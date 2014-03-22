@@ -1,0 +1,8 @@
+git config --global user.name "plsang"
+git config --global user.email "plsang@nii.ac.jp"
+git config --global credential.helper cache
+git config --global credential.helper 'cache --timeout=3600'
+git credential-cache exit
+Ref: https://help.github.com/articles/set-up-git#platform-linux
+
+
