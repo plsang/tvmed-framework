@@ -8,17 +8,38 @@ function calker_create_basic_exp_train_()
 	meta_dir = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/';
 	meta_file = fullfile(meta_dir, 'medmd.mat');
 	
-	fprintf('Loading metadata file...');
+	fprintf('Loading metadata file...\n');
 	load(meta_file, 'MEDMD');
-	
-	event_kits = {'EK10Ex', 'EK100Ex', 'EK130Ex'};
 	
 	%% setting for MED 2013,
 	%% Pre-specified tasks: 20 events E006-E015 & E021-E030
 	
+	fprintf('Generating for TVMED13-PS...\n');
 	exp_prefix = 'TVMED13-PS';
 	event_nums = [6:15, 21:30];
+	calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_dir);
+
+	%% setting for MED 2013,
+	%% Ad-hoc tasks: 
+	fprintf('Generating for TVMED13-AH...\n');
+	exp_prefix = 'TVMED13-AH';
+	event_nums = [31:40];
+	calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_dir);
+	
+	%% setting for MED 2012,
+	%% Ad-hoc tasks: 
+	fprintf('Generating for TVMED12-AH...\n');
+	exp_prefix = 'TVMED12-AH';
+	event_nums = [16:20];
+	calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_dir);
+end
+
+function calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_dir)
+
 	event_ids = arrayfun(@(x) sprintf('E%03d', x), event_nums, 'UniformOutput', false);
+	
+	%event_kits = {'EK10Ex', 'EK100Ex', 'EK130Ex'};
+	event_kits = {'EK10Ex', 'EK100Ex'};
 	
 	%% 3 ways to use miss (related) videos
 	related_examples = {'RP', 'RN', 'NR'}; % RP: Related as Positive, RN: Related as Negative, NR: No Related 
@@ -66,7 +87,7 @@ function calker_create_basic_exp_train_()
 			output_dir = sprintf('%s/%s', meta_dir, r_exp_name);
 			if ~exist(output_dir, 'file'), mkdir(output_dir); end;
 			
-			output_file = sprintf('%s/database_devel.mat', output_dir);
+			output_file = sprintf('%s/database.mat', output_dir);
 			if exist(output_file, 'file'), fprintf('File %s already exist!\n', output_file); continue; end;
 			
 			for jj = 1:length(event_ids),
@@ -97,10 +118,7 @@ function calker_create_basic_exp_train_()
 		end
 	end
 	
-	%% setting for MED 2013,
-	%% Ad-hoc tasks: 
 end
-
 
 function calker_create_basic_exp_test_()
 	meta_dir = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/';
@@ -109,10 +127,21 @@ function calker_create_basic_exp_test_()
 	fprintf('Loading metadata file...');
 	load(meta_file, 'MEDMD');
 		
-	exp_prefix = 'TVMED13-PS-TEST';
-	event_nums = [6:15, 21:30];
-	event_ids = arrayfun(@(x) sprintf('E%03d', x), event_nums, 'UniformOutput', false);
-    event_names = MEDMD.EventKit.(event_kit).eventnames(find(ismember(MEDMD.EventKit.(event_kit).eventids, event_ids)));
-	
-	MEDMD.RefTest 	
+	exp_prefix = 'TVMED13-UNREFTEST';
+
+	test_sets = fieldnames(MEDMD.UnrefTest);
+	for ii = 1:length(test_sets),
+		test_set = test_sets{ii};
+		exp_name = [exp_prefix, '-', test_set];
+		output_dir = sprintf('%s/%s', meta_dir, exp_name);
+		if ~exist(output_dir, 'file'), mkdir(output_dir); end;
+		output_file = sprintf('%s/database.mat', output_dir);
+		if exist(output_file, 'file'), fprintf('File %s already exist!\n', output_file); continue; end;
+		database.clip_names = MEDMD.UnrefTest.(test_set).clips;
+		database.clip_idxs = [1:length(database.clip_names)];
+		database.num_clip = length(database.clip_names);
+		database.event_ids = MEDMD.UnrefTest.(test_set).eventids;
+		database.event_names = MEDMD.UnrefTest.(test_set).eventnames;
+		save(output_file, 'database');			
+	end
 end
