@@ -1,33 +1,29 @@
-function calker_train_kernel(proj_name, exp_name, ker, events)
+function calker_train_kernel(proj_name, exp_name, ker)
 
-    test_on_train = 1;
+    test_on_train = 0;
 	
 	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
-    traindb_file = fullfile(calker_exp_dir, 'metadata', 'traindb.mat');
+	fprintf('Loading meta file \n');
 	
-    load(traindb_file, 'traindb');
-
-    % event names
- 
-    n_event = length(events);
-
-    all_labels = zeros(n_event, length(traindb.selected_label));
-
-    for ii = 1:length(traindb.selected_label),
-        for jj = 1:n_event,
-            if traindb.selected_label(ii) == jj,
-                all_labels(jj, ii) = 1;
-            else
-                all_labels(jj, ii) = -1;
-            end
-        end
-    end
+	load(ker.prms.meta_file, 'database');
+	
+	if isempty(database)
+		error('Empty metadata file!!\n');
+	end
+	
+	selLabelPath = sprintf('%s/kernels/%s/%s.sel.mat', calker_exp_dir, ker.dev_pat, ker.histName);	
+	if ~exist(selLabelPath, 'file')
+		error('File not found!!\n');
+	end
+	
+	sel_feat = load(selLabelPath, 'sel_feat');
+	sel_feat = sel_feat.sel_feat;
 
     kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
 	
-	parfor kk = 1:n_event,
-		event_name = events{kk};
+	parfor kk = 1:length(database.event_names),
+		event_name = database.event_names{kk};
 	
         modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
 		
@@ -38,7 +34,7 @@ function calker_train_kernel(proj_name, exp_name, ker, events)
 		
 		fprintf('Training event ''%s''...\n', event_name);	
 		
-		labels = double(all_labels(kk,:));
+		labels = double(database.train_labels(sel_feat, kk));
 		posWeight = ceil(length(find(labels == -1))/length(find(labels == 1)));
 		
 		log2g_list = ker.startG:ker.stepG:ker.endG;

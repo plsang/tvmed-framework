@@ -1,4 +1,4 @@
-function calker_test_kernel(proj_name, exp_name, ker, events)
+function calker_test_kernel(proj_name, exp_name, ker)
 
 
     % loading labels
@@ -6,43 +6,24 @@ function calker_test_kernel(proj_name, exp_name, ker, events)
 
 	calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 
-	test_db_file = sprintf('database_%s.mat', ker.test_pat);
-
-	db_file = fullfile(calker_common_exp_dir, test_db_file);
-
-	fprintf('Loading database [%s]...\n', db_file);
-    load(db_file, 'database');
-
-
-    n_event = length(events);
-
-    all_labels = zeros(n_event, length(database.label));
-
-    for ii = 1:length(database.label),
-        for jj = 1:n_event,
-            if database.label(ii) == jj,
-                all_labels(jj, ii) = 1;
-            else
-                all_labels(jj, ii) = -1;
-            end
-        end
-    end
-
-
-    % number test kf
-    %n_test_kf = size(all_labels, 2);
+	fprintf('Loading meta file \n');
 	
-	n_test_kf = size(database.video, 2);	%% Update Sep 6, 2013
-    fprintf('Number test kf %d\n', n_test_kf);
+	load(ker.prms.meta_file, 'database');
+	
+	if isempty(database)
+		error('Empty metadata file!!\n');
+	end
+	
+    n_event = length(database.event_names);
+	events = database.event_names;
+	
+	n_clip = size(database.clip_names, 2);	%% Update Sep 6, 2013
+    fprintf('Number test clips: %d\n', n_clip);
 
-    num_part = ceil(n_test_kf/ker.chunk_size);
-    cols = fix(linspace(1, n_test_kf + 1, num_part+1));
+    num_part = ceil(n_clip/ker.chunk_size);
+    cols = fix(linspace(1, n_clip + 1, num_part+1));
 	
 	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
-	
-	%if checkFile(scorePath), 
-	%	error('Skipped testing %s \n', scorePath);
-	%end;
 	
 	models = struct;
 	scores = struct;

@@ -8,6 +8,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 	kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
 
 	devHistPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.histName);
+	selLabelPath = sprintf('%s/kernels/%s/%s.sel.mat', calker_exp_dir, ker.dev_pat, ker.histName);
 	
 	scaleParamsPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.scaleparamsName);
 	
@@ -18,7 +19,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 	if exist(devHistPath),
 		load(devHistPath);
 	else
-		dev_hists = calker_load_traindata(proj_name, exp_name, ker);
+		[dev_hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker);
 		
 		if ker.feature_scale == 1,	
 			fprintf('Feature scaling...\n');	
@@ -28,6 +29,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 		
 		fprintf('\tSaving devel features for kernel %s ... \n', feature_ext) ;
 		save(devHistPath, 'dev_hists', '-v7.3');
+		save(selLabelPath, 'sel_feat');
 		
 	end
 

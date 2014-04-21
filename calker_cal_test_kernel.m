@@ -6,12 +6,8 @@ calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_
 
 calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 
-test_db_file = sprintf('database_%s.mat', ker.test_pat);
-
-db_file = fullfile(calker_common_exp_dir, test_db_file);
-
-fprintf('Loading database [%s]...\n', db_file);
-load(db_file, 'database');
+fprintf('Loading meta file \n');
+load(ker.prms.meta_file, 'database');
 
 devHistPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.histName);
 if ~exist(devHistPath),
@@ -33,8 +29,8 @@ if strcmp(ker.type, 'echi2'),
 	ker.mu = heu_ker.mu;	
 end
 
-num_part = ceil(length(database.path)/ker.chunk_size);
-cols = fix(linspace(1, length(database.path) + 1, num_part+1));
+num_part = ceil(size(database.clip_names, 2)/ker.chunk_size);
+cols = fix(linspace(1, size(database.clip_names, 2) + 1, num_part+1));
 
 % cal test kernel using num_part partition
 database_path = database.path;
@@ -55,8 +51,13 @@ parfor jj = 1:num_part,
 		fprintf('----[%d/%d] Loading test data [feature: %s] [ker_type = %s] [range: %d-%d]... \n', jj, num_part, feature_ext, ker.type, cols(jj), cols(jj+1)-1);
 		
 		for ii = 1:part_length, %
-    
-			segment_path = database_path{ii + cols(jj) - 1};
+		
+			clip_name = database.clip_names{ii + cols(jj) - 1};
+			
+			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
+				ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.test_pat, clip_name, clip_name);   
+
+			%segment_path = database_path{ii + cols(jj) - 1};
 			
 			if ~exist(segment_path),
 				warning('File [%s] does not exist! Generating random feature... !!\n', segment_path);
