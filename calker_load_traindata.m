@@ -1,27 +1,29 @@
 
-function hists = calker_load_traindata(proj_name, exp_name, ker)
+function [hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker)
 
 %%Update change parameter to ker
 % load database
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
-traindb_file = fullfile(calker_exp_dir, 'metadata', 'traindb.mat');
-load(traindb_file, 'traindb');
+fprintf('Loading meta file \n');
+load(ker.prms.meta_file, 'database');
 
-if isempty(traindb)
-    error('Empty training db!!\n');
+if isempty(database)
+    error('Empty metadata file!!\n');
 end
 
-hists = zeros(ker.num_dim, size(traindb.label, 1));
+hists = zeros(ker.num_dim, size(database.train_labels, 1));
 
-selected_label = zeros(1, size(traindb.label, 1));
-traindb_label = traindb.label;
-traindb_path = traindb.path;
+selected_label = zeros(1, size(database.train_labels, 1));
 
 parfor ii = 1:length(traindb.label), %
-	segment_path = traindb_path{ii};
 	
+	clip_name = database.clip_names{ii};
+	
+	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
+						ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.train_pat, clip_name, clip_name);   
+						
 	if ~exist(segment_path),
 		warning('File [%s] does not exist!\n', segment_path);
 		continue;
@@ -62,23 +64,21 @@ parfor ii = 1:length(traindb.label), %
     end
 	
 	hists(:, ii) =  code;
-	selected_label(ii) = traindb_label(ii);
+	selected_label(ii) = 1;
 	
 end
 
 sel_feat = selected_label ~= 0;
-traindb.selected_label = selected_label(sel_feat);
 hists = hists(:, sel_feat);
 
-fprintf('Updating traindb ...\n');
-save(traindb_file, 'traindb');
+%fprintf('Updating traindb ...\n');
+%save(traindb_file, 'traindb');
 
 end
 
 function log (msg)
-	fh = fopen('/net/per900a/raid0/plsang/tools/kaori-secode-calker-v3/log/calker_load_traindata.log', 'a+');
-    msg = [msg, ' at ', datestr(now), '\n'];
-	fprintf(fh, msg);
+    logfile = [mfilename('fullpath'), '.log'];
+    fh = fopen(logfile, 'a+');
+    fprintf(fh, [msg, '\n']);
 	fclose(fh);
 end
-

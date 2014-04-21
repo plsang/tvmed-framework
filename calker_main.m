@@ -50,8 +50,17 @@ end
 
 ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 
+ker.prms.tvprefix = 'TVMED13';
+ker.prms.tvtask = 'PS';
+ker.prms.eventkit = 'EK10Ex';
+ker.prms.rtype = 'NR';	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
+ker.prms.train_pat = 'devel';	% train pat name where local features are stored
+
+ker.prms.meta_file = sprintf('%s/%s/metadata/%s-%s-%s-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, ker.prms.tvtask, ker.prms.eventkit, ker.prms.rtype);
+ker.prms.seg_name = seg_name;
+
 ker.events = events;
-ker.event_set = 'EK130';	% EK10, EK100
+%ker.event_set = 'EK130';	% EK10, EK100
 ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
 %ker.test_pat = 'medtest';
@@ -73,8 +82,8 @@ mkdir(fullfile(calker_exp_dir, 'log'));
 
 videolevel = strcmp('100000', exp_id);
 
-calker_create_database(proj_name, exp_name, seg_name, ker);
-calker_create_traindb(proj_name, exp_name, ker);
+%calker_create_database(proj_name, exp_name, seg_name, ker);
+%calker_create_traindb(proj_name, exp_name, ker);
 
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
