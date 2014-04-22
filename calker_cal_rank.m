@@ -1,4 +1,4 @@
-function calker_cal_rank(proj_name, exp_name, ker, events)
+function calker_cal_rank(proj_name, exp_name, ker)
 	
 	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 	
@@ -6,17 +6,13 @@ function calker_cal_rank(proj_name, exp_name, ker, events)
 	
 	calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 	
-	gt_file = fullfile(calker_common_exp_dir, test_db_file);
+	fprintf('Loading ref meta file \n');
 	
-	if ~exist(gt_file, 'file'),
-		warning('File not found! [%s] USING COMMON DIR GROUNDTRUTH!!!', gt_file);
-		calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common', ker.proj_dir, proj_name, exp_name);
-		gt_file = fullfile(calker_common_exp_dir, test_db_file);
+	load(ker.prms.ref_meta_file, 'database');
+	
+	if isempty(database)
+		error('Empty metadata file!!\n');
 	end
-	
-	fprintf('Loading database [%s]...\n', test_db_file);
-    database = load(gt_file, 'database');
-	database = database.database;
 	
 	scoreDir =  sprintf('%s/scores/%s', calker_exp_dir, ker.test_pat);
 	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
@@ -31,7 +27,8 @@ function calker_cal_rank(proj_name, exp_name, ker, events)
 	
 	scores = load(scorePath);
 	
-	n_event = length(events);
+	n_event = length(database.event_names);
+	events = database.event_names;
 	
 	fprintf('Ranking for feature %s...\n', ker.name);
 	
@@ -51,7 +48,7 @@ function calker_cal_rank(proj_name, exp_name, ker, events)
 		fh = fopen(rankFile, 'w');
 		for kk=1:length(sorted_scores),
 			rank_idx = sorted_idx(kk);
-			fprintf(fh, '%s %f\n', database.cname{rank_idx}, sorted_scores(kk));
+			fprintf(fh, '%s %f\n', database.clip_names{rank_idx}, sorted_scores(kk));
 		end
 		
 		fclose(fh);
