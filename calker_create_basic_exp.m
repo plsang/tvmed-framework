@@ -1,5 +1,5 @@
 function calker_create_basic_exp()
-	%calker_create_basic_exp_train_();
+	calker_create_basic_exp_train_();
 	calker_create_basic_exp_test_();
 end
 
@@ -111,9 +111,9 @@ function calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_d
 						error('Unknow related example type!');
 				end
 				
-				database.train_labels = r_train_labels;
 			end
 
+			database.train_labels = r_train_labels;
 			save(output_file, 'database');			
 		end
 	end
