@@ -62,9 +62,10 @@ function calker_test_kernel(proj_name, exp_name, ker)
 		parfor jj = 1:n_event,
 			event_name = events{jj};
 			fprintf('-- [%d/%d] -- Testing event ''%s''...\n', kk, num_part, event_name);
+			
 			%only test at svind
-			test_base = base(models.(event_name).svind,:);
-			sub_scores = models.(event_name).alphay' * test_base + models.(event_name).b;
+			%test_base = base(models.(event_name).svind,:);
+			%sub_scores = models.(event_name).alphay' * test_base + models.(event_name).b;
 			
 			[y, acc, dec] = svmpredict(zeros(Nt, 1), [(1:Nt)' base'], models.(event_name).libsvm_cl, '-b 1') ;		
 			sub_scores = dec(:, 1)';
