@@ -14,8 +14,9 @@ function calker_cal_rank(proj_name, exp_name, ker)
 		error('Empty metadata file!!\n');
 	end
 	
-	scoreDir =  sprintf('%s/scores/%s', calker_exp_dir, ker.test_pat);
-	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
+	scorePath = sprintf('%s/scores/%s/%s/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.name, ker.type);
+	scoreDir = fileparts(scorePath);
+	
 	videoScorePath = sprintf('%s/scores/%s/%s.video.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
 	mapPath = sprintf('%s/scores/%s/%s.map.csv', calker_exp_dir, ker.test_pat, ker.name);
     
@@ -23,7 +24,6 @@ function calker_cal_rank(proj_name, exp_name, ker)
 		warning('File not found!! %s \n', scorePath);
 		return;
 	end
-	
 	
 	scores = load(scorePath);
 	

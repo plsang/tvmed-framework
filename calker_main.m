@@ -1,4 +1,4 @@
-function calker_main(proj_name, exp_id, feature_ext, suffix, test_pat, feat_dim, ker_type, cross, open_pool)
+function calker_main(proj_name, exp_id, feature_ext, eventkit, test_pat, feat_dim, ker_type, suffix, cross, open_pool)
 
 addpath('/net/per900a/raid0/plsang/tools/kaori-secode-calker-v6/support');
 addpath('/net/per900a/raid0/plsang/tools/libsvm-3.17/matlab');
@@ -35,6 +35,10 @@ if ~exist('test_pat', 'var'),
 	test_pat = 'kindredtest';
 end
 
+if ~exist('eventkit', 'var'),
+	eventkit = 'EK130Ex';
+end
+
 if isempty(strfind(suffix, '-v7')),
 	error('**** Suffix does not contain v7 !!!!!\n');
 end
@@ -43,7 +47,7 @@ ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 
 ker.prms.tvprefix = 'TVMED13';
 ker.prms.tvtask = 'PS';
-ker.prms.eventkit = 'EK130Ex';
+ker.prms.eventkit = eventkit; % 'EK130Ex';
 ker.prms.rtype = 'RN';	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
 ker.prms.train_fea_pat = 'devel';	% train pat name where local features are stored
 ker.prms.test_fea_pat = 'devel';	% train pat name where local features are stored
@@ -51,7 +55,6 @@ ker.prms.test_fea_pat = 'devel';	% train pat name where local features are store
 ker.prms.meta_file = sprintf('%s/%s/metadata/%s-%s-%s-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, ker.prms.tvtask, ker.prms.eventkit, ker.prms.rtype);
 ker.prms.seg_name = seg_name;
 
-%ker.event_set = 'EK130';	% EK10, EK100
 ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
 ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
@@ -60,14 +63,11 @@ calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_
 ker.log_dir = fullfile(calker_exp_dir, 'log');
  
 %if ~exist(calker_exp_dir, 'file'),
-mkdir(calker_exp_dir);
 mkdir(fullfile(calker_exp_dir, 'metadata'));
-mkdir(fullfile(calker_exp_dir, 'kernels'));
 mkdir(fullfile(calker_exp_dir, 'kernels', ker.dev_pat));
 mkdir(fullfile(calker_exp_dir, 'kernels', ker.test_pat));
-mkdir(fullfile(calker_exp_dir, 'scores'));
-mkdir(fullfile(calker_exp_dir, 'scores', ker.test_pat));
-mkdir(fullfile(calker_exp_dir, 'models'));
+mkdir(fullfile(calker_exp_dir, 'scores', ker.test_pat, eventkit));
+mkdir(fullfile(calker_exp_dir, 'models', eventkit));
 mkdir(fullfile(calker_exp_dir, 'log'));
 %end
 

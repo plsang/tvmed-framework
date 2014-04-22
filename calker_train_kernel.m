@@ -26,7 +26,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 	parfor kk = 1:length(database.event_names),
 		event_id = database.event_ids{kk};
 	
-        modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_id, ker.name, ker.type);
+        modelPath = sprintf('%s/models/%s/%s.%s.%s.model.mat', calker_exp_dir, ker.prms.eventkit, event_id, ker.name, ker.type);
 		
 		if checkFile(modelPath),
 			fprintf('Skipped training %s \n', modelPath);
