@@ -6,8 +6,8 @@ calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_
 
 calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 
-fprintf('Loading meta file \n');
-database = load(ker.prms.meta_file, 'database');
+fprintf('Loading test meta file \n');
+database = load(ker.prms.test_meta_file, 'database');
 database = database.database;
 
 devHistPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.histName);

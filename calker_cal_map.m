@@ -12,7 +12,7 @@ function calker_cal_map(proj_name, exp_name, ker, videolevel, fusion)
 	
 	fprintf('Loading ref meta file \n');
 	
-	load(ker.prms.ref_meta_file, 'database');
+	load(ker.prms.test_meta_file, 'database');
 	
 	if isempty(database)
 		error('Empty metadata file!!\n');
