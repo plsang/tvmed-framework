@@ -6,24 +6,21 @@ function hists = calker_load_testdata(proj_name, exp_name, ker)
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 
-test_db_file = sprintf('database_%s.mat', ker.test_pat);
-
-db_file = fullfile(calker_common_exp_dir, test_db_file);
-
-fprintf('Loading database [%s]...\n', db_file);
-load(db_file, 'database');
-
-hists = zeros(ker.num_dim, length(database.path));
+fprintf('Loading meta file \n');
+load(ker.prms.meta_file, 'database');
 
 if isempty(database)
-    error('Empty db!!\n');
+    error('Empty metadata file!!\n');
 end
 
-database_path = database.path;
+hists = zeros(ker.num_dim, size(database.clip_names, 2));
 
 parfor ii = 1:length(database.path), %
     
-    segment_path = database_path{ii};
+	clip_name = database.clip_names{ii};
+	
+	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
+						ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
 	
 	if ~exist(segment_path),
 		warning('File [%s] does not exist! Generating random feature... !!\n', segment_path);

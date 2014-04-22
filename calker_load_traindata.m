@@ -22,7 +22,7 @@ parfor ii = 1:length(traindb.label), %
 	clip_name = database.clip_names{ii};
 	
 	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-						ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.train_pat, clip_name, clip_name);   
+						ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.train_fea_pat, clip_name, clip_name);   
 						
 	if ~exist(segment_path),
 		warning('File [%s] does not exist!\n', segment_path);

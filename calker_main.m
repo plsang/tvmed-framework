@@ -11,12 +11,6 @@ vl_setup;
 exp_name = [proj_name, '-', exp_id];
 seg_name = ['segment-', exp_id];
 
-event_list = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/trecvidmed13.events.ps.lst';
-fh = fopen(event_list, 'r');
-infos = textscan(fh, '%s %s', 'delimiter', ' >.< ', 'MultipleDelimsAsOne', 1);
-fclose(fh);
-events = infos{1};
-
 if ~exist('suffix', 'var'),
 	suffix = '--calker-v7.1';
 end
@@ -51,8 +45,8 @@ ker.prms.tvprefix = 'TVMED13';
 ker.prms.tvtask = 'PS';
 ker.prms.eventkit = 'EK10Ex';
 ker.prms.rtype = 'NR';	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
-ker.prms.train_pat = 'devel';	% train pat name where local features are stored
-ker.prms.test_pat = 'devel';	% train pat name where local features are stored
+ker.prms.train_fea_pat = 'devel';	% train pat name where local features are stored
+ker.prms.test_fea_pat = 'devel';	% train pat name where local features are stored
 
 ker.prms.meta_file = sprintf('%s/%s/metadata/%s-%s-%s-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, ker.prms.tvtask, ker.prms.eventkit, ker.prms.rtype);
 ker.prms.seg_name = seg_name;
@@ -60,7 +54,7 @@ ker.prms.seg_name = seg_name;
 %ker.event_set = 'EK130';	% EK10, EK100
 ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
-%ker.test_pat = 'medtest';
+ker.prms.ref_meta_file = sprintf('%s/%s/metadata/%s-%s-REFTEST/%s.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, ker.prms.tvtask, upper(test_pat));
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 ker.log_dir = fullfile(calker_exp_dir, 'log');

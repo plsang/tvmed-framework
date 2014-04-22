@@ -1,4 +1,4 @@
-function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
+function calker_cal_map(proj_name, exp_name, ker, videolevel, fusion)
 	
 	%videolevel: 1 (default): video-based approach, 0: segment-based approach
 	
@@ -10,24 +10,17 @@ function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
 	
 	calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 	
-	test_db_file = sprintf('database_%s.mat', ker.test_pat);
+	fprintf('Loading ref meta file \n');
 	
-	gt_file = fullfile(calker_common_exp_dir, test_db_file);
+	load(ker.prms.ref_meta_file, 'database');
 	
-	if ~exist(gt_file, 'file'),
-		warning('File not found! [%s] USING COMMON DIR GROUNDTRUTH!!!', gt_file);
-		calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common', ker.proj_dir, proj_name, exp_name);
-		gt_file = fullfile(calker_common_exp_dir, test_db_file);
+	if isempty(database)
+		error('Empty metadata file!!\n');
 	end
 	
-	fprintf('Loading database [%s]...\n', test_db_file);
-    database = load(gt_file, 'database');
-	database = database.database;
-	
-	
-
 	% event names
-	n_event = length(events);
+	n_event = length(database.event_names);
+	events = database.event_names;
 	
 	fprintf('Scoring for feature %s...\n', ker.name);
 
@@ -58,7 +51,8 @@ function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
 			fprintf('Scoring for event [%s]...\n', event_name);
 			
 			[~, idx] = sort(this_scores, 'descend');
-			gt_idx = find(database.label == jj);
+			%gt_idx = find(database.label == jj);
+			gt_idx = find(ismember(database.clip_names, database.ref.(event_name)));
 			
 			rank_idx = arrayfun(@(x)find(idx == x), gt_idx);
 			
@@ -73,7 +67,7 @@ function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
 		end	
 	else 		% segment-based
 		
-		%videoScorePath = sprintf('%s/scores/%s.video.scores.mat', calker_exp_dir, ker.name);
+		%% note: April 22, haven't updated for segment-based approach yet
 		fprintf('Calculating scores at video level...\n');
 		
 		video_scores_ = cell(n_event, 1);

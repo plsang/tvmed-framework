@@ -126,7 +126,32 @@ function calker_create_basic_exp_test_()
 	
 	fprintf('Loading metadata file...');
 	load(meta_file, 'MEDMD');
-		
+	
+	% updated but not used
+	exp_prefix = 'TVMED13-REFTEST';	
+	test_sets = fieldnames(MEDMD.RefTest);
+	for ii = 1:length(test_sets),
+		test_set = test_sets{ii};
+		exp_name = [exp_prefix, '-', test_set];
+		output_dir = sprintf('%s/%s', meta_dir, exp_name);
+		if ~exist(output_dir, 'file'), mkdir(output_dir); end;
+		output_file = sprintf('%s/database.mat', output_dir);
+		if exist(output_file, 'file'), fprintf('File %s already exist!\n', output_file); continue; end;
+		database.clip_names = MEDMD.RefTest.(test_set).clips;
+		database.clip_idxs = [1:length(database.clip_names)];
+		database.num_clip = length(database.clip_names);
+		database.event_ids = MEDMD.RefTest.(test_set).eventids;
+		database.event_names = MEDMD.RefTest.(test_set).eventnames;
+		database.ref = MEDMD.RefTest.(test_set).ref;
+		database.label = -ones(length(database.clip_names), 1);
+		for jj = 1:length(database.event_ids),
+			event_name = database.event_names{jj};
+			gt_idx = find(ismember(MEDMD.RefTest.MEDTEST.clips, MEDMD.RefTest.MEDTEST.ref.(event_name)));
+			%gt_idx = 
+		end
+		save(output_file, 'database');			
+	end
+	
 	exp_prefix = 'TVMED13-UNREFTEST';
 
 	test_sets = fieldnames(MEDMD.UnrefTest);
