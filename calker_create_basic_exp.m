@@ -1,11 +1,11 @@
 function calker_create_basic_exp()
-	calker_create_basic_exp_train_();
+	%calker_create_basic_exp_train_();
 	calker_create_basic_exp_test_();
 end
 
 function calker_create_basic_exp_train_()
 	
-	meta_dir = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/';
+	meta_dir = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata';
 	meta_file = fullfile(meta_dir, 'medmd.mat');
 	
 	fprintf('Loading metadata file...\n');
@@ -121,7 +121,7 @@ function calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_d
 end
 
 function calker_create_basic_exp_test_()
-	meta_dir = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/';
+	meta_dir = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata';
 	meta_file = fullfile(meta_dir, 'medmd.mat');
 	
 	fprintf('Loading metadata file...');
@@ -143,12 +143,12 @@ function calker_create_basic_exp_test_()
 		database.event_ids = MEDMD.RefTest.(test_set).eventids;
 		database.event_names = MEDMD.RefTest.(test_set).eventnames;
 		database.ref = MEDMD.RefTest.(test_set).ref;
-		database.label = -ones(length(database.clip_names), 1);
-		for jj = 1:length(database.event_ids),
-			event_name = database.event_names{jj};
-			gt_idx = find(ismember(MEDMD.RefTest.MEDTEST.clips, MEDMD.RefTest.MEDTEST.ref.(event_name)));
-			%gt_idx = 
-		end
+		% database.label = -ones(length(database.clip_names), 1);
+		% for jj = 1:length(database.event_ids),
+			% event_name = database.event_names{jj};
+			% gt_idx = find(ismember(MEDMD.RefTest.MEDTEST.clips, MEDMD.RefTest.MEDTEST.ref.(event_name)));
+			% gt_idx = 
+		% end
 		save(output_file, 'database');			
 	end
 	

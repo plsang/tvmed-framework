@@ -56,7 +56,7 @@ parfor jj = 1:num_part,
 			clip_name = database.clip_names{ii + cols(jj) - 1};
 			
 			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-				ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_pat, clip_name, clip_name);   
+				ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
 
 			%segment_path = database_path{ii + cols(jj) - 1};
 			
