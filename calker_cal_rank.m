@@ -28,7 +28,7 @@ function calker_cal_rank(proj_name, exp_name, ker)
 	scores = load(scorePath);
 	
 	n_event = length(database.event_names);
-	events = database.event_names;
+	events = database.event_ids;
 	
 	fprintf('Ranking for feature %s...\n', ker.name);
 	

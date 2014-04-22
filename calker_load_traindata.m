@@ -7,7 +7,8 @@ function [hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker)
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
 fprintf('Loading meta file \n');
-load(ker.prms.meta_file, 'database');
+database = load(ker.prms.meta_file, 'database');
+database = database.database;
 
 if isempty(database)
     error('Empty metadata file!!\n');
@@ -17,12 +18,12 @@ hists = zeros(ker.num_dim, size(database.train_labels, 1));
 
 selected_label = zeros(1, size(database.train_labels, 1));
 
-parfor ii = 1:length(traindb.label), %
+parfor ii = 1:size(database.train_labels, 1), %
 	
 	clip_name = database.clip_names{ii};
 	
 	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-						ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.train_fea_pat, clip_name, clip_name);   
+						ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.train_fea_pat, clip_name, clip_name);   
 						
 	if ~exist(segment_path),
 		warning('File [%s] does not exist!\n', segment_path);

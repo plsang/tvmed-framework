@@ -7,7 +7,8 @@ calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_
 calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 
 fprintf('Loading meta file \n');
-load(ker.prms.meta_file, 'database');
+database = load(ker.prms.meta_file, 'database');
+database = database.database;
 
 devHistPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.histName);
 if ~exist(devHistPath),
@@ -33,7 +34,7 @@ num_part = ceil(size(database.clip_names, 2)/ker.chunk_size);
 cols = fix(linspace(1, size(database.clip_names, 2) + 1, num_part+1));
 
 % cal test kernel using num_part partition
-database_path = database.path;
+
 fprintf('-- Calculating test kernel %s with %d partition(s) \n', feature_ext, num_part);
 
 parfor jj = 1:num_part,
@@ -55,7 +56,7 @@ parfor jj = 1:num_part,
 			clip_name = database.clip_names{ii + cols(jj) - 1};
 			
 			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-				ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.test_pat, clip_name, clip_name);   
+				ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_pat, clip_name, clip_name);   
 
 			%segment_path = database_path{ii + cols(jj) - 1};
 			

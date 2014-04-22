@@ -15,7 +15,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
 	end
 	
     n_event = length(database.event_names);
-	events = database.event_names;
+	event_ids = database.event_ids;
 	
 	n_clip = size(database.clip_names, 2);	%% Update Sep 6, 2013
     fprintf('Number test clips: %d\n', n_clip);
@@ -29,7 +29,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
 	scores = struct;
 	
 	for jj = 1:n_event,
-		event_name = events{jj};
+		event_name = event_ids{jj};
 		
 		modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
         
@@ -60,7 +60,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
 		[N, Nt] = size(base) ;
 
 		parfor jj = 1:n_event,
-			event_name = events{jj};
+			event_name = event_ids{jj};
 			fprintf('-- [%d/%d] -- Testing event ''%s''...\n', kk, num_part, event_name);
 			
 			%only test at svind
@@ -77,7 +77,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
 	end
 	
 	for jj = 1:n_event,
-		event_name = events{jj};
+		event_name = event_ids{jj};
 		scores.(event_name) = cat(2, tmp_scores{jj}{:});
 	end
 		

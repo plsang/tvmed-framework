@@ -20,7 +20,7 @@ function calker_cal_map(proj_name, exp_name, ker, videolevel, fusion)
 	
 	% event names
 	n_event = length(database.event_names);
-	events = database.event_names;
+	events = database.event_ids;
 	
 	fprintf('Scoring for feature %s...\n', ker.name);
 

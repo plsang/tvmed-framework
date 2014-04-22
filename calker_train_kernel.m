@@ -6,7 +6,8 @@ function calker_train_kernel(proj_name, exp_name, ker)
 
 	fprintf('Loading meta file \n');
 	
-	load(ker.prms.meta_file, 'database');
+	database = load(ker.prms.meta_file, 'database');
+	database = database.database;
 	
 	if isempty(database)
 		error('Empty metadata file!!\n');
@@ -23,18 +24,25 @@ function calker_train_kernel(proj_name, exp_name, ker)
     kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
 	
 	parfor kk = 1:length(database.event_names),
-		event_name = database.event_names{kk};
+		event_id = database.event_ids{kk};
 	
-        modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
+        modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_id, ker.name, ker.type);
 		
 		if checkFile(modelPath),
 			fprintf('Skipped training %s \n', modelPath);
 			continue;
 		end
 		
-		fprintf('Training event ''%s''...\n', event_name);	
+		fprintf('Training event ''%s''...\n', event_id);	
 		
 		labels = double(database.train_labels(sel_feat, kk));
+		labels = labels';	% labels are row vectors
+		
+		%% removing 0 entry (not used for training);
+		train_idx = find(labels ~= 0);
+		labels = labels(train_idx);
+		
+		
 		posWeight = ceil(length(find(labels == -1))/length(find(labels == 1)));
 		
 		log2g_list = ker.startG:ker.stepG:ker.endG;
@@ -52,7 +60,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 				cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
 				fprintf('Loading kernel %s ...\n', cv_kerPath); 
 				kernels_ = load(cv_kerPath) ;
-				base = kernels_.matrix;
+				base = kernels_.matrix(train_idx, train_idx);
 
 				fprintf('SVM learning with predefined kernel matrix...\n');
 				[svm_, maxacc_] = calker_svmkernellearn(base, labels,   ...
@@ -79,9 +87,10 @@ function calker_train_kernel(proj_name, exp_name, ker)
 			heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
 			fprintf('Loading kernel %s ...\n', heu_kerPath); 
 			kernels_ = load(heu_kerPath) ;
-			base = kernels_.matrix;
+			base = kernels_.matrix(train_idx, train_idx);
 			
 			fprintf('SVM learning with predefined kernel matrix...\n');
+		
 			svm = calker_svmkernellearn(base, labels,   ...
 							   'type', 'C',        ...
 							   ...%'C', 10,            ...

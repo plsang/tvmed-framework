@@ -43,8 +43,8 @@ ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 
 ker.prms.tvprefix = 'TVMED13';
 ker.prms.tvtask = 'PS';
-ker.prms.eventkit = 'EK10Ex';
-ker.prms.rtype = 'NR';	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
+ker.prms.eventkit = 'EK130Ex';
+ker.prms.rtype = 'RN';	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
 ker.prms.train_fea_pat = 'devel';	% train pat name where local features are stored
 ker.prms.test_fea_pat = 'devel';	% train pat name where local features are stored
 
@@ -73,9 +73,6 @@ mkdir(fullfile(calker_exp_dir, 'log'));
 
 videolevel = strcmp('100000', exp_id);
 
-%calker_create_database(proj_name, exp_name, seg_name, ker);
-%calker_create_traindb(proj_name, exp_name, ker);
-
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 calker_cal_train_kernel(proj_name, exp_name, ker);
@@ -83,10 +80,7 @@ calker_train_kernel(proj_name, exp_name, ker);
 calker_cal_test_kernel(proj_name, exp_name, ker);
 calker_test_kernel(proj_name, exp_name, ker);
 calker_cal_map(proj_name, exp_name, ker, videolevel);
-
-%calker_val_kernel(proj_name, exp_name, ker, events);
-%calker_val_map(proj_name, exp_name, ker, events, videolevel);
-
+calker_cal_rank(proj_name, exp_name, ker);
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
