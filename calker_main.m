@@ -70,8 +70,8 @@ ker.log_dir = fullfile(calker_exp_dir, 'log');
 mkdir(fullfile(calker_exp_dir, 'metadata'));
 mkdir(fullfile(calker_exp_dir, 'kernels', ker.dev_pat));
 mkdir(fullfile(calker_exp_dir, 'kernels', ker.test_pat));
-mkdir(fullfile(calker_exp_dir, 'scores', ker.test_pat, eventkit));
-mkdir(fullfile(calker_exp_dir, 'models', eventkit));
+mkdir(fullfile(calker_exp_dir, 'scores', ker.test_pat));
+mkdir(fullfile(calker_exp_dir, 'models'));
 mkdir(fullfile(calker_exp_dir, 'log'));
 %end
 
