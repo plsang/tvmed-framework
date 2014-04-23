@@ -14,7 +14,7 @@ function calker_cal_rank(proj_name, exp_name, ker)
 		error('Empty metadata file!!\n');
 	end
 	
-	scorePath = sprintf('%s/scores/%s/%s/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.name, ker.type);
+	scorePath = sprintf('%s/scores/%s/%s-%s/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type);
 	scoreDir = fileparts(scorePath);
 	
 	videoScorePath = sprintf('%s/scores/%s/%s.video.scores.mat', calker_exp_dir, ker.test_pat, ker.name);

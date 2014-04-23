@@ -14,11 +14,11 @@ if isempty(database)
     error('Empty metadata file!!\n');
 end
 
-hists = zeros(ker.num_dim, size(database.train_labels, 1));
+hists = zeros(ker.num_dim, database.num_clip);
 
-selected_label = zeros(1, size(database.train_labels, 1));
+selected_label = zeros(1, database.num_clip);
 
-parfor ii = 1:size(database.train_labels, 1), %
+parfor ii = 1:database.num_clip, %
 	
 	clip_name = database.clip_names{ii};
 	
@@ -70,7 +70,7 @@ parfor ii = 1:size(database.train_labels, 1), %
 end
 
 sel_feat = selected_label ~= 0;
-hists = hists(:, sel_feat);
+%hists = hists(:, sel_feat);
 
 %fprintf('Updating traindb ...\n');
 %save(traindb_file, 'traindb');
