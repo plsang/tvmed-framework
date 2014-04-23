@@ -101,7 +101,7 @@ function calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_d
 		
 		clip_names = unique(clip_names);
 		
-		database.sel_idx = find(ismember(database.clip_names, clip_names));
+		database.sel_idx = ismember(database.clip_names, clip_names);
 		
 		for kk = 1:length(related_examples),
 			r_example = related_examples{kk};

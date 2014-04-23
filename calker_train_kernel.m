@@ -18,14 +18,13 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		error('File not found!!\n');
 	end
 	
-	sel_feat = load(selLabelPath, 'sel_feat');
-	sel_feat = sel_feat.sel_feat;
+	sel_feat_ = load(selLabelPath, 'sel_feat');
 	
-	sel_feat = intersect(database.sel_idx, sel_feat);
+	sel_feat = database.sel_idx & sel_feat_.sel_feat;
 
     kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
 	
-	for kk = 1:length(database.event_names),
+	parfor kk = 1:length(database.event_names),
 		event_name = database.event_ids{kk};
 	
         modelPath = sprintf('%s/models/%s-%s/%s.%s.%s.model.mat', calker_exp_dir, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type);
@@ -40,7 +39,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		labels = double(database.train_labels(kk, sel_feat)); % labels are row vectors
 		
 		%% removing 0 entry (not used for training);
-		train_idx = find(labels ~= 0);
+		train_idx = labels ~= 0;
 		labels = labels(train_idx);
 		
 		
