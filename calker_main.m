@@ -1,46 +1,50 @@
-function calker_main(proj_name, exp_id, feature_ext, eventkit, test_pat, feat_dim, ker_type, suffix, cross, open_pool)
+function calker_main(proj_name, exp_id, feature_ext, varargin)
 
 addpath('/net/per900a/raid0/plsang/tools/kaori-secode-calker-v6/support');
 addpath('/net/per900a/raid0/plsang/tools/libsvm-3.17/matlab');
 addpath('/net/per900a/raid0/plsang/tools/vlfeat-0.9.16/toolbox');
-
-% run vl_setup with no prefix
-% vl_setup('noprefix');
 vl_setup;
 
 exp_name = [proj_name, '-', exp_id];
-seg_name = ['segment-', exp_id];
+%seg_name = ['segment-', exp_id];
+seg_name = 'segment-100000';
 
-if ~exist('suffix', 'var'),
-	suffix = '--calker-v7.1';
-end
+feat_dim = 4000;
+ker_type = 'kl2';
+cross = 0;
+open_pool = 0;
+suffix = '';
+test_pat = 'kindredtest';
+eventkit = 'EK10Ex';
+miss_type = 'RN'; % RN: Related example as Negative, RP: Related example as Positive, NR: No related example
 
-if ~exist('feat_dim', 'var'),
-	feat_dim = 4000;
-end
+for k=1:2:length(varargin),
 
-if ~exist('ker_type', 'var'),
-	ker_type = 'echi2';
-end
-
-if ~exist('cross', 'var'),
-	cross = 0;
-end
-
-if ~exist('open_pool', 'var'),
-	open_pool = 0;
-end
-
-if ~exist('test_pat', 'var'),
-	test_pat = 'kindredtest';
-end
-
-if ~exist('eventkit', 'var'),
-	eventkit = 'EK130Ex';
-end
-
-if isempty(strfind(suffix, '-v7')),
-	error('**** Suffix does not contain v7 !!!!!\n');
+	opt = lower(varargin{k});
+	arg = varargin{k+1} ;
+  
+	switch opt
+		case 'cross'
+			cross = arg;
+		case 'pool' ;
+			open_pool = arg ;
+		case 'cv' ;
+			cv = arg ;
+		case 'ker' ;
+			ker_type = arg ;
+		case 'suffix'
+			suffix = arg ;
+		case 'dim'
+			feat_dim = arg;
+		case 'ek'
+			eventkit = arg;	
+		case 'miss'
+			miss_type = arg;	
+		case 'test'
+			test_pat = arg;	
+		otherwise
+			error(sprintf('Option ''%s'' unknown.', opt)) ;
+	end  
 end
 
 ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
@@ -48,7 +52,7 @@ ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 ker.prms.tvprefix = 'TVMED13';
 ker.prms.tvtask = 'PS';
 ker.prms.eventkit = eventkit; % 'EK130Ex';
-ker.prms.rtype = 'RN';	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
+ker.prms.rtype = miss_type;	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
 ker.prms.train_fea_pat = 'devel';	% train pat name where local features are stored
 ker.prms.test_fea_pat = 'devel';	% train pat name where local features are stored
 
@@ -71,15 +75,13 @@ mkdir(fullfile(calker_exp_dir, 'models', eventkit));
 mkdir(fullfile(calker_exp_dir, 'log'));
 %end
 
-videolevel = strcmp('100000', exp_id);
-
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 calker_cal_train_kernel(proj_name, exp_name, ker);
 calker_train_kernel(proj_name, exp_name, ker);
 calker_cal_test_kernel(proj_name, exp_name, ker);
 calker_test_kernel(proj_name, exp_name, ker);
-calker_cal_map(proj_name, exp_name, ker, videolevel);
+calker_cal_map(proj_name, exp_name, ker);
 calker_cal_rank(proj_name, exp_name, ker);
 
 %close pool
