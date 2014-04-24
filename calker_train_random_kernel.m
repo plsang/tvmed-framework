@@ -1,4 +1,4 @@
-function calker_train_random_kernel(proj_name, exp_name, ker, events)
+function calker_train_random_kernel(proj_name, exp_name, ker)
 
     test_on_train = 0;
 	
@@ -24,7 +24,7 @@ function calker_train_random_kernel(proj_name, exp_name, ker, events)
 	
     kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
 	
-	parfor kk = 1:n_event,
+	parfor kk = 1:length(database.event_names),
 		event_name = database.event_ids{kk};
 			
 		fprintf('Training event ''%s''...\n', event_name);	

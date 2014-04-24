@@ -45,7 +45,8 @@ function calker_cal_random_map(proj_name, exp_name, ker, videolevel)
 			fprintf('Scoring for event [%s]...\n', event_name);
 			
 			[~, idx] = sort(this_scores, 'descend');
-			gt_idx = find(database.label == jj);
+			%gt_idx = find(database.label == jj);
+			gt_idx = find(ismember(database.clip_names, database.ref.(event_name)));
 			
 			rank_idx = arrayfun(@(x)find(idx == x), gt_idx);
 			
