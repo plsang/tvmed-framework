@@ -1,4 +1,4 @@
-function calker_random_main(proj_name, exp_id, feature_ext, varargin)
+function calker_random_main(proj_name, exp_id, feature_ext, randim, varargin)
 
 addpath('/net/per900a/raid0/plsang/tools/kaori-secode-calker-v6/support');
 addpath('/net/per900a/raid0/plsang/tools/libsvm-3.17/matlab');
@@ -7,10 +7,10 @@ vl_setup;
 
 exp_name = [proj_name, '-', exp_id];
 %seg_name = ['segment-', exp_id];
-seg_name = 'segment-100000';
+seg_name = 'segment-att';
 
-feat_dim = 4000;
-ker_type = 'kl2';
+feat_dim = 10000;
+ker_type = 'echi2';
 cross = 0;
 open_pool = 0;
 suffix = '';
@@ -62,6 +62,9 @@ ker.prms.seg_name = seg_name;
 ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
 ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
+
+ker.numrand = 1;
+ker.randim = randim;
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 ker.log_dir = fullfile(calker_exp_dir, 'log');
