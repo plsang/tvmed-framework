@@ -105,7 +105,7 @@ function calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_d
 		
 		for kk = 1:length(related_examples),
 			r_example = related_examples{kk};
-			r_train_labels = train_labels(:, database.sel_idx);
+			%r_train_labels = train_labels(:, database.sel_idx);
 			
 			r_exp_name = [exp_name, '-', r_example];
 			output_dir = sprintf('%s/%s', meta_dir, r_exp_name);
@@ -114,18 +114,21 @@ function calker_create_basic_exp_train_set(MEDMD, exp_prefix, event_nums, meta_d
 			output_file = sprintf('%s/database.mat', output_dir);
 			if exist(output_file, 'file'), fprintf('File %s already exist!\n', output_file); continue; end;
 			
+			r_train_labels = train_labels;
+			
 			for jj = 1:length(event_ids),
 				
-				r_train_labels(jj, :) = -1;
+				r_train_labels(jj, database.sel_idx) = -1;
 				
 				event_id = event_ids{jj};
 				event_pos_clips = MEDMD.EventKit.(event_kit).judge.(event_id).positive;
 				event_miss_clips = MEDMD.EventKit.(event_kit).judge.(event_id).miss;
 				
-				event_pos_idx = find(ismember(clip_names, event_pos_clips));
+				%event_pos_idx = find(ismember(clip_names, event_pos_clips));
+				event_pos_idx = ismember(database.clip_names, event_pos_clips);
 				r_train_labels(jj, event_pos_idx) = 1;
 				
-				event_miss_idx = find(ismember(clip_names, event_miss_clips));
+				event_miss_idx = ismember(database.clip_names, event_miss_clips);
 				
 				switch r_example,
 					case 'RP' 
