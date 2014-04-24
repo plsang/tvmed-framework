@@ -57,19 +57,21 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			%info = whos('base') ;
 			%fprintf('\tKernel matrices size %.2f GB\n', info.bytes / 1024^3) ;
 			
-			% Nt = # test
-			% N  = # train
-			[N, Nt] = size(base) ;
+			%[N, Nt] = size(base) ;
 
 			parfor jj = 1:n_event,
 				event_name = event_ids{jj};
 				fprintf('-- [%d/%d] -- Testing event ''%s''...\n', kk, num_part, event_name);
 				
+				test_base = base(models.(event_name).train_idx, :);
+				% Nt = # test
+				% N  = # train
+				[N, Nt] = size(test_base);
 				%only test at svind
 				%test_base = base(models.(event_name).svind,:);
 				%sub_scores = models.(event_name).alphay' * test_base + models.(event_name).b;
 				
-				[y, acc, dec] = svmpredict(zeros(Nt, 1), [(1:Nt)' base'], models.(event_name).libsvm_cl, '-b 1') ;		
+				[y, acc, dec] = svmpredict(zeros(Nt, 1), [(1:Nt)' test_base'], models.(event_name).libsvm_cl, '-b 1') ;		
 				sub_scores = dec(:, 1)';
 				
 				tmp_scores{jj}{kk} = sub_scores;

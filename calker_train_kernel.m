@@ -36,10 +36,11 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		
 		fprintf('Training event ''%s''...\n', event_name);	
 		
-		labels = double(database.train_labels(kk, sel_feat)); % labels are row vectors
+		labels = double(database.train_labels(kk, :)); % labels are row vectors
 		
 		%% removing 0 entry (not used for training);
-		train_idx = labels ~= 0;
+		non_zero_label_idx = labels ~= 0;
+		train_idx = sel_feat & non_zero_label_idx;
 		labels = labels(train_idx);
 		
 		
@@ -60,8 +61,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 				cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
 				fprintf('Loading kernel %s ...\n', cv_kerPath); 
 				kernels_ = load(cv_kerPath) ;
-				base = kernels_.matrix(sel_feat, sel_feat);	% selected features
-				base = base(train_idx, train_idx);			% selected labels
+				base = kernels_.matrix(train_idx, train_idx);
 
 				fprintf('SVM learning with predefined kernel matrix...\n');
 				[svm_, maxacc_] = calker_svmkernellearn(base, labels,   ...
@@ -88,8 +88,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 			heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
 			fprintf('Loading kernel %s ...\n', heu_kerPath); 
 			kernels_ = load(heu_kerPath) ;
-			base = kernels_.matrix(sel_feat, sel_feat);	% selected features
-			base = base(train_idx, train_idx);			% selected labels
+			base = kernels_.matrix(train_idx, train_idx);	% selected features
 			
 			fprintf('SVM learning with predefined kernel matrix...\n');
 		
@@ -109,6 +108,8 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		
 
 		svm = svmflip(svm, labels);
+		
+		svm.train_idx = train_idx;
 
 		if strcmp(ker.type, 'echi2'),
 			svm.gamma = gamma;
@@ -124,8 +125,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 			
 			fprintf('Loading kernel %s ...\n', cv_kerPath); 
 			kernels_ = load(cv_kerPath) ;
-			base = kernels_.matrix(sel_feat, sel_feat);	% selected features
-			base = base(train_idx, train_idx);			% selected labels
+			base = kernels_.matrix(train_idx, train_idx);	% selected features
 			
 			scores = svm.alphay' * base(svm.svind, :) + svm.b ;
 			errs = scores .* labels < 0 ;
