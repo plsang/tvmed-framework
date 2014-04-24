@@ -35,8 +35,8 @@ for rr = 1:ker.numrand,
 		ker.mu = heu_ker.mu;	
 	end
 
-	num_part = ceil(length(database.path)/ker.chunk_size);
-	cols = fix(linspace(1, length(database.path) + 1, num_part+1));
+	num_part = ceil(database.num_clip/ker.chunk_size);
+	cols = fix(linspace(1, database.num_clip + 1, num_part+1));
 
 	% cal test kernel using num_part partition
 	% database_path = database.path;
@@ -60,8 +60,8 @@ for rr = 1:ker.numrand,
 		
 				clip_name = database.clip_names{ii + cols(jj) - 1};
 				
-				segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
+				segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name);   
 				
 				% segment_path = database_path{ii + cols(jj) - 1};
 				
