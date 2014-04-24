@@ -200,7 +200,9 @@ if cross
   end
   switch lower(type)
     case 'c'
-      val_range = logspace(-5,+5,11) ;
+      %val_range = logspace(-5,+5,11) ;
+	  val_range_idx = [-5:+5];
+	  val_range = arrayfun(@(x) 4^x, val_range_idx);
     case 'nu'
       val_range = logspace(-10,-0.0001,11) ;
   end
@@ -238,8 +240,12 @@ if cross
     [maxacc,best] = max(acc_range) ;
     sel           = find(acc_range == maxacc) ;
     %pick          = (max(sel)+min(sel)) / 2 ;
-    pick          = min(sel) ;
+    %pick          = min(sel) ;
+    %val           = val_range(pick) ;
+	[~, median_idx] = min(abs(sel - median(sel)));		% get the median value
+	pick = sel(median_idx);
     val           = val_range(pick) ;
+	fprintf('Selected values: maxacc = %f, pick = %d, C = %f \n', maxacc, pick, C);
     
     switch lower(type)
       case 'c'
@@ -267,8 +273,11 @@ if cross
         break;
     end
     
-    step = log10(val_range(2)) - log10(val_range(1)) ;
-    val_range = logspace(log10(val) - 2*step, log10(val) + 2*step, 11) ;
+    %step = log10(val_range(2)) - log10(val_range(1)) ;
+    %val_range = logspace(log10(val) - 2*step, log10(val) + 2*step, 11) ;
+	
+	val_range_idx = [val_range_idx(pick)-5:val_range_idx(pick)+5];
+	val_range = arrayfun(@(x) 2^x, val_range_idx);
     
   end
 end
@@ -276,11 +285,6 @@ end
 % --------------------------------------------------------------------
 %                                                             Learning
 % --------------------------------------------------------------------
-
-if C < 0.0001,
-	C
-	C = 1;
-end
 
 switch lower(type)
   case 'c'
