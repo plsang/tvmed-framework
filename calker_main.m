@@ -79,10 +79,10 @@ mkdir(fullfile(calker_exp_dir, 'log'));
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 calker_cal_train_kernel(proj_name, exp_name, ker);
 calker_train_kernel(proj_name, exp_name, ker);
-%calker_cal_test_kernel(proj_name, exp_name, ker);
-%calker_test_kernel(proj_name, exp_name, ker);
-%calker_cal_map(proj_name, exp_name, ker);
-%calker_cal_rank(proj_name, exp_name, ker);
+calker_cal_test_kernel(proj_name, exp_name, ker);
+calker_test_kernel(proj_name, exp_name, ker);
+calker_cal_map(proj_name, exp_name, ker);
+calker_cal_rank(proj_name, exp_name, ker);
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
