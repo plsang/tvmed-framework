@@ -51,7 +51,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			
 			sel = [cols(kk):cols(kk+1)-1];
 			part_name = sprintf('%s_%d_%d', ker.testname, cols(kk), cols(kk+1)-1);
-			kerPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
+			%kerPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
+			kerPath = sprintf('%s/kernels/%s/%s-%s/%s.%s.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, part_name, ker.type);
 			
 			fprintf('Loading kernel %s ...\n', kerPath); 
 			kernels_ = load(kerPath) ;

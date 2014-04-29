@@ -5,7 +5,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 
 	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
-	kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
+	kerPath = sprintf('%s/kernels/%s/%s/%s-%s', calker_exp_dir, ker.dev_pat, ker.devname, ker.prms.eventkit, ker.prms.rtype);
 
 	devHistPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.histName);
 	selLabelPath = sprintf('%s/kernels/%s/%s.sel.mat', calker_exp_dir, ker.dev_pat, ker.histName);
@@ -18,6 +18,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 	fprintf('\tLoading devel features for kernel %s ... \n', feature_ext) ;
 	if exist(devHistPath),
 		load(devHistPath);
+		load(selLabelPath);
 	else
 		[dev_hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker);
 		
@@ -30,9 +31,10 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 		fprintf('\tSaving devel features for kernel %s ... \n', feature_ext) ;
 		save(devHistPath, 'dev_hists', '-v7.3');
 		save(selLabelPath, 'sel_feat');
-		
 	end
 
+	ker.sel_feat =  sel_feat;
+	
 	if ker.cross,
 		parfor jj = 1:numLog2g,
 			cv_ker = ker;
@@ -55,7 +57,8 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 		heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
 		if ~exist(heu_kerPath),
 			fprintf('\tCalculating devel kernel %s with heuristic gamma ... \n', feature_ext) ;	
-			ker = calcKernel(ker, dev_hists);
+			%ker = calcKernel(ker, dev_hists);
+			ker = calker_cal_kernel(ker, dev_hists);
 			
 			fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
 			par_save( heu_kerPath, ker );

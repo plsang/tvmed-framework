@@ -22,7 +22,8 @@ function calker_train_kernel(proj_name, exp_name, ker)
 	
 	sel_feat = database.sel_idx & sel_feat_.sel_feat;
 
-    kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
+    %kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
+	kerPath = sprintf('%s/kernels/%s/%s/%s-%s', calker_exp_dir, ker.dev_pat, ker.devname, ker.prms.eventkit, ker.prms.rtype);
 	
 	parfor kk = 1:length(database.event_names),
 		event_name = database.event_ids{kk};

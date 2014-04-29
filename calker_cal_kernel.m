@@ -87,7 +87,13 @@ switch ker.type
       if ~ auto
         warning('RBF mu parameter computed when testing') ;
       end
-      mu     = 1 ./ mean(matrix(:)) ;
+	  if ~isempty(ker.sel_feat),
+		fprintf('Calculating mu based on selected features...\n');
+		sel_matrix = matrix(ker.sel_feat, ker.sel_feat);	
+		mu     = 1 ./ mean(sel_matrix(:)) ;
+	  else
+		mu     = 1 ./ mean(matrix(:)) ;
+	  end
     end
     
     matrix = exp(- mu * matrix) ;

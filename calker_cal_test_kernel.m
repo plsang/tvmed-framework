@@ -40,7 +40,7 @@ fprintf('-- Calculating test kernel %s with %d partition(s) \n', feature_ext, nu
 parfor jj = 1:num_part,
 	sel = [cols(jj):cols(jj+1)-1];
 	part_name = sprintf('%s_%d_%d', ker.testname, cols(jj), cols(jj+1)-1);
-	kerPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
+	kerPath = sprintf('%s/kernels/%s/%s-%s/%s.%s.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, part_name, ker.type);
 
 	if ~exist(kerPath, 'file'),
 		
@@ -106,7 +106,7 @@ parfor jj = 1:num_part,
 		
 		fprintf('---- [%d/%d] Calculating test kernel [feature: %s] [ker_type = %s] [range: %d-%d]... \n', jj, num_part, feature_ext, ker.type, cols(jj), cols(jj+1)-1);
 		
-		testKer = calcKernel(ker, dev_hists, test_hists);
+		testKer = calker_cal_kernel(ker, dev_hists, test_hists);
 		%save test kernel
 		fprintf('---- Saving kernel ''%s''.\n', kerPath) ;
 		par_save( kerPath, testKer ) ;
