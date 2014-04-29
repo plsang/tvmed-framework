@@ -9,7 +9,7 @@ exp_name = [proj_name, '-', exp_id];
 %seg_name = ['segment-', exp_id];
 seg_name = 'segment-att';
 
-feat_dim = 10000;
+feat_dim = 20000;
 ker_type = 'echi2';
 cross = 0;
 open_pool = 0;
