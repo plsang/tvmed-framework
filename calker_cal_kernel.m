@@ -1,110 +1,151 @@
+function ker = calker_cal_kernel(ker, hists, testHists, alphay)
+% CALCKERNEL  Compute kernel on histograms
+%    KER = CALCKERNEL(KER, HISTS) takes the structure KER describing
+%    the kernel to compute and the histograms HISTS on which to
+%    compute the kernel. HISTS has an histogram per column and N
+%    columns and the compute kernel matrix has dimensions N x N.
+%
+%    KER = CALCKERNEL(KER, HISTS, TESTHISTS) does the same, except
+%    that it computes the kernels among histograms from HISTS (along
+%    the rows of the kernel matrix) and TESTHISTS (along the
+%    columns). So if HISTS has N columns and TESTHITS has M columns,
+%    the kernel matrix has dimension N x M.
+%
+%    SCORES = CALCKERNEL(KER, HISTS, TESTHISTS, ALPHAY) calculates the
+%    score vector ALPAHY' * KER.MATRIX. For some kernels, this
+%    operation is highly optimized.
+%
+%    The function returns and extended structure KER, with the
+%    kernel matrix stored in KER.MATRIX.
+%
+%    For the exponential kernels, the constant MU is read/stored in
+%    the field KER.MU. Fist, the function tries to use the stored
+%    KER.MU, if the field exists and if its value is not empty and not
+%    NaN. Otherwise, it sets MU to the inverse average of the
+%    histogram distances.
+%
+%    HISTS and TESTHISTS can be either DOUBLE or SINGLE precision and
+%    can be either FULL or SPARSE. TESTHISTS is internally converted
+%    to the same format of HISTS.
+%
+%    Author:: Andrea Vedaldi
 
-function calker_cal_kernel(proj_name, exp_name, ker)
+% AUTORIGHTS
+% Copyright (C) 2008-09 Andrea Vedaldi
+%
+% This file is part of the VGG MKL Class and VGG MKL Det code packages,
+% available in the terms of the GNU General Public License version 2.
 
+auto = nargin < 3 ;
+project = nargin == 4 ;
 
+% Make TRAINHISTS format the same as HISTS  ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-feature_ext = ker.feat;
-
-calker_exp_dir = sprintf('/net/per900a/raid0/plsang/%s/experiments/%s-calker/%s', proj_name, exp_name, ker.feat);
-
-kerPath = sprintf('%s/kernels/%s.mat', calker_exp_dir, ker.devname);
-kerDescrPath = sprintf('%s/kernels/%s.mat', calker_exp_dir, ker.descname);
-devHistPath = sprintf('%s/kernels/%s.mat', calker_exp_dir, ker.histName);
-
-if ~checkFile(kerPath)
-    %% kernel on train-train pat
-    fprintf('\tLoading devel features for kernel %s ... \n', feature_ext) ;
-
-    if exist(devHistPath),
-        load(devHistPath);
+if ~ auto
+  if ~isequal(class(hists), class(testHists))
+    switch class(hists)
+      case 'double'
+        testHists = double(testHists) ;
+      case 'single'
+        testHists = single(testHists) ;
+      otherwise
+        assert(false) ;
+    end
+  end
+  
+  if ~isequal(issparse(hists), issparse(testHists))
+    if issparse(hists)
+      testHists = sparse(testHists) ;
     else
-        dev_hists = calker_load_traindata(proj_name, exp_name, ker);
-        save(devHistPath, 'dev_hists', '-v7.3');
+      testHists = full(testHists) ;
     end
+  end
+end
 
-    %fprintf('Scaling data before cal kernel...\n');
-    %dev_hists = scaledata(dev_hists, 0, 1);
+% --------------------------------------------------------------------
+%                                                    Compute the kernel
+% --------------------------------------------------------------------
 
-    fprintf('\tCalculating devel kernel %s ... \n', feature_ext) ;
-	
-    ker = calcKernel(ker, dev_hists);
-
-    %save kernel
-    fprintf('\tSaving kernel ''%s''.\n', kerPath) ;
-    ssave(kerPath, '-STRUCT', 'ker', '-v7.3');
-
-    %save kernel descriptors (without kernel matrix)
-    ker = rmfield(ker, 'matrix') ;
-
-    % optionally save the kernel descriptor (includes gamma for the RBF)
-    if ~isempty(ker.descname)
-      
-      fprintf('\tSaving kernel descriptor ''%s''.\n', kerDescrPath) ;
-      ssave(kerDescrPath, '-STRUCT', 'ker', '-v7.3') ;
-    end    
-else
-    fprintf('Skipped calculating devel kernel %s \n', feature_ext);
-	fprintf('Loading dev_hists kernel %s \n', feature_ext);
-	load(devHistPath, 'dev_hists');
-	
-	if exist(kerDescrPath),
-        load(kerDescrPath);
+switch ker.type
+  
+  case 'echi2'
+    if auto
+      matrix = vl_alldist2(hists, 'chi2') ;
+    else
+      if issparse(hists) | issparse(testHists)
+        matrix = vl_alldist2(hists, testHists, 'chi2') ;
+      else
+        matrix = vl_alldist(hists, testHists, 'chi2') ;
+      end
     end
-end
-%% kernel on train-test pat
-
-fprintf('\tLoading test features for kernel %s ... \n', feature_ext) ;
-
-%use kernel with paramters from training
-
-
-testHistPath = sprintf('%s/kernels/%s.mat', calker_exp_dir, ker.testHists);
-
-if exist(testHistPath),
-    load(testHistPath);
-else
-    test_hists = calker_load_testdata(proj_name, exp_name, ker);
-    save(testHistPath, 'test_hists', '-v7.3');
-end
-
-
-num_part = ceil(size(test_hists, 2)/10000);
-cols = fix(linspace(1, size(test_hists, 2) + 1, num_part+1));
-
-%fprintf('Scaling data before cal kernel...\n');
-%test_hists = scaledata(test_hists, 0, 1);
-
-% cal test kernel using num_part partition
-
-fprintf('Calculating test kernel %s with %d partition \n', feature_ext, num_part);
-
-for jj = 1:num_part,
-	sel = [cols(jj):cols(jj+1)-1];
-	part_name = sprintf('%s_%d_%d', ker.testname, cols(jj), cols(jj+1)-1);
-	kerPath = sprintf('%s/kernels/%s.mat', calker_exp_dir, part_name);
-
-	if ~checkFile(kerPath)
-		
-		fprintf('\tCalculating test kernel %s [range: %d-%d]... \n', feature_ext, cols(jj), cols(jj+1)-1) ;
-		testKer = calcKernel(ker, dev_hists, test_hists(:, sel));
-		%save test kernel
-		fprintf('\tSaving kernel ''%s''.\n', kerPath) ;
-		ssave(kerPath, '-STRUCT', 'testKer', '-v7.3') ;
-
-	else
-		kerPath
-		fprintf('Skipped calculating test kernel %s [range: %d-%d] \n', feature_ext, cols(jj), cols(jj+1)-1);
-	end
-
-end
-
-
-
-%% clean up
-clear dev_hists;
-clear test_hists;
-clear kernel;
-clear testKer;
     
+    % retrieve or compute mu
+    if isfield(ker, 'mu') & ~isnan(ker.mu) & ~isempty(ker.mu)
+      mu = ker.mu ;
+      %      fprintf('calcKernel: retrieved mu value: %g\n', mu) ;
+    else
+      if ~ auto
+        warning('RBF mu parameter computed when testing') ;
+      end
+      mu     = 1 ./ mean(matrix(:)) ;
+    end
+    
+    matrix = exp(- mu * matrix) ;
 
+    if project
+      ker = alphay(:)' * matrix ;
+    else
+      ker.matrix = matrix ;
+      ker.mu     = mu ;
+    end
+    clear matrix mu ;
+    
+  case 'kl1'
+    if auto
+      if project
+        ker = fastKL1(alphay, hists, hists) ;
+      else
+        ker.matrix = vl_alldist2(hists, 'kl1') ;
+      end
+    else
+      if project        
+        %        ker = alphay(:)' * vl_alldist2(hists, testHists, 'kl1') ;
+        ker = fastKL1(alphay, hists, testHists) ;
+      else
+        ker.matrix = vl_alldist2(hists, testHists, 'kl1') ;
+      end
+    end
+    
+  case 'kl2'
+    if auto
+      if project
+        ker = (alphay(:)' * hists') * hists ;
+      else
+        ker.matrix = hists' * hists ;
+      end
+    else
+      if project
+        ker = (alphay(:)' * hists') * testHists ;
+      else        
+        ker.matrix = hists' * testHists ;
+      end
+    end
+    
+  case 'kchi2'
+    if auto
+      if project
+        ker = alphay(:)' * vl_alldist2(hists, 'kchi2') ;
+      else
+        ker.matrix = vl_alldist2(hists, 'kchi2') ;
+      end
+    else
+      if project
+        ker = alphay(:)' * vl_alldist2(hists, testHists, 'kchi2') ;
+      else        
+        ker.matrix = vl_alldist2(hists, testHists, 'kchi2') ;
+      end
+    end
+    
+  otherwise
+    error('Unsupported kernel ''%s''.', ker.type) ;
 end
