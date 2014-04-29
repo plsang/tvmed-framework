@@ -68,12 +68,13 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 			
 			%ker = calcKernel(ker, dev_hists);
 			distancePath = sprintf('%s/kernels/%s/%s.distance.mat', calker_exp_dir, ker.dev_pat, ker.devname);
-			if ~exist(distancePath),
+			if exist(distancePath),
 				fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
 				load(distancePath, 'distmatrix');
 			else
 				fprintf('\tCalculating distance matrix for feature [%s] ... \n', feature_ext) ;	
 				distmatrix = vl_alldist2(dev_hists, 'chi2') ;
+				fprintf('\tSaving distance matrix for feature [%s] ... \n', feature_ext) ;	
 				save(distancePath, 'distmatrix', '-v7.3');
 			end
 			%ker = calker_cal_kernel(ker, dev_hists);
