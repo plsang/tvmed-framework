@@ -10,7 +10,7 @@ exp_name = [proj_name, '-', exp_id];
 seg_name = 'segment-100000';
 
 feat_dim = 4000;
-ker_type = 'kl2';
+ker_type = 'echi2';
 cross = 0;
 open_pool = 0;
 suffix = '';

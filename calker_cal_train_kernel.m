@@ -2,7 +2,16 @@
 function calker_cal_train_kernel(proj_name, exp_name, ker)
 
 	feature_ext = ker.feat;
-
+	
+	fprintf('Loading meta file \n');
+	
+	database = load(ker.prms.meta_file, 'database');
+	database = database.database;
+	
+	if isempty(database)
+		error('Empty metadata file!!\n');
+	end
+	
 	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
 	kerPath = sprintf('%s/kernels/%s/%s/%s-%s', calker_exp_dir, ker.dev_pat, ker.devname, ker.prms.eventkit, ker.prms.rtype);
@@ -33,7 +42,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 		save(selLabelPath, 'sel_feat');
 	end
 
-	ker.sel_feat =  sel_feat;
+	ker.sel_feat =  database.sel_idx & sel_feat;
 	
 	if ker.cross,
 		parfor jj = 1:numLog2g,
@@ -56,9 +65,23 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 	else
 		heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
 		if ~exist(heu_kerPath),
-			fprintf('\tCalculating devel kernel %s with heuristic gamma ... \n', feature_ext) ;	
+			
 			%ker = calcKernel(ker, dev_hists);
-			ker = calker_cal_kernel(ker, dev_hists);
+			distancePath = sprintf('%s/kernels/%s/%s.distance.mat', calker_exp_dir, ker.dev_pat, ker.devname);
+			if ~exist(distancePath),
+				fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
+				load(distancePath, 'distmatrix');
+			else
+				fprintf('\tCalculating distance matrix for feature [%s] ... \n', feature_ext) ;	
+				distmatrix = vl_alldist2(dev_hists, 'chi2') ;
+				save(distancePath, 'distmatrix', '-v7.3');
+			end
+			%ker = calker_cal_kernel(ker, dev_hists);
+			fprintf('\tCalculating devel kernel %s with heuristic gamma ... \n', feature_ext) ;	
+			sel_matrix = distmatrix(ker.sel_feat, ker.sel_feat);	
+			mu     = 1 ./ mean(sel_matrix(:)) ;
+			ker.mu = mu;
+			ker.matrix = exp(- mu * matrix) ;
 			
 			fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
 			par_save( heu_kerPath, ker );
