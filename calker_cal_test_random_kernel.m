@@ -25,15 +25,16 @@ for rr = 1:ker.numrand,
 		
 	fprintf('\tLoading kernel info for heuristic mu... \n') ;
 	%heu_kerPath = sprintf('%s/kernels/%s/%s.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.devname);
-	heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-	heu_ker = load( heu_kerPath );
+	
+	% heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+	% heu_ker = load( heu_kerPath );
 
-	if strcmp(ker.type, 'echi2'),
-		if ~isfield(heu_ker, 'mu'),
-			error('Mu is not set in kernel info...\n');
-		end
-		ker.mu = heu_ker.mu;	
-	end
+	% if strcmp(ker.type, 'echi2'),
+		% if ~isfield(heu_ker, 'mu'),
+			% error('Mu is not set in kernel info...\n');
+		% end
+		% ker.mu = heu_ker.mu;	
+	% end
 
 	num_part = ceil(database.num_clip/ker.chunk_size);
 	cols = fix(linspace(1, database.num_clip + 1, num_part+1));
@@ -45,9 +46,10 @@ for rr = 1:ker.numrand,
 	parfor jj = 1:num_part,
 		sel = [cols(jj):cols(jj+1)-1];
 		part_name = sprintf('%s_%d_%d', ker.testname, cols(jj), cols(jj+1)-1);
-		kerPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
-
-		if ~exist(kerPath, 'file'),
+		%kerPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
+		distPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
+		
+		if ~exist(distPath, 'file'),
 			
 			% Update Sep 6, 2013: load test hist here
 			
@@ -102,10 +104,14 @@ for rr = 1:ker.numrand,
 			
 			fprintf('---- [%d/%d] Calculating test kernel [feature: %s] [ker_type = %s] [range: %d-%d]... \n', jj, num_part, feature_ext, ker.type, cols(jj), cols(jj+1)-1);
 			
-			testKer = calcKernel(ker, dev_hists(ridx, :), test_hists(ridx, :));
+			%testKer = calcKernel(ker, dev_hists(ridx, :), test_hists(ridx, :));
+			testDist = vl_alldist2(dev_hists(ridx, :), test_hists(ridx, :), 'chi2') ;
 			%save test kernel
-			fprintf('---- Saving kernel ''%s''.\n', kerPath) ;
-			par_save( kerPath, testKer ) ;
+			%fprintf('---- Saving kernel ''%s''.\n', kerPath) ;
+			%par_save( kerPath, testKer ) ;
+			
+			fprintf('---- Saving distance matrix ''%s''.\n', distPath) ;
+			par_save( distPath, testDist ) ;
 				
 		else	
 			fprintf('Skipped calculating test kernel %s [range: %d-%d] \n', feature_ext, cols(jj), cols(jj+1)-1);
@@ -123,8 +129,6 @@ clear testKer;
 end
 
 
-function par_save( kerPath, testKer )
-	output_dir = fileparts(kerPath);
-	if ~exist(output_dir, 'file'), mkdir(output_dir); end;
-	ssave(kerPath, '-STRUCT', 'testKer', '-v7.3') ;
+function par_save( distPath, testDist )
+	ssave(distPath, 'testDist', '-v7.3') ;
 end
