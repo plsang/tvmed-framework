@@ -20,7 +20,9 @@ dev_hists = dev_hists.dev_hists;
 scaleParamsPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.scaleparamsName);
 
 fprintf('\tLoading kernel info for heuristic mu... \n') ;
-heu_kerPath = sprintf('%s/kernels/%s/%s.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.devname);
+
+%heu_kerPath = sprintf('%s/kernels/%s/%s.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.devname);
+heu_kerPath = sprintf('%s/kernels/%s/%s/%s-%s.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.devname, ker.prms.eventkit, ker.prms.rtype);
 heu_ker = load( heu_kerPath );
 
 if strcmp(ker.type, 'echi2'),
@@ -55,8 +57,8 @@ parfor jj = 1:num_part,
 		
 			clip_name = database.clip_names{ii + cols(jj) - 1};
 			
-			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-				ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
+			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+				ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name);   
 
 			%segment_path = database_path{ii + cols(jj) - 1};
 			

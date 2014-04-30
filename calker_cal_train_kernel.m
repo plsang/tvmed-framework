@@ -82,7 +82,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 			sel_matrix = distmatrix(ker.sel_feat, ker.sel_feat);	
 			mu     = 1 ./ mean(sel_matrix(:)) ;
 			ker.mu = mu;
-			ker.matrix = exp(- mu * matrix) ;
+			ker.matrix = exp(- mu * distmatrix) ;
 			
 			fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
 			par_save( heu_kerPath, ker );
