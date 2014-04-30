@@ -52,11 +52,13 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			sel = [cols(kk):cols(kk+1)-1];
 			part_name = sprintf('%s_%d_%d', ker.testname, cols(kk), cols(kk+1)-1);
 			%kerPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
-			kerPath = sprintf('%s/kernels/%s/%s-%s/%s.%s.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, part_name, ker.type);
+			%kerPath = sprintf('%s/kernels/%s/%s-%s/%s.%s.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, part_name, ker.type);
+			distPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
 			
-			fprintf('Loading kernel %s ...\n', kerPath); 
-			kernels_ = load(kerPath) ;
-			base = kernels_.matrix;
+			fprintf('Loading distance matrix %s ...\n', distPath); 
+			testDist_ = load(distPath) ;
+			testDist = testDist_.testDist;
+			%base = kernels_.matrix;
 			%info = whos('base') ;
 			%fprintf('\tKernel matrices size %.2f GB\n', info.bytes / 1024^3) ;
 			
@@ -65,7 +67,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			parfor jj = 1:n_event,
 				event_name = event_ids{jj};
 				
-				test_base = base(models.(event_name).train_idx, :);
+				test_base = exp(- models.(event_name).gamma * testDist(models.(event_name).train_idx, :)) ;
 				
 				[N, Nt] = size(test_base); % Nt = # test ; % N  = # train
 				
