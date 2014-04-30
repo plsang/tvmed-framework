@@ -3,6 +3,15 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 
 	feature_ext = ker.feat;
 
+	fprintf('Loading meta file \n');
+	
+	database = load(ker.prms.meta_file, 'database');
+	database = database.database;
+	
+	if isempty(database)
+		error('Empty metadata file!!\n');
+	end
+	
 	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
 	kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
@@ -18,6 +27,7 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 	fprintf('\tLoading devel features for kernel %s ... \n', feature_ext) ;
 	if exist(devHistPath),
 		load(devHistPath);
+		load(selLabelPath);
 	else
 		[dev_hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker);
 		
@@ -33,6 +43,7 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 		
 	end
 	
+	ker.sel_feat =  database.sel_idx & sel_feat;
 	
 	for rr = 1:ker.numrand,
 		
@@ -69,8 +80,24 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 			%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
 			heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 			if ~exist(heu_kerPath),
+			
+				distancePath = sprintf('%s/r-kernels/%s/%d/%s.r%d.distance.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+				if exist(distancePath),
+					fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
+					load(distancePath, 'distmatrix');
+				else
+					fprintf('\tCalculating distance matrix for feature [%s] ... \n', feature_ext) ;	
+					distmatrix = vl_alldist2(dev_hists, 'chi2') ;
+					fprintf('\tSaving distance matrix for feature [%s] ... \n', feature_ext) ;	
+					save(distancePath, 'distmatrix', '-v7.3');
+				end
+			
 				fprintf('\t[ randim = %d, randnum = %d] Calculating devel kernel %s with heuristic gamma ... \n', ker.randim, rr, feature_ext) ;	
-				ker = calcKernel(ker, dev_hists(ridx, :));
+				%ker = calcKernel(ker, dev_hists(ridx, :));
+				sel_matrix = distmatrix(ker.sel_feat, ker.sel_feat);	
+				mu     = 1 ./ mean(sel_matrix(:)) ;
+				ker.mu = mu;
+				ker.matrix = exp(- mu * distmatrix) ;
 				
 				fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
 				par_save( heu_kerPath, ker );
