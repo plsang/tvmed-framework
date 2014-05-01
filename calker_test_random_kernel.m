@@ -26,7 +26,7 @@ function calker_test_random_kernel(proj_name, exp_name, ker)
 	for rr = 1:ker.numrand,
 		
 		%scorePath = sprintf('%s/r-scores/%d/%s/%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.name, rr);
-		scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
+		scorePath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
 		
 		if checkFile(scorePath), 
 			fprintf('Skipped testing %s \n', scorePath);
@@ -41,7 +41,8 @@ function calker_test_random_kernel(proj_name, exp_name, ker)
 			
 			%modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
 			%modelPath = sprintf('%s/r-models/%d/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, event_name, ker.name, ker.type, rr);
-			modelPath = sprintf('%s/r-models/%d/%s-%s/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type, rr);
+			%modelPath = sprintf('%s/r-models/%d/%s-%s/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type, rr);
+			modelPath = sprintf('%s/r-models/%s-%s/n%05d/r%03d/%s.%s.%s.model.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, rr, event_name, ker.name, ker.type);
 			
 			if ~checkFile(modelPath),
 				error('Model not found %s \n', modelPath);			
@@ -62,7 +63,8 @@ function calker_test_random_kernel(proj_name, exp_name, ker)
 			part_name = sprintf('%s_%d_%d', ker.testname, cols(kk), cols(kk+1)-1);
 			%kerPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
 			%kerPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
-			distPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
+			%distPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
+			distPath = sprintf('%s/r-kernels/%s/n%05d/r%03d/%s.%s.mat', calker_exp_dir, ker.test_pat, ker.randim, rr, part_name, ker.type);
 			
 			fprintf('Loading distance matrix %s ...\n', distPath); 
 			testDist_ = load(distPath) ;

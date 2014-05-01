@@ -47,7 +47,8 @@ for rr = 1:ker.numrand,
 		sel = [cols(jj):cols(jj+1)-1];
 		part_name = sprintf('%s_%d_%d', ker.testname, cols(jj), cols(jj+1)-1);
 		%kerPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
-		distPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
+		%distPath = sprintf('%s/r-kernels/%s/%d/%s.%s.r%d.mat', calker_exp_dir, ker.test_pat, ker.randim, part_name, ker.type, rr);
+		distPath = sprintf('%s/r-kernels/%s/n%05d/r%03d/%s.%s.mat', calker_exp_dir, ker.test_pat, ker.randim, rr, part_name, ker.type);
 		
 		if ~exist(distPath, 'file'),
 			

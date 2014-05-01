@@ -27,9 +27,10 @@ function calker_cal_random_map(proj_name, exp_name, ker, videolevel)
 	for rr = ker.numrand,
 	
 		%scorePath = sprintf('%s/r-scores/%d/%s/%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.name, rr);
-		scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
+		%scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
+		scorePath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
 		
-		mapPath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.map.csv', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
+		mapPath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.map.csv', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
 		
 		if ~checkFile(scorePath), 
 			error('File not found!! %s \n', scorePath);
