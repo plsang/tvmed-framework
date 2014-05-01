@@ -42,7 +42,7 @@ function calker_test_random_kernel(proj_name, exp_name, ker)
 		%modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
 		%modelPath = sprintf('%s/r-models/%d/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, event_name, ker.name, ker.type, rr);
 		%modelPath = sprintf('%s/r-models/%d/%s-%s/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type, rr);
-		modelPath = sprintf('%s/r-models/%s-%s/n%05d/r%03d/%s.%s.%s.model.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, rr, event_name, ker.name, ker.type);
+		modelPath = sprintf('%s/r-models/%s-%s/n%05d/r%03d/%s.%s.%s.model.mat', calker_exp_dir, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, event_name, ker.name, ker.type);
 		
 		if ~checkFile(modelPath),
 			error('Model not found %s \n', modelPath);			
