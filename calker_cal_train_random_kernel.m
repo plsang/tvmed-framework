@@ -87,7 +87,7 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 					load(distancePath, 'distmatrix');
 				else
 					fprintf('\tCalculating distance matrix for feature [%s] ... \n', feature_ext) ;	
-					distmatrix = vl_alldist2(dev_hists, 'chi2') ;
+					distmatrix = vl_alldist2(dev_hists(ridx, :), 'chi2') ;
 					fprintf('\tSaving distance matrix for feature [%s] ... \n', feature_ext) ;	
 					save(distancePath, 'distmatrix', '-v7.3');
 				end

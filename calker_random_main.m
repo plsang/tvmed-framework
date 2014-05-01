@@ -17,6 +17,7 @@ suffix = '';
 test_pat = 'kindredtest';
 eventkit = 'EK10Ex';
 miss_type = 'RN'; % RN: Related example as Negative, RP: Related example as Positive, NR: No related example
+numrand = 1;
 
 for k=1:2:length(varargin),
 
@@ -42,6 +43,8 @@ for k=1:2:length(varargin),
 			miss_type = arg;	
 		case 'test'
 			test_pat = arg;	
+		case 'nr'
+			numrand = arg;		
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -63,7 +66,7 @@ ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
 ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
 
-ker.numrand = 1;
+ker.numrand = numrand;
 ker.randim = randim;
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
