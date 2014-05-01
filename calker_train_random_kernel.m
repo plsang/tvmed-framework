@@ -89,7 +89,8 @@ function calker_train_random_kernel(proj_name, exp_name, ker)
 					continue;
 				end
 		
-				heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+				%heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+				heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 				%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
 				
 				fprintf('Loading kernel %s ...\n', heu_kerPath); 

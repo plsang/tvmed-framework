@@ -47,7 +47,7 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 	
 	for rr = 1:ker.numrand,
 		
-		randidx_Path = sprintf('%s/r-kernels/%s/%d/%s.randindex.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+		randidx_Path = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.randindex.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 		if exist(randidx_Path, 'file'),
 			ridx = load(randidx_Path, 'ridx');	
 			ridx = ridx.ridx;
@@ -78,10 +78,11 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 			end
 		else
 			%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
-			heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+			%heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+			heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 			if ~exist(heu_kerPath),
 			
-				distancePath = sprintf('%s/r-kernels/%s/%d/%s.r%d.distance.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+				distancePath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.distance.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 				if exist(distancePath),
 					fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
 					load(distancePath, 'distmatrix');

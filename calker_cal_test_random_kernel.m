@@ -19,23 +19,11 @@ dev_hists = dev_hists.dev_hists;
 
 for rr = 1:ker.numrand,
 	
-	randidx_Path = sprintf('%s/r-kernels/%s/%d/%s.randindex.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+	%randidx_Path = sprintf('%s/r-kernels/%s/%d/%s.randindex.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+	randidx_Path = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.randindex.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 	ridx = load(randidx_Path, 'ridx');
 	ridx = ridx.ridx;
 		
-	fprintf('\tLoading kernel info for heuristic mu... \n') ;
-	%heu_kerPath = sprintf('%s/kernels/%s/%s.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.devname);
-	
-	% heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-	% heu_ker = load( heu_kerPath );
-
-	% if strcmp(ker.type, 'echi2'),
-		% if ~isfield(heu_ker, 'mu'),
-			% error('Mu is not set in kernel info...\n');
-		% end
-		% ker.mu = heu_ker.mu;	
-	% end
-
 	num_part = ceil(database.num_clip/ker.chunk_size);
 	cols = fix(linspace(1, database.num_clip + 1, num_part+1));
 
@@ -103,7 +91,7 @@ for rr = 1:ker.numrand,
 				test_hists(:, ii) = code;
 			end
 			
-			fprintf('---- [%d/%d] Calculating test kernel [feature: %s] [ker_type = %s] [range: %d-%d]... \n', jj, num_part, feature_ext, ker.type, cols(jj), cols(jj+1)-1);
+			fprintf('---- [%d/%d] Calculating test distance [path: %s] [ker_type = %s] [range: %d-%d]... \n', jj, num_part, distPath, ker.type, cols(jj), cols(jj+1)-1);
 			
 			%testKer = calcKernel(ker, dev_hists(ridx, :), test_hists(ridx, :));
 			testDist = vl_alldist2(dev_hists(ridx, :), test_hists(ridx, :), 'chi2') ;
@@ -115,7 +103,7 @@ for rr = 1:ker.numrand,
 			par_save( distPath, testDist ) ;
 				
 		else	
-			fprintf('Skipped calculating test kernel %s [range: %d-%d] \n', feature_ext, cols(jj), cols(jj+1)-1);
+			fprintf('Skipped calculating test distance [%s] [range: %d-%d] \n', distPath, cols(jj), cols(jj+1)-1);
 		end
 
 	end

@@ -88,7 +88,7 @@ calker_train_random_kernel(proj_name, exp_name, ker);
 calker_cal_test_random_kernel(proj_name, exp_name, ker);
 calker_test_random_kernel(proj_name, exp_name, ker);
 calker_cal_random_map(proj_name, exp_name, ker);
-calker_cal_random_rank(proj_name, exp_name, ker);
+%calker_cal_random_rank(proj_name, exp_name, ker);
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
