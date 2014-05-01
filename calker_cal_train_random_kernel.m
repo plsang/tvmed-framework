@@ -45,67 +45,68 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 	
 	ker.sel_feat =  database.sel_idx & sel_feat;
 	
-	for rr = 1:ker.numrand,
+	
 		
-		randidx_Path = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.randindex.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-		if exist(randidx_Path, 'file'),
-			ridx = load(randidx_Path, 'ridx');	
-			ridx = ridx.ridx;
-		else
-			ridx = randperm(size(dev_hists, 1));
-			ridx = ridx(1:ker.randim);
-			idx_save(randidx_Path, ridx);
-		end
-		
-		if ker.cross,
-			parfor jj = 1:numLog2g,
-				cv_ker = ker;
-				log2g = log2g_list(jj);
-				gamma = 2^log2g;	
-				cv_ker.mu = gamma;
-				%cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
-				cv_kerPath = sprintf('%s/r-kernels/%s/%d/%s.gamma%s.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, num2str(gamma), rr);
-				
-				if ~exist(cv_kerPath),
-					fprintf('\tCalculating devel kernel %s with gamma = %f... \n', feature_ext, gamma) ;	
-					cv_ker = calcKernel(cv_ker, dev_hists(ridx, :));
-					
-					fprintf('\tSaving kernel ''%s''.\n', cv_kerPath) ;
-					par_save( cv_kerPath, cv_ker );
-				else
-					fprintf('Skipped calculating kernel [%s]...\n', cv_kerPath);
-				end			
-			end
-		else
-			%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
-			%heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-			heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-			if ~exist(heu_kerPath),
+	rr = ker.randnum;
+	
+	randidx_Path = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.randindex.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+	if exist(randidx_Path, 'file'),
+		ridx = load(randidx_Path, 'ridx');	
+		ridx = ridx.ridx;
+	else
+		ridx = randperm(size(dev_hists, 1));
+		ridx = ridx(1:ker.randim);
+		idx_save(randidx_Path, ridx);
+	end
+	
+	if ker.cross,
+		parfor jj = 1:numLog2g,
+			cv_ker = ker;
+			log2g = log2g_list(jj);
+			gamma = 2^log2g;	
+			cv_ker.mu = gamma;
+			%cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
+			cv_kerPath = sprintf('%s/r-kernels/%s/%d/%s.gamma%s.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, num2str(gamma), rr);
 			
-				distancePath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.distance.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-				if exist(distancePath),
-					fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
-					load(distancePath, 'distmatrix');
-				else
-					fprintf('\tCalculating distance matrix for feature [%s] ... \n', feature_ext) ;	
-					distmatrix = vl_alldist2(dev_hists(ridx, :), 'chi2') ;
-					fprintf('\tSaving distance matrix for feature [%s] ... \n', feature_ext) ;	
-					save(distancePath, 'distmatrix', '-v7.3');
-				end
-			
-				fprintf('\t[ randim = %d, randnum = %d] Calculating devel kernel %s with heuristic gamma ... \n', ker.randim, rr, feature_ext) ;	
-				%ker = calcKernel(ker, dev_hists(ridx, :));
-				sel_matrix = distmatrix(ker.sel_feat, ker.sel_feat);	
-				mu     = 1 ./ mean(sel_matrix(:)) ;
-				ker.mu = mu;
-				ker.matrix = exp(- mu * distmatrix) ;
+			if ~exist(cv_kerPath),
+				fprintf('\tCalculating devel kernel %s with gamma = %f... \n', feature_ext, gamma) ;	
+				cv_ker = calcKernel(cv_ker, dev_hists(ridx, :));
 				
-				fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
-				par_save( heu_kerPath, ker );
+				fprintf('\tSaving kernel ''%s''.\n', cv_kerPath) ;
+				par_save( cv_kerPath, cv_ker );
 			else
-				fprintf('Skipped calculating kernel [%s]...\n', heu_kerPath);
-			end		
+				fprintf('Skipped calculating kernel [%s]...\n', cv_kerPath);
+			end			
 		end
+	else
+		%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
+		%heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+		heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+		if ~exist(heu_kerPath),
+		
+			distancePath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.distance.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+			if exist(distancePath),
+				fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
+				load(distancePath, 'distmatrix');
+			else
+				fprintf('\tCalculating distance matrix for feature [%s] ... \n', feature_ext) ;	
+				distmatrix = vl_alldist2(dev_hists(ridx, :), 'chi2') ;
+				fprintf('\tSaving distance matrix for feature [%s] ... \n', feature_ext) ;	
+				save(distancePath, 'distmatrix', '-v7.3');
+			end
+		
+			fprintf('\t[ randim = %d, randnum = %d] Calculating devel kernel %s with heuristic gamma ... \n', ker.randim, rr, feature_ext) ;	
+			%ker = calcKernel(ker, dev_hists(ridx, :));
+			sel_matrix = distmatrix(ker.sel_feat, ker.sel_feat);	
+			mu     = 1 ./ mean(sel_matrix(:)) ;
+			ker.mu = mu;
+			ker.matrix = exp(- mu * distmatrix) ;
+			
+			fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
+			par_save( heu_kerPath, ker );
+		else
+			fprintf('Skipped calculating kernel [%s]...\n', heu_kerPath);
+		end		
 	end
 	
 end
