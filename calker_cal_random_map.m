@@ -24,53 +24,53 @@ function calker_cal_random_map(proj_name, exp_name, ker, videolevel)
 	
 	fprintf('Scoring for feature %s...\n', ker.name);
 
-	for rr = ker.numrand,
+	rr = ker.randnum;
+
+	%scorePath = sprintf('%s/r-scores/%d/%s/%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.name, rr);
+	%scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
+	scorePath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
 	
-		%scorePath = sprintf('%s/r-scores/%d/%s/%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.name, rr);
-		%scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
-		scorePath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
-		
-		mapPath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.map.csv', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
-		
-		if ~checkFile(scorePath), 
-			error('File not found!! %s \n', scorePath);
-		end
-		scores = load(scorePath);
-				
-		m_ap = zeros(1, n_event);
-			
-		for jj = 1:n_event,
-			event_name = events{jj};
-			this_scores = scores.(event_name);
-			
-			fprintf('Scoring for event [%s]...\n', event_name);
-			
-			[~, idx] = sort(this_scores, 'descend');
-			%gt_idx = find(database.label == jj);
-			gt_idx = find(ismember(database.clip_names, database.ref.(event_name)));
-			
-			rank_idx = arrayfun(@(x)find(idx == x), gt_idx);
-			
-			sorted_idx = sort(rank_idx);	
-			ap = 0;
-			for kk = 1:length(sorted_idx), 
-				ap = ap + kk/sorted_idx(kk);
-			end
-			ap = ap/length(sorted_idx);
-			m_ap(jj) = ap;
-			%map.(event_name) = ap;
-		end	
-		
-		m_ap
-		mean(m_ap)	
-		%save(mapPath, 'map');
-		
-		fh = fopen(mapPath, 'w');
-		for jj = 1:n_event,	
-			event_name = events{jj};
-			fprintf(fh, '%s\t%f\n', event_name, m_ap(jj));
-		end
-		fprintf(fh, '%s\t%f\n', 'all', mean(m_ap));
-		fclose(fh);
+	mapPath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.map.csv', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
+	
+	if ~checkFile(scorePath), 
+		error('File not found!! %s \n', scorePath);
 	end
+	scores = load(scorePath);
+			
+	m_ap = zeros(1, n_event);
+		
+	for jj = 1:n_event,
+		event_name = events{jj};
+		this_scores = scores.(event_name);
+		
+		fprintf('Scoring for event [%s]...\n', event_name);
+		
+		[~, idx] = sort(this_scores, 'descend');
+		%gt_idx = find(database.label == jj);
+		gt_idx = find(ismember(database.clip_names, database.ref.(event_name)));
+		
+		rank_idx = arrayfun(@(x)find(idx == x), gt_idx);
+		
+		sorted_idx = sort(rank_idx);	
+		ap = 0;
+		for kk = 1:length(sorted_idx), 
+			ap = ap + kk/sorted_idx(kk);
+		end
+		ap = ap/length(sorted_idx);
+		m_ap(jj) = ap;
+		%map.(event_name) = ap;
+	end	
+	
+	m_ap
+	mean(m_ap)	
+	%save(mapPath, 'map');
+	
+	fh = fopen(mapPath, 'w');
+	for jj = 1:n_event,	
+		event_name = events{jj};
+		fprintf(fh, '%s\t%f\n', event_name, m_ap(jj));
+	end
+	fprintf(fh, '%s\t%f\n', 'all', mean(m_ap));
+	fclose(fh);
+	
 end

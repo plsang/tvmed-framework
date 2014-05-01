@@ -17,44 +17,42 @@ function calker_cal_random_rank(proj_name, exp_name, ker)
 	n_event = length(database.event_names);
 	events = database.event_ids;
 	
-	for rr = ker.numrand,
-
-		%scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
-		scorePath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
-		scoreDir = fileparts(scorePath);
+	rr = ker.randnum;
+	
+	%scorePath = sprintf('%s/r-scores/%d/%s/%s-%s/%s.%s.r%d.scores.mat', calker_exp_dir, ker.randim, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, rr);
+	scorePath = sprintf('%s/r-scores/%s/%s-%s/n%05d/r%03d/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.randim, rr, ker.name, ker.type);
+	scoreDir = fileparts(scorePath);
+	
+	if ~checkFile(scorePath), 
+		warning('File not found!! %s \n', scorePath);
+		return;
+	end
+	
+	
+	scores = load(scorePath);
+	
+	fprintf('Ranking for feature %s...\n', ker.name);
+	
+	
+	for jj = 1:n_event,
+		event_name = events{jj};
 		
-		if ~checkFile(scorePath), 
-			warning('File not found!! %s \n', scorePath);
-			return;
+		
+		this_scores = scores.(event_name);
+		
+		fprintf('-- [%d] Ranking for event [%s]...\n', jj, event_name);
+		
+		[sorted_scores, sorted_idx] = sort(this_scores, 'descend');
+		
+		rankFile = sprintf('%s/%s.%s.r%d.video.rank', scoreDir, event_name, ker.name, rr);
+		
+		fh = fopen(rankFile, 'w');
+		for kk=1:length(sorted_scores),
+			rank_idx = sorted_idx(kk);
+			fprintf(fh, '%s %f\n', database.clip_names{rank_idx}, sorted_scores(kk));
 		end
 		
-		
-		scores = load(scorePath);
-		
-		fprintf('Ranking for feature %s...\n', ker.name);
-		
-		
-		for jj = 1:n_event,
-			event_name = events{jj};
-			
-			
-			this_scores = scores.(event_name);
-			
-			fprintf('-- [%d] Ranking for event [%s]...\n', jj, event_name);
-			
-			[sorted_scores, sorted_idx] = sort(this_scores, 'descend');
-			
-			rankFile = sprintf('%s/%s.%s.r%d.video.rank', scoreDir, event_name, ker.name, rr);
-			
-			fh = fopen(rankFile, 'w');
-			for kk=1:length(sorted_scores),
-				rank_idx = sorted_idx(kk);
-				fprintf(fh, '%s %f\n', database.clip_names{rank_idx}, sorted_scores(kk));
-			end
-			
-			fclose(fh);
-		end	
-	
-	end
+		fclose(fh);
+	end	
 	
 end

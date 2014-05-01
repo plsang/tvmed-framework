@@ -44,8 +44,6 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 	end
 	
 	ker.sel_feat =  database.sel_idx & sel_feat;
-	
-	
 		
 	rr = ker.randnum;
 	
@@ -84,6 +82,8 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 		heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 		if ~exist(heu_kerPath),
 		
+			fprintf('\t[ randim = %d, randnum = %d] Calculating devel kernel %s with heuristic gamma ... \n', ker.randim, rr, feature_ext) ;	
+			
 			distancePath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.distance.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 			if exist(distancePath),
 				fprintf('\tLoading distance matrix for feature [%s] ... \n', feature_ext) ;	
@@ -95,7 +95,6 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 				save(distancePath, 'distmatrix', '-v7.3');
 			end
 		
-			fprintf('\t[ randim = %d, randnum = %d] Calculating devel kernel %s with heuristic gamma ... \n', ker.randim, rr, feature_ext) ;	
 			%ker = calcKernel(ker, dev_hists(ridx, :));
 			sel_matrix = distmatrix(ker.sel_feat, ker.sel_feat);	
 			mu     = 1 ./ mean(sel_matrix(:)) ;
