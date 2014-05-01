@@ -41,90 +41,88 @@ function calker_train_random_kernel(proj_name, exp_name, ker)
 		log2g_list = ker.startG:ker.stepG:ker.endG;
 		numLog2g = length(log2g_list);
 		
-		for rr = ker.numrand,
-		
-			if ker.cross, % TODO
-				svm = cell(numLog2g, 1);
-				maxacc = cell(numLog2g, 1);
+		rr = ker.randnum;
+		if ker.cross, % TODO
+			svm = cell(numLog2g, 1);
+			maxacc = cell(numLog2g, 1);
+			
+			for jj = 1:numLog2g,
+				cv_ker = ker;
+				log2g = log2g_list(jj);
+				gamma = 2^log2g;	
 				
-				for jj = 1:numLog2g,
-					cv_ker = ker;
-					log2g = log2g_list(jj);
-					gamma = 2^log2g;	
-					
-					cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
-					fprintf('Loading kernel %s ...\n', cv_kerPath); 
-					kernels_ = load(cv_kerPath) ;
-					base = kernels_.matrix;
+				cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
+				fprintf('Loading kernel %s ...\n', cv_kerPath); 
+				kernels_ = load(cv_kerPath) ;
+				base = kernels_.matrix;
 
-					fprintf('SVM learning with predefined kernel matrix...\n');
-					[svm_, maxacc_] = calker_svmkernellearn(base, labels,   ...
-									   'type', 'C',        ...
-									   ...%'C', 10,            ...
-									   'verbosity', 0,     ...
-									   ...%'rbf', 1,           ...
-									   'crossvalidation', 5, ...
-									   'weights', [+1 posWeight ; -1 1]') ;
-					fprintf(' cur acc = %f, at gamma = %f...\n', maxacc_, gamma);
-					
-					svm{jj} = svm_;
-					maxacc{jj} = maxacc_;
-					
-				end
-				
-				maxacc = cat(1, maxacc{:});
-				[~, max_idx] = 	max(maxacc);
-				svm = svm{max_idx};
-				gamma = 2^log2g_list(max_idx);
-				fprintf(' best acc = %f, at gamma = %f...\n', maxacc(max_idx), gamma);
-				
-			else
-						
-				%modelPath = sprintf('%s/r-models/%d/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, event_name, ker.name, ker.type, rr);
-				%modelPath = sprintf('%s/r-models/%d/%s-%s/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type, rr);
-				modelPath = sprintf('%s/r-models/%s-%s/n%05d/r%03d/%s.%s.%s.model.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, rr, event_name, ker.name, ker.type);
-		
-				if checkFile(modelPath),
-					fprintf('Skipped training %s \n', modelPath);
-					continue;
-				end
-		
-				%heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-				heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
-				%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
-				
-				fprintf('Loading kernel %s ...\n', heu_kerPath); 
-				kernels_ = load(heu_kerPath) ;
-				base = kernels_.matrix(train_idx, train_idx);
-				
 				fprintf('SVM learning with predefined kernel matrix...\n');
-				svm = calker_svmkernellearn(base, labels,   ...
+				[svm_, maxacc_] = calker_svmkernellearn(base, labels,   ...
 								   'type', 'C',        ...
 								   ...%'C', 10,            ...
 								   'verbosity', 0,     ...
 								   ...%'rbf', 1,           ...
 								   'crossvalidation', 5, ...
 								   'weights', [+1 posWeight ; -1 1]') ;
-								   
-				if isfield(kernels_, 'mu'),
-					gamma = kernels_.mu;
-				end
+				fprintf(' cur acc = %f, at gamma = %f...\n', maxacc_, gamma);
 				
-				svm = svmflip(svm, labels);
+				svm{jj} = svm_;
+				maxacc{jj} = maxacc_;
 				
-				svm.train_idx = train_idx;
-				
-				if strcmp(ker.type, 'echi2'),
-					svm.gamma = gamma;
-				end
-				
-				
-				%clear kernels_;
 			end
-				
-			fprintf('\tSaving model ''%s''.\n', modelPath) ;
-			par_save( modelPath, svm );			
+			
+			maxacc = cat(1, maxacc{:});
+			[~, max_idx] = 	max(maxacc);
+			svm = svm{max_idx};
+			gamma = 2^log2g_list(max_idx);
+			fprintf(' best acc = %f, at gamma = %f...\n', maxacc(max_idx), gamma);
+			
+		else
+					
+			%modelPath = sprintf('%s/r-models/%d/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, event_name, ker.name, ker.type, rr);
+			%modelPath = sprintf('%s/r-models/%d/%s-%s/%s.%s.%s.model.%d.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type, rr);
+			modelPath = sprintf('%s/r-models/%s-%s/n%05d/r%03d/%s.%s.%s.model.mat', calker_exp_dir, ker.randim, ker.prms.eventkit, ker.prms.rtype, rr, event_name, ker.name, ker.type);
+	
+			if checkFile(modelPath),
+				fprintf('Skipped training %s \n', modelPath);
+				continue;
+			end
+	
+			%heu_kerPath = sprintf('%s/r-kernels/%s/%d/%s.heuristic.r%d.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+			heu_kerPath = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.heuristic.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
+			%heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
+			
+			fprintf('Loading kernel %s ...\n', heu_kerPath); 
+			kernels_ = load(heu_kerPath) ;
+			base = kernels_.matrix(train_idx, train_idx);
+			
+			fprintf('SVM learning with predefined kernel matrix...\n');
+			svm = calker_svmkernellearn(base, labels,   ...
+							   'type', 'C',        ...
+							   ...%'C', 10,            ...
+							   'verbosity', 0,     ...
+							   ...%'rbf', 1,           ...
+							   'crossvalidation', 5, ...
+							   'weights', [+1 posWeight ; -1 1]') ;
+							   
+			if isfield(kernels_, 'mu'),
+				gamma = kernels_.mu;
+			end
+			
+			svm = svmflip(svm, labels);
+			
+			svm.train_idx = train_idx;
+			
+			if strcmp(ker.type, 'echi2'),
+				svm.gamma = gamma;
+			end
+			
+			
+			%clear kernels_;
 		end
+			
+		fprintf('\tSaving model ''%s''.\n', modelPath) ;
+		par_save( modelPath, svm );			
 
 	end
 	
