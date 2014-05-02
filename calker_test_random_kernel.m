@@ -30,7 +30,7 @@ function calker_test_random_kernel(proj_name, exp_name, ker)
 	
 	if checkFile(scorePath), 
 		fprintf('Skipped testing %s \n', scorePath);
-		continue;
+		return;
 	end
 	
 	models = struct;
