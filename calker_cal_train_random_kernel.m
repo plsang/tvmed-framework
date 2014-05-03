@@ -47,6 +47,9 @@ function calker_cal_train_random_kernel(proj_name, exp_name, ker)
 		
 	rr = ker.randnum;
 	
+	stream = RandStream('mt19937ar','Seed',sum(100*clock));
+	RandStream.setDefaultStream(stream);
+
 	randidx_Path = sprintf('%s/r-kernels/%s/n%05d/%s.r%03d.randindex.mat', calker_exp_dir, ker.dev_pat, ker.randim, ker.devname, rr);
 	if exist(randidx_Path, 'file'),
 		ridx = load(randidx_Path, 'ridx');	
