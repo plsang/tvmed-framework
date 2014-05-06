@@ -7,9 +7,9 @@ vl_setup;
 
 exp_name = [proj_name, '-', exp_id];
 %seg_name = ['segment-', exp_id];
-seg_name = 'segment-100000';
+seg_name = 'segment-att';
 
-feat_dim = 4000;
+feat_dim = 1000;
 ker_type = 'echi2';
 cross = 0;
 open_pool = 0;
