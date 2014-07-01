@@ -65,7 +65,12 @@ ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', k
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 ker.log_dir = fullfile(calker_exp_dir, 'log');
- 
+
+f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_devel.mat';
+fprintf('Loading metadata...\n');
+metadata_ = load(f_metadata, 'metadata');
+metadata = metadata_.metadata;
+	 
 %if ~exist(calker_exp_dir, 'file'),
 mkdir(fullfile(calker_exp_dir, 'metadata'));
 mkdir(fullfile(calker_exp_dir, 'kernels', ker.dev_pat));
