@@ -7,7 +7,7 @@ vl_setup;
 
 exp_name = [proj_name, '-', exp_id];
 %seg_name = ['segment-', exp_id];
-seg_name = 'segment-att';
+seg_name = exp_id;
 
 feat_dim = 1000;
 ker_type = 'echi2';
@@ -70,6 +70,7 @@ f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/met
 fprintf('Loading metadata...\n');
 metadata_ = load(f_metadata, 'metadata');
 metadata = metadata_.metadata;
+ker.prms.metadata = metadata;
 	 
 %if ~exist(calker_exp_dir, 'file'),
 mkdir(fullfile(calker_exp_dir, 'metadata'));
