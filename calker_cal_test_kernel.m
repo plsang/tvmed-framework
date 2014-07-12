@@ -30,6 +30,12 @@ if strcmp(ker.type, 'echi2'),
 	ker.mu = heu_ker.mu;	
 end
 
+f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_devel.mat';
+fprintf('Loading metadata...\n');
+metadata_ = load(f_metadata, 'metadata');
+metadata = metadata_.metadata;
+prms.metadata = metadata;
+
 num_part = ceil(size(database.clip_names, 2)/ker.chunk_size);
 cols = fix(linspace(1, size(database.clip_names, 2) + 1, num_part+1));
 
@@ -59,7 +65,7 @@ parfor jj = 1:num_part,
 			%	ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
 
 			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(ker.prms.metadata.(clip_name).ldc_pat), clip_name); 
+					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.(clip_name).ldc_pat), clip_name); 
 					
 			%segment_path = database_path{ii + cols(jj) - 1};
 			

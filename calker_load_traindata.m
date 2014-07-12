@@ -14,6 +14,12 @@ if isempty(database)
     error('Empty metadata file!!\n');
 end
 
+f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_devel.mat';
+fprintf('Loading metadata...\n');
+metadata_ = load(f_metadata, 'metadata');
+metadata = metadata_.metadata;
+prms.metadata = metadata;
+
 hists = zeros(ker.num_dim, database.num_clip);
 
 selected_label = zeros(1, database.num_clip);
@@ -25,7 +31,7 @@ parfor ii = 1:database.num_clip, %
 	%segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
 	%					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.train_fea_pat, clip_name, clip_name);   
 	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(ker.prms.metadata.(clip_name).ldc_pat), clip_name);
+					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.(clip_name).ldc_pat), clip_name);
 					
 	if ~exist(segment_path),
 		warning('File [%s] does not exist!\n', segment_path);
