@@ -62,6 +62,8 @@ parfor ii = 1:database.num_clip, %
 		continue;
 	end
 	
+	code = sign(code) .* power(abs(code), ker.alpha);   
+	
 	if ~all(code == 0),
 		if strcmp(ker.feat_norm, 'l1'),
 			code = code / norm(code, 1);

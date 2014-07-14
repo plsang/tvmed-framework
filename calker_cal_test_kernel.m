@@ -91,6 +91,10 @@ parfor jj = 1:num_part,
 				end
 			end
 			
+			%% applying power normalization
+			%% code = sign(code) .* sqrt(abs(code));   
+			code = sign(code) .* power(abs(code), ker.alpha);   
+			
 			if ~all(code == 0),
 				if strcmp(ker.feat_norm, 'l2'),
 					code = code / norm(code, 2);
