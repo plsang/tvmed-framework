@@ -19,9 +19,12 @@ parfor ii = 1:length(database.path), %
     
 	clip_name = database.clip_names{ii};
 	
-	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
-						ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
+	%segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
+	%					ker.proj_dir, proj_name, seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
 	
+	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(ker.prms.metadata.(clip_name).ldc_pat), clip_name); 
+					
 	if ~exist(segment_path),
 		warning('File [%s] does not exist! Generating random feature... !!\n', segment_path);
 		%code = ones(ker.num_dim, 1);
