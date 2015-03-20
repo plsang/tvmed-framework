@@ -30,11 +30,16 @@ if strcmp(ker.type, 'echi2'),
 	ker.mu = heu_ker.mu;	
 end
 
-f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_devel.mat';
-fprintf('Loading metadata...\n');
-metadata_ = load(f_metadata, 'metadata');
-metadata = metadata_.metadata;
-prms.metadata = metadata;
+if strcmp('EVALFULL', upper(ker.test_pat)),
+	f_metadata = sprintf('/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_test_%s.mat', lower(ker.prms.tvtask));
+else
+	f_metadata = sprintf('/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_%s.mat', lower(ker.prms.tvtask));
+end
+
+fprintf('Loading test metadata...<%s>\n', f_metadata);
+MEDMD_ = load(f_metadata, 'MEDMD');
+
+prms.metadata = MEDMD_.MEDMD;
 
 num_part = ceil(size(database.clip_names, 2)/ker.chunk_size);
 cols = fix(linspace(1, size(database.clip_names, 2) + 1, num_part+1));
@@ -43,7 +48,7 @@ cols = fix(linspace(1, size(database.clip_names, 2) + 1, num_part+1));
 
 fprintf('-- Calculating test kernel %s with %d partition(s) \n', feature_ext, num_part);
 
-parfor jj = 1:num_part,
+for jj = 1:num_part,
 	sel = [cols(jj):cols(jj+1)-1];
 	part_name = sprintf('%s_%d_%d', ker.testname, cols(jj), cols(jj+1)-1);
 	kerPath = sprintf('%s/kernels/%s/%s.%s.mat', calker_exp_dir, ker.test_pat, part_name, ker.type);
@@ -63,31 +68,41 @@ parfor jj = 1:num_part,
 			
 			%segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
 			%	ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.test_fea_pat, clip_name, clip_name);   
-
-			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.(clip_name).ldc_pat), clip_name); 
-					
-			%segment_path = database_path{ii + cols(jj) - 1};
 			
-			if ~exist(segment_path),
-				warning('File [%s] does not exist! Generating random feature... !!\n', segment_path);
+			if ~isfield(prms.metadata.lookup, clip_name),
+				warning('Clip [%s] does not exist! Generating random feature... !!\n', clip_name);
 				%code = ones(ker.num_dim, 1);
 				code = zeros(ker.num_dim, 1);
 			else
-				code = load(segment_path, 'code');
-				code = code.code;
-				
-				if size(code, 1) ~= ker.num_dim,
-					warning('Dimension mismatch [%d-%d-%s]. Generating random feature... !!\n', size(code, 1), ker.num_dim, segment_path);
+				segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.lookup.(clip_name)), clip_name); 
+			
+				if ~exist(segment_path),
+					warning('File [%s] does not exist! Generating random feature... !!\n', segment_path);
 					%code = ones(ker.num_dim, 1);
-					code = zeros(ker.num_dim, 1);			
-				elseif any(isnan(code)),
-					warning('Feature contains NaN [%s] !!\n', segment_path);
-					%code(isnan(code)) = 0;
 					code = zeros(ker.num_dim, 1);
-				elseif all(code == 0),
-					warning('All zeros feature [%s] !!\n', segment_path);	
-					%code = ones(ker.num_dim, 1);
+				else
+					code = load(segment_path, 'code');
+					code = code.code;
+					
+					if strcmp(ker.idt_desc, 'hoghof'),
+						code = code(1:65536);
+					elseif strcmp(ker.idt_desc, 'mbh'),
+						code = code(65537:end);
+					end
+	
+					if size(code, 1) ~= ker.num_dim,
+						warning('Dimension mismatch [%d-%d-%s]. Generating random feature... !!\n', size(code, 1), ker.num_dim, segment_path);
+						%code = ones(ker.num_dim, 1);
+						code = zeros(ker.num_dim, 1);			
+					elseif any(isnan(code)),
+						warning('Feature contains NaN [%s] !!\n', segment_path);
+						%code(isnan(code)) = 0;
+						code = zeros(ker.num_dim, 1);
+					elseif all(code == 0),
+						warning('All zeros feature [%s] !!\n', segment_path);	
+						%code = ones(ker.num_dim, 1);
+					end
 				end
 			end
 			
@@ -96,8 +111,8 @@ parfor jj = 1:num_part,
 					code = code / norm(code, 2);
 				elseif strcmp(ker.feat_norm, 'l1'),
 					code = code / norm(code, 1);
-				else
-					error('unknown norm!\n');
+				%else
+					%error('unknown norm!\n');
 				end
 			end
 			

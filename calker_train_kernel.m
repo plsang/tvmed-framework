@@ -24,7 +24,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 
     kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
 	
-	parfor kk = 1:length(database.event_names),
+    parfor kk = 1:length(database.event_ids),
 		event_name = database.event_ids{kk};
 	
         modelPath = sprintf('%s/models/%s-%s/%s.%s.%s.model.mat', calker_exp_dir, ker.prms.eventkit, ker.prms.rtype, event_name, ker.name, ker.type);
