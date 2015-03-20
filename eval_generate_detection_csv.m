@@ -1,25 +1,6 @@
 function eval_generate_detection_csv()
-	feature_list = {'densetrajectory.mbh.cb256.fc.l2',
-		'densetrajectory.mbh.cb4000.soft.l2',
-		'fusion-multiseg.mbh_fc',
-		'fusion-multiseg.mbh_soft',
-		'fusion-multiseg.sift_fc',
-		'fusion-multiseg.sift_soft',
-		'fusion.mbh_fc.mbh_soft',
-		'fusion.mbh_fc.mbh_soft.sift_fc.sift_soft.mfcc_fc.mfcc_soft',
-		'fusion.mbh_fc.sift_fc.mfcc_fc',
-		'fusion.mbh_soft.sift_soft.mfcc_soft',
-		'fusion.mfcc_fc.mfcc_soft',
-		'fusion.multiseg_mbh_fc.multiseg_mbh_soft.multiseg_sift_fc.multiseg_sift_soft.mfcc_fc.mfcc_soft',
-		'fusion.multiseg_mbh_fc.multiseg_sift_fc.mfcc_fc',
-		'fusion.multiseg_mbh_soft.multiseg_sift_soft.mfcc_soft',
-		'fusion.sift_fc.sift_soft',
-		'mfcc.rastamat.cb256.fc.l2',
-		'mfcc.rastamat.cb4000.soft.l2',
-		'fusion.mbh_fc.sift_fc',
-		'fusion.multiseg_mbh_fc.multiseg_sift_fc',
-		'fusion.mbh_fc.mbh_soft.sift_fc.sift_soft',
-		'fusion.multiseg_mbh_fc.multiseg_mbh_soft.multiseg_sift_fc.multiseg_sift_soft'
+	feature_list = {
+		'fusion.mbh_fc.sift_fc_pca.mfcc_fc';
 		};
 	
 	for ii = 1:length(feature_list),
@@ -33,102 +14,62 @@ end
 function eval_generate_detection_csv_(feature_name)
 	
 	proj_dir = '/net/per610a/export/das11f/plsang';
-	proj_name = 'trecvidmed13';
-	exp_name = 'trecvidmed13-100000';
-	suffix = '--calker-v7.1';
+	proj_name = 'trecvidmed14';
+	exp_name = 'trecvidmed14-video-bg-calker';
+	suffix = '--tvmed13-v1.1.3-ah';
 	
 	% eval_generate_detection_csv('trecvidmed11', 'trecvidmed11-100000', 'densetrajectory.mbh.Soft-4000-VL2.MBH.trecvidmed11.devel.kcb', 'l2')
 	
 	addpath('/net/per900a/raid0/plsang/tools/kaori-secode-calker-v7.1/support');
 	
-	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', proj_dir, proj_name, exp_name, feature_name, suffix);
+	calker_exp_dir = sprintf('%s/%s/experiments/%s/%s%s', proj_dir, proj_name, exp_name, feature_name, suffix);
+	
+	ker.test_pat = 'evalfull';
+	ker.eventkit = 'EK100Ex';
+	ker.rtype = 'RN'; % RN: R
+	ker.type = 'kl2';
 
-	f_detection_csv = sprintf('%s/scores/test/%s.detection.csv', calker_exp_dir, feature_name);
-	f_detection_csv
-	
-	if exist(f_detection_csv, 'file'),
-		fprintf('File already exist! skipped!\n');
-		return;
-	end
-	
-	f_trial_index = '/net/per610a/export/das11f/plsang/dataset/MED2013/MEDDATA/databases/PROGTEST_20120507_TrialIndex.csv';
-	
-	fprintf('Reading trial index...\n');
-	fh = fopen(f_trial_index);
-	trial_indexes = textscan(fh, '%s %s %s', 'delimiter', ',');
-	fclose(fh);
-	
-	trial_ids = trial_indexes{1}(2:end);
-	video_num_ids = trial_indexes{2}(2:end);
-	event_ids = trial_indexes{3}(2:end);
-	
-	
-	video_idx_file = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_test_index.mat';
-	
-	if ~exist(video_idx_file, 'file'),
-		test_lst = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/trecvidmed13.test.lst';
-		
-		fprintf('Generating video index...\n');
-		test_videos = textread(test_lst, '%s');
-		video_idxs = struct;
-		for ii = 1:length(test_videos),
-			video_id = test_videos{ii};
-			video_idxs.(video_id) = ii;
-		end	
-		save(video_idx_file, 'video_idxs');
-	else
-		fprintf('Loading video index...\n');
-		load(video_idx_file, 'video_idxs');
-	end
-	
-
-	
-	videoScorePath = sprintf('%s/scores/test/%s.scores.mat', calker_exp_dir, feature_name);
-	
-	calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', proj_dir, proj_name, exp_name, feature_name);
-	
-	test_db_file = 'database_test.mat';
-	
-	gt_file = fullfile(calker_common_exp_dir, test_db_file);
-	
-	if ~exist(gt_file, 'file'),
-		warning('File not found! [%s] USING COMMON DIR GROUNDTRUTH!!!', gt_file);
-		calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common', proj_dir, proj_name, exp_name);
-		gt_file = fullfile(calker_common_exp_dir, test_db_file);
-	end
-	
-	fprintf('Loading database [%s]...\n', test_db_file);
-    database = load(gt_file, 'database');
+	fprintf('Loading test meta file \n');
+	tvprefix = 'TVMED14';
+	test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', proj_dir, proj_name, tvprefix, upper(ker.test_pat));
+	database = load(test_meta_file, 'database');
 	database = database.database;
 	
+	scorePath = sprintf('%s/scores/%s/%s-%s/%s.%s.scores.mat', calker_exp_dir, ker.test_pat, ker.eventkit, ker.rtype, feature_name, ker.type);
+	
 	fprintf('Loading scores...\n');
-	scores = load(videoScorePath);
+	scores = load(scorePath);
 	events  = fieldnames(scores);
 	
-	fprintf('Saving detection scores...\n');
-	fh = fopen(f_detection_csv, 'w');
-	fprintf(fh, '"TrialID","Score"\n');
+	%output_dir='/net/per610a/export/das11f/plsang/trecvidmed14/ioserver/submissions/ES';
+	output_dir='/net/per610a/export/das11f/plsang/trecvidmed14/ioserver/submissions_adhoc/ES';
 	
-	for jj=1:length(trial_ids),
-		if ~mod(jj, 50000),
-			fprintf('%.2f %% ...  ', 100*jj/length(trial_ids));
+	for ii = 1:length(events),
+		event_name = events{ii};
+		fprintf('for event: %s...\n', event_name);
+		
+		f_detection_csv = sprintf('%s/%s/%s.detection.csv', output_dir, ker.eventkit, event_name);
+		fh = fopen(f_detection_csv, 'w');
+		fprintf(fh, 'EventID,QueryType,PRF,VideoID,Score,Rank\n');
+		
+		this_scores = scores.(event_name);
+		
+		fprintf('-- [%d] Generating for event [%s]...\n', ii, event_name);
+		
+		[sorted_scores, sorted_idx] = sort(this_scores, 'descend');
+		
+		for kk=1:length(sorted_scores),
+			rank_idx = sorted_idx(kk);
+			clip_name = database.clip_names{rank_idx};
+			if isempty(strfind(clip_name, 'HVC')),
+				error('Unknown video');
+			end
+			clip_id = clip_name(4:end);
+			fprintf(fh, '%s,SQ,noPRF,%s,%.6f,%d\n', event_name, clip_id, sorted_scores(kk),kk);
 		end
-		event_id = strrep(event_ids{jj}, '"', '');
 		
-		video_num_id = strrep(video_num_ids{jj}, '"', '');
-		
-		video_name = ['HVC', video_num_id];
-		
-		if isfield(video_idxs, video_name),
-			vid_idx = video_idxs.(video_name);
-			score = scores.(event_id)(vid_idx);
-		else
-			score = 0;
-		end
-						
-		fprintf(fh, '%s,"%f"\n', trial_ids{jj}, score);
-	end	
-	fprintf('Done...\n');
-	fclose(fh);
+		fclose(fh);
+	end
+	
 
 end

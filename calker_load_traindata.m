@@ -3,7 +3,14 @@ function [hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker)
 
 %%Update change parameter to ker
 % load database
-
+	
+	configs = set_global_config();
+	logfile = sprintf('%s/%s.log', configs.logdir, mfilename);
+	msg = sprintf('Start running %s(%s, %s, %s)', mfilename, proj_name, exp_name);
+	logmsg(logfile, msg);
+	change_perm(logfile);
+	tic;
+	
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 
 fprintf('Loading meta file \n');
@@ -14,11 +21,16 @@ if isempty(database)
     error('Empty metadata file!!\n');
 end
 
-f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_devel.mat';
-fprintf('Loading metadata...\n');
-metadata_ = load(f_metadata, 'metadata');
-metadata = metadata_.metadata;
-prms.metadata = metadata;
+% MED -PS 2014 version
+%f_metadata = '/net/per610a/export/das11f/plsang/trecvidmed13/metadata/common/metadata_devel.mat';
+%fprintf('Loading metadata...\n');
+%metadata_ = load(f_metadata, 'metadata');
+%metadata = metadata_.metadata;
+%prms.metadata = metadata;
+f_metadata = sprintf('/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_%s.mat', lower(ker.prms.tvtask));
+fprintf('Loading metadata...<%s>\n', f_metadata);
+MEDMD_ = load(f_metadata, 'MEDMD');
+prms.metadata = MEDMD_.MEDMD;
 
 hists = zeros(ker.num_dim, database.num_clip);
 
@@ -30,11 +42,18 @@ parfor ii = 1:database.num_clip, %
 	
 	%segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s/%s.mat',...
 	%					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, ker.prms.train_fea_pat, clip_name, clip_name);   
+	
+	% MED -PS 2014 version
+	%segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+	%				ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.(clip_name).ldc_pat), clip_name);
+					
 	segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.(clip_name).ldc_pat), clip_name);
+					ker.proj_dir, proj_name, ker.prms.seg_name, ker.feat_raw, fileparts(prms.metadata.lookup.(clip_name)), clip_name);
 					
 	if ~exist(segment_path),
-		warning('File [%s] does not exist!\n', segment_path);
+		msg = sprintf('File [%s] does not exist!\n', segment_path);
+		warning(msg);
+		logmsg(logfile, msg);
 		continue;
 	end
 	
@@ -50,7 +69,7 @@ parfor ii = 1:database.num_clip, %
 	if any(isnan(code)),
 		warning('Feature contains NaN [%s]. Skipped !!\n', segment_path);
 		msg = sprintf('Feature contains NaN [%s]', segment_path);
-		log(msg);
+		logmsg(logfile, msg);
 		continue;
 	end
 	
@@ -58,7 +77,7 @@ parfor ii = 1:database.num_clip, %
 	if all(code == 0),
 		warning('Feature contains all zeros [%s]. Skipped !!\n', segment_path);
 		msg = sprintf('Feature contains all zeros [%s]', segment_path);
-		log(msg);
+		logmsg(logfile, msg);
 		continue;
 	end
 	
@@ -82,12 +101,9 @@ sel_feat = selected_label ~= 0;
 
 %fprintf('Updating traindb ...\n');
 %save(traindb_file, 'traindb');
-
-end
-
-function log (msg)
-    logfile = [mfilename('fullpath'), '.log'];
-    fh = fopen(logfile, 'a+');
-    fprintf(fh, [msg, '\n']);
-	fclose(fh);
+	elapsed = toc;
+	elapsed_str = datestr(datenum(0,0,0,0,0,elapsed),'HH:MM:SS');
+	msg = sprintf('Finish running %s(%s, %s, %s). Elapsed time: %s', mfilename, proj_name, exp_name, elapsed_str);
+	logmsg(logfile, msg);
+	
 end

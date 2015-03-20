@@ -13,7 +13,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
 		error('Empty metadata file!!\n');
 	end
 	
-    n_event = length(database.event_names);
+    n_event = length(database.event_ids);
 	event_ids = database.event_ids;
 	
 	n_clip = size(database.clip_names, 2);	%% Update Sep 6, 2013
@@ -61,7 +61,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			
 			%[N, Nt] = size(base) ;
 			
-			parfor jj = 1:n_event,
+			%%%parfor jj = 1:n_event,
+            for jj = 1:n_event,
 				event_name = event_ids{jj};
 				
 				test_base = base(models.(event_name).train_idx, :);
