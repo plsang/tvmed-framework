@@ -1,22 +1,14 @@
-function calker_main(proj_name, exp_id, feature_ext, varargin)
+function calker_main(proj_name, exp_name, feature_ext, event_id, varargin)
 
 set_env;
-% addpath('/net/per900a/raid0/plsang/tools/kaori-secode-calker-v6/support');
-% addpath('/net/per900a/raid0/plsang/tools/libsvm-3.17/matlab');
-% addpath('/net/per900a/raid0/plsang/tools/vlfeat-0.9.16/toolbox');
-% vl_setup;
 
-exp_name = [proj_name, '-', exp_id];
-%seg_name = ['segment-', exp_id];
-seg_name = exp_id;
-
-feat_dim = 4000;
-ker_type = 'kl2';
+feat_dim = 2^16;
+ker_type = 'linear';
 cross = 0;
 open_pool = 0;
 suffix = '';
-test_pat = 'kindredtest';
-eventkit = 'EK10Ex';
+test_pat = 'kindred14';
+eventkit = 'EK100Ex';
 miss_type = 'RN'; % RN: Related example as Negative, RP: Related example as Positive, NR: No related example
 tvtask = 'PS';
 desc = 'hoghof';
@@ -60,39 +52,24 @@ ker.prms.tvprefix = 'TVMED14';
 ker.prms.tvtask = upper(tvtask);
 ker.prms.eventkit = eventkit; % 'EK130Ex';
 ker.prms.rtype = miss_type;	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
-ker.prms.train_fea_pat = 'devel';	% train pat name where local features are stored
-ker.prms.test_fea_pat = 'devel';	% train pat name where local features are stored
-
-ker.prms.meta_file = sprintf('%s/%s/metadata/%s-%s-%s-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, ker.prms.tvtask, ker.prms.eventkit, ker.prms.rtype);
-ker.prms.seg_name = seg_name;
 ker.idt_desc = desc;
 
 ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
-ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
 
-calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
-ker.log_dir = fullfile(calker_exp_dir, 'log');
- 
-%if ~exist(calker_exp_dir, 'file'),
-mkdir(fullfile(calker_exp_dir, 'metadata'));
-mkdir(fullfile(calker_exp_dir, 'kernels', ker.dev_pat));
-mkdir(fullfile(calker_exp_dir, 'kernels', ker.test_pat));
-mkdir(fullfile(calker_exp_dir, 'scores', ker.test_pat));
-mkdir(fullfile(calker_exp_dir, 'models'));
-mkdir(fullfile(calker_exp_dir, 'log'));
-%end
+ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s-%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
+ker.log_dir = fullfile(ker.calker_exp_dir, 'log');
 
-%open pool
-if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
-calker_cal_train_kernel(proj_name, exp_name, ker);
-calker_train_kernel(proj_name, exp_name, ker);
-calker_cal_test_kernel(proj_name, exp_name, ker);
-calker_test_kernel(proj_name, exp_name, ker);
-if ~strcmp('EVALFULL', upper(ker.test_pat)),
-	calker_cal_map(proj_name, exp_name, ker);
-end
-calker_cal_rank(proj_name, exp_name, ker);
+fprintf('Loading metadata...\n');
+medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
+load(medmd_file, 'MEDMD'); 
+ker.MEDMD = MEDMD;
+    
+%calker_cal_bg_kernel(proj_name, exp_name, ker);
+%calker_cal_train_kernel(proj_name, exp_name, ker, event_id);
+calker_train_kernel(proj_name, exp_name, ker, event_id);
+%calker_cal_test_kernel(proj_name, exp_name, ker, event_id);
+calker_test_kernel(proj_name, exp_name, ker, event_id);
+calker_cal_map(proj_name, exp_name, ker, event_id);
+%calker_cal_rank(proj_name, exp_name, ker, event_id);
 
-%close pool
-if matlabpool('size') > 0, matlabpool close; end;

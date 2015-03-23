@@ -5,7 +5,8 @@
 % vlfeat
 run('/net/per900a/raid0/plsang/tools/vlfeat-0.9.16/toolbox/vl_setup');
 
-% libsvm
+% liblinear-1.96
+addpath('/net/per610a/export/das11f/plsang/codes/common/liblinear-1.96/matlab');
 
 % addpath('/net/per900a/raid0/plsang/tools/libsvm-3.12/matlab');
 addpath('/net/per900a/raid0/plsang/tools/libsvm-3.17/matlab');
