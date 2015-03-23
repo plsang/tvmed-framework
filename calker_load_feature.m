@@ -15,7 +15,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
     clips = []; 
     labels = []; %% only in case of event videos
     
-    if (any(ismember(ker.MEDMD.EventKit.EK10Ex.eventids, video_pat))), 
+    if (any(ismember(ker.MEDMD.EventKit.(ker.prms.eventkit).eventids, video_pat))), 
         if strcmp(ker.prms.rtype, 'NR'),
             clips = [ker.MEDMD.EventKit.(ker.prms.eventkit).judge.(video_pat).positive];
             labels = ones(1, length(clips));

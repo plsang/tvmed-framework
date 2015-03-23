@@ -1,4 +1,4 @@
-function calker_main(proj_name, exp_name, feature_ext, event_id, varargin)
+function calker_main(proj_name, exp_name, feature_ext, varargin)
 
 set_env;
 
@@ -54,6 +54,7 @@ ker.prms.eventkit = eventkit; % 'EK130Ex';
 ker.prms.rtype = miss_type;	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
 ker.idt_desc = desc;
 
+ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [21:30], 'UniformOutput', false);
 ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
 
@@ -67,9 +68,9 @@ ker.MEDMD = MEDMD;
     
 %calker_cal_bg_kernel(proj_name, exp_name, ker);
 %calker_cal_train_kernel(proj_name, exp_name, ker, event_id);
-calker_train_kernel(proj_name, exp_name, ker, event_id);
+calker_train_kernel(proj_name, exp_name, ker);
 %calker_cal_test_kernel(proj_name, exp_name, ker, event_id);
-calker_test_kernel(proj_name, exp_name, ker, event_id);
-calker_cal_map(proj_name, exp_name, ker, event_id);
+calker_test_kernel(proj_name, exp_name, ker);
+calker_cal_map(proj_name, exp_name, ker);
 %calker_cal_rank(proj_name, exp_name, ker, event_id);
 
