@@ -1,71 +1,42 @@
 
 function calker_cal_train_kernel(proj_name, exp_name, ker)
 
-	feature_ext = ker.feat;
-
-	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
-
-	kerPath = sprintf('%s/kernels/%s/%s', calker_exp_dir, ker.dev_pat, ker.devname);
-
-	devHistPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.histName);
-	selLabelPath = sprintf('%s/kernels/%s/%s.sel.mat', calker_exp_dir, ker.dev_pat, ker.histName);
+	kerPath = sprintf('%s/kernels/%s/%s.%s.mat', ker.calker_exp_dir, ker.dev_pat, ker.devname, ker.type);
 	
-	scaleParamsPath = sprintf('%s/kernels/%s/%s.mat', calker_exp_dir, ker.dev_pat, ker.scaleparamsName);
-	
-	log2g_list = ker.startG:ker.stepG:ker.endG;
-	numLog2g = length(log2g_list);
-
-	fprintf('\tLoading devel features for kernel %s ... \n', feature_ext) ;
-	if exist(devHistPath),
-		load(devHistPath);
-	else
-		[dev_hists, sel_feat] = calker_load_traindata(proj_name, exp_name, ker);
+	if ~exist(kerPath),
 		
-		if ker.feature_scale == 1,	
-			fprintf('Feature scaling...\n');	
-			[dev_hists, scale_params] = calker_feature_scale(dev_hists);	
-			save(scaleParamsPath, 'scale_params');		
-		end
-		
-		fprintf('\tSaving devel features for kernel %s ... \n', feature_ext) ;
-		save(devHistPath, 'dev_hists', '-v7.3');
-		save(selLabelPath, 'sel_feat');
-		
-	end
-
-	if ker.cross,
-		parfor jj = 1:numLog2g,
-			cv_ker = ker;
-			log2g = log2g_list(jj);
-			gamma = 2^log2g;	
-			cv_ker.mu = gamma;
-			cv_kerPath = sprintf('%s.gamma%s.mat', kerPath, num2str(gamma));
-			
-			if ~exist(cv_kerPath),
-				fprintf('\tCalculating devel kernel %s with gamma = %f... \n', feature_ext, gamma) ;	
-				cv_ker = calcKernel(cv_ker, dev_hists);
-				
-				fprintf('\tSaving kernel ''%s''.\n', cv_kerPath) ;
-				par_save( cv_kerPath, cv_ker );
-			else
-				fprintf('Skipped calculating kernel [%s]...\n', cv_kerPath);
-			end			
-		end
-	else
-		heu_kerPath = sprintf('%s.heuristic.mat', kerPath);
-		if ~exist(heu_kerPath),
-			fprintf('\tCalculating devel kernel %s with heuristic gamma ... \n', feature_ext) ;	
-			ker = calcKernel(ker, dev_hists);
-			
-			fprintf('\tSaving kernel ''%s''.\n', heu_kerPath) ;
-			par_save( heu_kerPath, ker );
-		else
-			fprintf('Skipped calculating kernel [%s]...\n', heu_kerPath);
-		end		
-	end
+        fprintf('Loading background feature...\n');
+        bg_feats = calker_load_feature(proj_name, exp_name, ker, 'bg');
+    
+        labels_ = cell(length(ker.event_ids), 1);
+        train_feats = cell(length(ker.event_ids), 1);
+        
+        for ii=1:length(ker.event_ids),
+            event_id = ker.event_ids{ii};
+            fprintf('Loading event feature [%s]...\n', event_id);
+            [train_feats{ii}, labels_{ii}] = calker_load_feature(proj_name, exp_name, ker, event_id);
+        end
+        
+        train_feats = cat(2, train_feats{:});
+        train_feats = [train_feats, bg_feats];
+        
+        labels = zeros(length(ker.event_ids), size(train_feats, 2));
+        start_idx = 1;
+        bg_start_idx = size(train_feats, 2) - size(bg_feats, 2)+1;
+        
+        for ii=1:length(ker.event_ids),
+            end_idx = start_idx + length(labels_{ii}) - 1;
+            labels(ii, start_idx:end_idx) = labels_{ii};
+            labels(ii, bg_start_idx:end) = -ones(1, size(bg_feats, 2));
+            start_idx = start_idx + length(labels_{ii});    
+        end
+            
+		fprintf('\tCalculating linear kernel %s ... \n', ker.feat) ;	
+        pre_train_kernel = train_feats'*train_feats;
+        
+        fprintf('\tSaving pre-computed kernel & labels ''%s''.\n', kerPath) ;
+        ssave( kerPath, 'pre_train_kernel', 'labels', '-v7.3' );
+    end
 
 end
 
-function par_save( output_file, ker )
-	ssave(output_file, '-STRUCT', 'ker', '-v7.3');
-end

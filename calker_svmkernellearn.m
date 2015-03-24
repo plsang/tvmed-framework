@@ -245,7 +245,6 @@ if cross
 	[~, median_idx] = min(abs(sel - median(sel)));		% get the median value
 	pick = sel(median_idx);
     val           = val_range(pick) ;
-	fprintf('Selected values: maxacc = %f, pick = %d, C = %f \n', maxacc, pick, C);
     
     switch lower(type)
       case 'c'
@@ -254,6 +253,8 @@ if cross
         nu = val ;
     end
 
+    fprintf('Selected values: maxacc = %f, pick = %d, C = %f \n', maxacc, pick, C);
+    
     semilogx(val_range, acc_range, '.-', 'Linewidth', 2*zz+1) ;
     hold on ;
     title('Cross validation') ; 
