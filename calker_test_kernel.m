@@ -23,7 +23,13 @@ function calker_test_kernel(proj_name, exp_name, ker)
             fprintf('Loading model ''%s''...\n', event_id);
             load(modelPath);
             
-            [~, ~, score] = predict(zeros(num_feat, 1), sparse(feats), model, '', 'col');
+            if strcmp(ker.svmtool, 'liblinear'),
+                [~, ~, score] = predict(zeros(num_feat, 1), sparse(feats'), model);
+            elseif strcmp(ker.svmtool, 'libsvm'),
+                [~, ~, score] = svmpredict(zeros(num_feat, 1), cast(feats', 'double'), model);
+            else
+                error('Unknown svm tool \n');
+            end
                 
             %saving scores
             fprintf('\tSaving scores ''%s''.\n', scorePath) ;

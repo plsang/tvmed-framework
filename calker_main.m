@@ -12,6 +12,9 @@ eventkit = 'EK100Ex';
 miss_type = 'RN'; % RN: Related example as Negative, RP: Related example as Positive, NR: No related example
 tvtask = 'PS';
 desc = 'hoghof';
+svmtool = 'liblinear';
+start_event = 21;
+end_event = 40;
 
 for k=1:2:length(varargin),
 
@@ -41,6 +44,12 @@ for k=1:2:length(varargin),
 			tvtask = arg;
 		case 'desc'
 			desc = arg;
+        case 'svmtool'
+            svmtool = arg;
+        case 's'
+            start_event = arg;
+        case 'e'
+            end_event = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -54,12 +63,13 @@ ker.prms.eventkit = eventkit; % 'EK130Ex';
 ker.prms.rtype = miss_type;	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
 ker.idt_desc = desc;
 
-ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [21:30], 'UniformOutput', false);
-ker.dev_pat = 'dev';
+ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
 ker.test_pat = test_pat;
 
 ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s-%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 ker.log_dir = fullfile(ker.calker_exp_dir, 'log');
+
+ker.svmtool = svmtool; 
 
 fprintf('Loading metadata...\n');
 medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
