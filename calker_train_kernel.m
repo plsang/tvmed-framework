@@ -42,7 +42,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		
 		fprintf('Training event ''%s''...\n', event_id);	
 		
-		labels_kk = kerinfo.labels(kk, :);
+		labels_kk = labels(kk, :);
 		
 		train_idx = labels_kk ~= 0;
 		labels_kk = labels_kk(train_idx);

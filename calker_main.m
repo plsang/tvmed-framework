@@ -59,12 +59,8 @@ ker.prms.tvprefix = 'TVMED14';
 ker.prms.tvtask = upper(tvtask);
 ker.prms.eventkit = eventkit; % 'EK130Ex';
 ker.prms.rtype = miss_type;	% RN: Related example as Negative, RP: Related example as Positive, NR: No related example 
-ker.prms.train_fea_pat = 'devel';	% train pat name where local features are stored
-ker.prms.test_fea_pat = 'devel';	% train pat name where local features are stored
 
 ker.idt_desc = desc;
-
-ker.dev_pat = 'dev';
 ker.test_pat = test_pat;
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
@@ -79,7 +75,7 @@ ker.MEDMD = MEDMD;
 
 %open pool
 %if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
-calker_cal_train_kernel(proj_name, exp_name, ker);
+%calker_cal_train_kernel(proj_name, exp_name, ker);
 calker_train_kernel(proj_name, exp_name, ker);
 calker_test_kernel(proj_name, exp_name, ker);
 calker_cal_map(proj_name, exp_name, ker);
