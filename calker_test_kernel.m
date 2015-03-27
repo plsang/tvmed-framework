@@ -56,7 +56,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
         test_feats = calker_load_feature(proj_name, exp_name, ker, ker.test_pat, 'test', cols(kk), cols(kk+1)-1);
         base = train_feats'*test_feats;
         
-        for jj = 1:length(ker.event_ids),
+        parfor jj = 1:length(ker.event_ids),
         
             event_id = ker.event_ids{jj};
             

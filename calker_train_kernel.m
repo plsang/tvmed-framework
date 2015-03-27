@@ -29,7 +29,7 @@ function calker_train_kernel(proj_name, exp_name, ker)
     fprintf('\tCalculating linear kernel %s ... \n', ker.feat) ;	
     train_kernel = train_feats'*train_feats;
     
-    for kk = 1:length(ker.event_ids),
+    parfor kk = 1:length(ker.event_ids),
     
 		event_id = ker.event_ids{kk};
         
@@ -66,9 +66,13 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		model.train_idx = train_idx;
 		
         fprintf('\tSaving model ''%s''.\n', modelPath) ;
-		ssave( modelPath, 'model' );	
+		par_save( modelPath, model );	
 
 	end
 	
+end
+
+function par_save( modelPath, model )
+	ssave(modelPath, 'model') ;
 end
 
