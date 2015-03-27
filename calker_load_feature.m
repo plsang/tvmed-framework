@@ -49,7 +49,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
     feats = zeros(ker.num_dim, end_clip - start_clip + 1);
     selected_label = zeros(1, end_clip - start_clip + 1);
 
-    for ii = 1:end_clip - start_clip + 1, %
+    parfor ii = 1:end_clip - start_clip + 1, %
         
         clip_name = clips{ii + start_clip - 1};
                                 

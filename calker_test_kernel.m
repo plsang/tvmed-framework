@@ -41,6 +41,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
     bg_feats = calker_load_feature(proj_name, exp_name, ker, 'bg');
     train_feats = cell(length(ker.event_ids), 1);
     for ii=1:length(ker.event_ids),
+        event_id = ker.event_ids{ii};
         train_feats{ii} = calker_load_feature(proj_name, exp_name, ker, event_id);
     end
     train_feats = cat(2, train_feats{:});
@@ -79,8 +80,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
     clear train_feats;
     
     for jj = 1:length(ker.event_ids),
-        event_name = ker.event_ids{jj};
-        scores.(event_name) = cat(2, tmp_scores{jj}{:});
+        event_id = ker.event_ids{jj};
+        scores.(event_id) = cat(2, tmp_scores{jj}{:});
     end
         
     %saving scores
