@@ -1,19 +1,18 @@
-function idensetraj_encode_gamma( exp_name, pat_list, start_seg, end_seg )
+function idensetraj_encode_gamma( exp_name, pat_list, seg_length, start_seg, end_seg )
     
     % pat_list == 'ek100ps14 ek10ps14 bg kindred14 medtest14 --count'
+    % seg_length: length of segment, in seconds, if seg_length is large enough, it become video-based
     
     %% special switch
     %% --count: count number of videos, and total duration of videos will be processed (then stop)
     %% --nolog: turn off logging
     %% --check: print videos that have not been processed
     %% --rmsmall: remove small files (possibly contains NaN)
-    
-	% power normalization, which one is the best? alpha = 0.2? 
 	
     % setting
     set_env;
     % exp_name = 'med.pooling';
-	
+        
     if isempty(strfind(pat_list, '--nolog')),
        	configs = set_global_config();
         logfile = sprintf('%s/%s.log', configs.logdir, mfilename);
@@ -101,8 +100,6 @@ function idensetraj_encode_gamma( exp_name, pat_list, start_seg, end_seg )
     if end_seg > length(clips),
         end_seg = length(clips);
     end
-    
-    seg_length = 4;  % seconds
     
     for ss = start_seg:end_seg,
 	
