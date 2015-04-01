@@ -1,4 +1,4 @@
-function idensetraj_encode_gamma( exp_name, pat_list, seg_length, start_seg, end_seg )
+function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
     
     % pat_list == 'ek100ps14 ek10ps14 bg kindred14 medtest14 --count'
     % seg_length: length of segment, in seconds, if seg_length is large enough, it become video-based
@@ -125,7 +125,10 @@ function idensetraj_encode_gamma( exp_name, pat_list, seg_length, start_seg, end
             end
         end
         
-        if bool_run == 0, continue; end
+        if bool_run == 0, 
+            fprintf('Video <%s> already processed \n', video_file);
+            continue; 
+        end
         
    		fprintf(' [%d --> %d --> %d] Extracting & Encoding for [%s], durations %d s...\n', start_seg, ss, end_seg, video_id, durations(ss));
         
@@ -141,9 +144,9 @@ function idensetraj_encode_gamma( exp_name, pat_list, seg_length, start_seg, end
             for jj=1:length(coding_params.(desc)),
                 enc_param = coding_params.(desc){jj};
                 if strcmp(enc_param.enc_type, 'fisher') == 1,
-                    codes.(desc){jj} = single(zeros(enc_param.output_dim + enc_param.stats_dim, num_seg));
+                    codes.(desc){jj} = zeros(enc_param.output_dim + enc_param.stats_dim, num_seg, 'single');
                 else
-                    codes.(desc){jj} = single(zeros(enc_param.output_dim, num_seg));
+                    codes.(desc){jj} = zeros(enc_param.output_dim, num_seg, 'single');
                 end
             end
         end
@@ -153,7 +156,7 @@ function idensetraj_encode_gamma( exp_name, pat_list, seg_length, start_seg, end
             if ff == 1, %% first segment
                 start_frame = 0;
             else
-                start_frame = start_frame - 15; %% seg_length is 15
+                start_frame = start_frame - 15; %% traj length is 15
             end
             
             end_frame = ceil(ff*seg_length*fps);
