@@ -35,10 +35,10 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
             enc_param = coding_params.(desc){jj};
             
             if strcmp(enc_param.enc_type, 'fisher') == 1,
-                codes.(desc){jj} = single(zeros(enc_param.output_dim + enc_param.stats_dim, 1, 'single'));
+                codes.(desc){jj} = zeros(enc_param.output_dim + enc_param.stats_dim, 1, 'single');
                 coding_params.(desc){jj}.fisher_handle = mexFisherEncodeHelperSP('init', enc_param.codebook, fisher_params); 
             else
-                codes.(desc){jj} = single(zeros(enc_param.output_dim, 1, 'single'));
+                codes.(desc){jj} = zeros(enc_param.output_dim, 1, 'single');
             end
         end
     end
@@ -77,7 +77,7 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
                             code_ = kcb_encode(X(s_idx:e_idx, :), enc_param.codebook, enc_param.kdtree);
                             codes.(desc){jj} = codes.(desc){jj} + sum(code_, 2);
                         case 'fisher'
-                            mexFisherEncodeHelperSP('accumulate', enc_param.fisher_handle, single(enc_param.low_proj * X(s_idx:e_idx, :)));
+                            mexFisherEncodeHelperSP('accumulate', enc_param.fisher_handle, enc_param.low_proj * X(s_idx:e_idx, :));
                     end
                 end
             end
@@ -109,7 +109,7 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
                         code_ = kcb_encode(X(s_idx:e_idx, :), enc_param.codebook, enc_param.kdtree);
                         codes.(desc){jj} = codes.(desc){jj} + sum(code_, 2);
                     case 'fisher'
-                        mexFisherEncodeHelperSP('accumulate', enc_param.fisher_handle, single(enc_param.low_proj * X(s_idx:e_idx, :)));
+                        mexFisherEncodeHelperSP('accumulate', enc_param.fisher_handle, enc_param.low_proj * X(s_idx:e_idx, :));
                 end
             end
         end
