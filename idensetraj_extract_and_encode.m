@@ -12,8 +12,7 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
     end
 	
 	full_dim = 396;		
-    BLOCK_SIZE = 10000;                          % initial capacity (& increment size)
-    numel = full_dim * BLOCK_SIZE;
+    BLOCK_SIZE = 50000;                          % initial capacity (& increment size)
     X = zeros(full_dim, BLOCK_SIZE, 'single');
    
     listPtr = 1;
@@ -36,28 +35,62 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
             enc_param = coding_params.(desc){jj};
             
             if strcmp(enc_param.enc_type, 'fisher') == 1,
-                codes.(desc){jj} = zeros(enc_param.output_dim + enc_param.stats_dim, 1, 'single');
+                codes.(desc){jj} = single(zeros(enc_param.output_dim + enc_param.stats_dim, 1, 'single'));
                 coding_params.(desc){jj}.fisher_handle = mexFisherEncodeHelperSP('init', enc_param.codebook, fisher_params); 
             else
-                codes.(desc){jj} = zeros(enc_param.output_dim, 1, 'single');
+                codes.(desc){jj} = single(zeros(enc_param.output_dim, 1, 'single'));
             end
         end
     end
     
-    time_to_break = 0;
     while true,
 
         % Get the next chunk of data from the process
-        Y = popenr(p, numel, 'float');
+        Y = popenr(p, full_dim, 'float');
 
-        if length(Y) ~= numel,
-            ncol = length(Y)/full_dim;
-            X(:, 1:ncol) = reshape(Y, full_dim, ncol);
-            X(:, ncol+1:end) = [];
-            time_to_break = 1;
-        else
-            X(:, :) = reshape(Y, full_dim, BLOCK_SIZE); % note the difference between X = reshape(...) (double return?),and X(:, :) = reshape (float returned)
+        if isempty(Y), break; end;
+
+        if length(Y) ~= full_dim,
+            continue;                                    
         end
+
+        X(:, listPtr) = Y;
+        listPtr = listPtr + 1;  
+
+        if listPtr > BLOCK_SIZE,
+            %%% HOGHOF
+            
+            for ii=1:length(descs),
+                desc = descs{ii};
+                
+                s_idx = coding_params.(desc){1}.start_idx;
+                e_idx = coding_params.(desc){1}.end_idx;
+                
+                for jj=1:length(coding_params.(desc)),
+                    enc_param = coding_params.(desc){jj};
+                    
+                    switch enc_param.enc_type,
+                        case 'hardbow'
+                            code_ = vq_encode(X(s_idx:e_idx, :), enc_param.codebook, enc_param.kdtree);
+                            codes.(desc){jj} = codes.(desc){jj} + sum(code_, 2);
+                        case 'softbow'
+                            code_ = kcb_encode(X(s_idx:e_idx, :), enc_param.codebook, enc_param.kdtree);
+                            codes.(desc){jj} = codes.(desc){jj} + sum(code_, 2);
+                        case 'fisher'
+                            mexFisherEncodeHelperSP('accumulate', enc_param.fisher_handle, single(enc_param.low_proj * X(s_idx:e_idx, :)));
+                    end
+                end
+            end
+            
+            listPtr = 1;
+            X(:,:) = 0;
+        end
+    
+    end
+
+    if (listPtr > 1)
+        
+        X(:, listPtr:end) = [];   % remove unused slots
         
         for ii=1:length(descs),
             desc = descs{ii};
@@ -78,15 +111,9 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
                     case 'fisher'
                         mexFisherEncodeHelperSP('accumulate', enc_param.fisher_handle, single(enc_param.low_proj * X(s_idx:e_idx, :)));
                 end
-                
-                clear code_;
             end
         end
-        
-        clear Y;    
-        X(:,:) = 0;
-        
-        if time_to_break == 1, break; end;
+            
     end
     
     clear X;
