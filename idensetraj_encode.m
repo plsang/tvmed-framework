@@ -25,13 +25,18 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
     video_dir = '/net/per610a/export/das11f/plsang/dataset/MED/LDCDIST-RSZ';
 	fea_dir = '/net/per610a/export/das11f/plsang/trecvidmed/feature';
 	
+    if ~isempty(strfind(pat_list, '12')),
+        %% MED 2012
+        medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med12/medmd_2012.mat';   
+    else
+        %% MED 2014
+        medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
+    end
 	fprintf('Loading metadata...\n');
-	medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
-	
 	load(medmd_file, 'MEDMD'); 
-	metadata = MEDMD.lookup;
+	%metadata = MEDMD.lookup;
 	
-    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14'};
+    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12'};
     
     clips = []; 
     durations = [];
@@ -71,6 +76,13 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
                     end
                     clips_ = clips_(sel_idx);
                     durations_ = durations_(sel_idx);
+                case 'train12'
+                    clips_ = MEDMD.Train.clips;
+                    durations_ = MEDMD.Train.durations;
+                
+                case 'test12'
+                    clips_ = MEDMD.Test.clips;
+                    durations_ = MEDMD.Test.durations;
             end
             
             clips = [clips, clips_];
@@ -105,19 +117,19 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
 	
 		video_id = clips{ss};
         
-		if ~isfield(metadata, video_id) && isempty(strfind(pat_list, '--nolog')),
+		if ~isfield(MEDMD.info, video_id) && isempty(strfind(pat_list, '--nolog')),
 			msg = sprintf('Unknown location of video <%s>\n', video_id);
 			logmsg(logfile, msg);
 			continue;
 		end
 		
-		video_file = fullfile(video_dir, metadata.(video_id));
+		video_file = fullfile(video_dir, MEDMD.info.(video_id).loc);
         
         bool_run = 0;
         for ii=1:length(descs),
             desc = descs{ii};
             for jj=1:length(coding_params.(desc)),
-                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(metadata.(video_id)), video_id);
+                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(MEDMD.info.(video_id).loc), video_id);
                 if ~exist(output_file, 'file'),
                     bool_run = 1;
                     break;
@@ -180,11 +192,11 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
         for ii=1:length(descs),
             desc = descs{ii};
             for jj=1:length(coding_params.(desc)),
-                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(metadata.(video_id)), video_id);
+                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(MEDMD.info.(video_id).loc), video_id);
                 enc_param = coding_params.(desc){jj};
                 if strcmp(enc_param.enc_type, 'fisher') == 1,
                     sge_save(output_file, codes.(desc){jj}(1:enc_param.output_dim, :));
-                    stats_file = sprintf('%s/%s/%s/%s/%s.stats.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(metadata.(video_id)), video_id);
+                    stats_file = sprintf('%s/%s/%s/%s/%s.stats.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(MEDMD.info.(video_id).loc), video_id);
                     sge_save(stats_file, codes.(desc){jj}(enc_param.output_dim+1:end, :));
                 else
                     sge_save(output_file, codes.(desc){jj});
