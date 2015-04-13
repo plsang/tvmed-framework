@@ -1,0 +1,14 @@
+
+%% med.pooling.seg4
+Fisher
+
+LD_PRELOAD="/net/per900a/raid0/plsang/usr.local/lib/libstdc++.so.6" matlab -nodisplay
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat');
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.64.mat');
+
+
+BoW
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4');

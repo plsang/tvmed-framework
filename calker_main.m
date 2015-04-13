@@ -11,9 +11,12 @@ test_pat = 'kindred14';
 eventkit = 'EK100Ex';
 miss_type = 'RN'; % RN: Related example as Negative, RP: Related example as Positive, NR: No related example
 tvtask = 'PS';
-desc = 'hoghof';
+desc = '';  % default is null, be careful because it will influence the feature index in the calker_load_feature function
 start_event = 21;
 end_event = 40;
+enc_type = 'fisher';
+seg_type = 'video'; %% video-based, segment-based
+cbfile = '';
 
 for k=1:2:length(varargin),
 
@@ -43,6 +46,12 @@ for k=1:2:length(varargin),
 			tvtask = arg;
 		case 'desc'
 			desc = arg;
+        case 'enctype'
+			enc_type = arg;
+        case 'segtype'
+			seg_type = arg;
+        case 'cbfile'
+			cbfile = arg;    
         case 's'
             start_event = arg;
         case 'e'
@@ -62,6 +71,21 @@ ker.prms.rtype = miss_type;	% RN: Related example as Negative, RP: Related examp
 
 ker.idt_desc = desc;
 ker.test_pat = test_pat;
+ker.seg_type = seg_type;
+ker.enc_type = enc_type;
+
+fisher_params = struct;
+fisher_params.grad_weights = false;		% "soft" BOW
+fisher_params.grad_means = true;		% 1st order
+fisher_params.grad_variances = true;	% 2nd order
+fisher_params.alpha = single(1.0);		% power normalization (set to 1 to disable)
+fisher_params.pnorm = single(0.0);		% norm regularisation (set to 0 to disable)
+
+ker.fisher_params = fisher_params;
+if exist(cbfile, 'file'),
+    load(cbfile);
+    ker.codebook = codebook;    
+end
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 ker.log_dir = fullfile(calker_exp_dir, 'log');
@@ -74,7 +98,7 @@ load(medmd_file, 'MEDMD');
 ker.MEDMD = MEDMD;
 
 %open pool
-%if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
+if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 %calker_cal_train_kernel(proj_name, exp_name, ker);
 calker_train_kernel(proj_name, exp_name, ker);
 calker_test_kernel(proj_name, exp_name, ker);
@@ -83,4 +107,4 @@ calker_cal_map(proj_name, exp_name, ker);
 %calker_cal_rank(proj_name, exp_name, ker);
 
 %close pool
-%if matlabpool('size') > 0, matlabpool close; end;
+if matlabpool('size') > 0, matlabpool close; end;

@@ -24,7 +24,7 @@ addpath('/net/per900a/raid0/plsang/tools/voicebox');
 addpath('/net/per900a/raid0/plsang/software/rastamat');
 
 % lib gmm-fisher
-addpath('/net/per900a/raid0/plsang/tools/gmm-fisher-kaori/matlab');
+addpath('/net/per610a/export/das11f/plsang/codes/common/gmm-fisher/matlab');
 
 % gist descriptor
 addpath('/net/per900a/raid0/plsang/software/gistdescriptor');

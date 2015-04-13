@@ -63,13 +63,45 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
             continue;
         end
         
-        code = load(segment_path, 'code');
-        code = code.code;
-        
-        if strcmp(ker.idt_desc, 'hoghof'),
-            code = code(1:65536);
-        elseif strcmp(ker.idt_desc, 'mbh'),
-            code = code(65537:end);
+        if strcmp(ker.seg_type, 'video'),  %% video-based
+            code = load(segment_path, 'code');
+            code = code.code;
+            
+            if strcmp(ker.idt_desc, 'hoghof'),
+                code = code(1:65536);
+            elseif strcmp(ker.idt_desc, 'mbh'),
+                code = code(65537:end);
+            end
+        else %% segment-based
+            if strcmp(ker.enc_type, 'fisher'),
+                stats_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
+                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.lookup.(clip_name)), clip_name);
+                stats = load(stats_path, 'code'); 
+
+                if ~isempty(find(any(isnan(stats.code), 1))),
+                    fprintf('Warning: File <%s> contains NaN\n', stats_path);
+                    stats.code = stats.code(:, ~any(isnan(stats.code), 1));
+                end
+                
+                stats = sum(stats.code, 2);
+                
+                cpp_handle = mexFisherEncodeHelperSP('init', ker.codebook, ker.fisher_params);
+                code = mexFisherEncodeHelperSP('getfkstats', cpp_handle, stats);
+                mexFisherEncodeHelperSP('clear', cpp_handle);
+                
+                %% power normalization
+                code = sign(code) .* sqrt(abs(code));    
+                %clear stats;
+                
+            else %bow
+                codes = load(segment_path, 'code');
+                if ~isempty(find(any(isnan(codes.code), 1))),
+                    fprintf('Warning: File <%s> contains NaN\n', segment_path);
+                    codes.code = codes.code(:, ~any(isnan(codes.code), 1));
+                end
+                code = sum(codes.code, 2);
+                %clear codes;
+            end
         end
         
         if size(code, 1) ~= ker.num_dim,
