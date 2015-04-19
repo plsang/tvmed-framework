@@ -33,11 +33,15 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
     else
         switch video_pat,
             case 'bg'
-                clips = ker.MEDMD.EventBG.default.clips;
+                if isfield(ker.MEDMD, 'EventBG'),
+                    clips = ker.MEDMD.EventBG.default.clips;
+                end
             case 'kindred14'
                 clips = ker.MEDMD.RefTest.KINDREDTEST.clips;
             case 'medtest14'
                 clips = ker.MEDMD.RefTest.MEDTEST.clips;
+            case 'med2012'
+                clips = ker.MEDMD.RefTest.CVPR14Test.clips;    
             otherwise
                 error('unknown video pat!!!\n');
         end
@@ -54,7 +58,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
         clip_name = clips{ii + start_clip - 1};
                                 
         segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-                        ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.lookup.(clip_name)), clip_name);
+                        ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
                         
         if ~exist(segment_path),
             msg = sprintf('File [%s] does not exist!\n', segment_path);
@@ -75,7 +79,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
         else %% segment-based
             if strcmp(ker.enc_type, 'fisher'),
                 stats_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
-                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.lookup.(clip_name)), clip_name);
+                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
                 stats = load(stats_path, 'code'); 
 
                 if ~isempty(find(any(isnan(stats.code), 1))),

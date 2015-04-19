@@ -8,6 +8,9 @@ function calker_cal_map(proj_name, exp_name, ker)
         case 'medtest14'
             clips = ker.MEDMD.RefTest.MEDTEST.clips;
             gt_ref = ker.MEDMD.RefTest.MEDTEST.ref;
+        case 'med2012'
+            clips = ker.MEDMD.RefTest.CVPR14Test.clips;
+            gt_ref = ker.MEDMD.RefTest.CVPR14Test.ref;
         otherwise
             error('unknown test video pat!!!\n');
     end

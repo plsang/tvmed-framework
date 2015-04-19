@@ -17,6 +17,7 @@ end_event = 40;
 enc_type = 'fisher';
 seg_type = 'video'; %% video-based, segment-based
 cbfile = '';
+metadb='med2014';
 
 for k=1:2:length(varargin),
 
@@ -52,6 +53,8 @@ for k=1:2:length(varargin),
 			seg_type = arg;
         case 'cbfile'
 			cbfile = arg;    
+        case 'metadb'
+            metadb = arg;
         case 's'
             start_event = arg;
         case 'e'
@@ -73,6 +76,7 @@ ker.idt_desc = desc;
 ker.test_pat = test_pat;
 ker.seg_type = seg_type;
 ker.enc_type = enc_type;
+ker.metadb = metadb;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
@@ -92,15 +96,26 @@ ker.log_dir = fullfile(calker_exp_dir, 'log');
 ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s-%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
 
-fprintf('Loading metadata...\n');
-medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
+if strcmp(ker.metadb, 'med2014'),
+    medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
+elseif strcmp(ker.metadb, 'med2012'),
+    medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med12/medmd_2012_upgraded.mat';
+else
+    error('unknown metadb <%s>\n', ker.metadb);
+end
+fprintf('Loading metadata <%s>...\n', medmd_file);
 load(medmd_file, 'MEDMD'); 
 ker.MEDMD = MEDMD;
 
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 %calker_cal_train_kernel(proj_name, exp_name, ker);
-calker_train_kernel(proj_name, exp_name, ker);
+
+if strcmp(ker.metadb, 'med2012'),
+    calker_train_kernel_ova(proj_name, exp_name, ker);
+else
+    calker_train_kernel(proj_name, exp_name, ker);
+end
 calker_test_kernel(proj_name, exp_name, ker);
 calker_cal_map(proj_name, exp_name, ker);
 %end
