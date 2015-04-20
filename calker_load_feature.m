@@ -82,7 +82,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
                     ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
                 stats = load(stats_path, 'code'); 
 
-                if ~isempty(find(any(isnan(stats.code), 1))),
+                if any(any(isnan(stats.code), 1)),
                     fprintf('Warning: File <%s> contains NaN\n', stats_path);
                     stats.code = stats.code(:, ~any(isnan(stats.code), 1));
                 end

@@ -29,4 +29,6 @@ addpath('/net/per610a/export/das11f/plsang/codes/common/gmm-fisher/matlab');
 % gist descriptor
 addpath('/net/per900a/raid0/plsang/software/gistdescriptor');
 
+addpath('/net/per610a/export/das11f/plsang/codes/tvmed-framework-v2.0');
+
 %featpipem_addpaths

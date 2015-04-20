@@ -18,6 +18,7 @@ enc_type = 'fisher';
 seg_type = 'video'; %% video-based, segment-based
 cbfile = '';
 metadb='med2014';
+maxneg=Inf;
 
 for k=1:2:length(varargin),
 
@@ -55,6 +56,8 @@ for k=1:2:length(varargin),
 			cbfile = arg;    
         case 'metadb'
             metadb = arg;
+        case 'maxneg'
+            maxneg = arg;    
         case 's'
             start_event = arg;
         case 'e'
@@ -77,6 +80,7 @@ ker.test_pat = test_pat;
 ker.seg_type = seg_type;
 ker.enc_type = enc_type;
 ker.metadb = metadb;
+ker.maxneg = maxneg;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
@@ -89,6 +93,13 @@ ker.fisher_params = fisher_params;
 if exist(cbfile, 'file'),
     load(cbfile);
     ker.codebook = codebook;    
+else    
+    [~, param_dict] = get_coding_params();
+    feat_key = strrep(feature_ext, '.', '');
+    if ~isfield(param_dict, feat_key),
+        error('unknown feature <%s> \n', feature_ext);
+    end
+    ker.codebook = param_dict.(feat_key).codebook;
 end
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
