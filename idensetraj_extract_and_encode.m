@@ -1,6 +1,6 @@
 function codes = idensetraj_extract_and_encode( video_file, start_frame, end_frame, coding_params )
 
-    idensetraj = 'LD_PRELOAD=/net/per900a/raid0/plsang/usr.local/lib/libstdc++.so /net/per610a/export/das11f/plsang/codes/opensource/improved_trajectory_release/release/DenseTrackStab_HOGHOFMBH';
+    idensetraj = 'LD_PRELOAD=/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so.6 /net/per610a/export/das11f/plsang/codes/opensource/improved_trajectory_release/release/DenseTrackStab_HOGHOFMBH';
     
     cmd = [idensetraj, ' ', video_file, ' -S ', num2str(start_frame), ' -E ', num2str(end_frame)];
 
