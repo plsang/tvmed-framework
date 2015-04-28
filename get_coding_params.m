@@ -1,4 +1,4 @@
-function coding_params = get_coding_params()
+function [coding_params, param_dict] = get_coding_params()
     %%% HOGHOF
     coding_params.hoghof = {};
     coding_param = struct;
@@ -96,11 +96,12 @@ function coding_params = get_coding_params()
     coding_params.mbh{end+1} = coding_param;
     
     %%% post processing, add output dimension & stats_dimnesion (for fisher vector)
-    coding_params = post_process(coding_params);
+    [coding_params, param_dict] = post_process(coding_params);
 end
 
-function coding_params = post_process(coding_params)
+function [coding_params, param_dict] = post_process(coding_params)
     descs = fieldnames(coding_params);
+    param_dict = struct;
     for ii=1:length(descs),
         desc = descs{ii};
         for jj=1:length(coding_params.(desc)),
@@ -124,6 +125,8 @@ function coding_params = post_process(coding_params)
                 coding_params.(desc){jj}.end_idx = 396;
             end
             
+            key = strrep(coding_params.(desc){jj}.feature_pat, '.', '');
+            param_dict.(key) = coding_param;
         end
     end
 end
