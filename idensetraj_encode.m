@@ -113,23 +113,27 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
         end_seg = length(clips);
     end
     
+    clear clips_ durations_ durations;
+    info = MEDMD.info;
+    clear MEDMD;
+    
     for ss = start_seg:end_seg,
 	
 		video_id = clips{ss};
         
-		if ~isfield(MEDMD.info, video_id) && isempty(strfind(pat_list, '--nolog')),
+		if ~isfield(info, video_id) && isempty(strfind(pat_list, '--nolog')),
 			msg = sprintf('Unknown location of video <%s>\n', video_id);
 			logmsg(logfile, msg);
 			continue;
 		end
 		
-		video_file = fullfile(video_dir, MEDMD.info.(video_id).loc);
+		video_file = fullfile(video_dir, info.(video_id).loc);
         
         bool_run = 0;
         for ii=1:length(descs),
             desc = descs{ii};
             for jj=1:length(coding_params.(desc)),
-                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(MEDMD.info.(video_id).loc), video_id);
+                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(info.(video_id).loc), video_id);
                 if ~exist(output_file, 'file'),
                     bool_run = 1;
                     break;
@@ -142,10 +146,10 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
             continue; 
         end
         
-   		fprintf(' [%d --> %d --> %d] Extracting & Encoding for [%s], durations %d s...\n', start_seg, ss, end_seg, video_id, durations(ss));
+   		fprintf(' [%d --> %d --> %d] Extracting & Encoding for [%s], durations %f s...\n', start_seg, ss, end_seg, video_id, info.(video_id).duration);
         
-        fps = MEDMD.info.(video_id).fps;
-        duration = MEDMD.info.(video_id).duration;
+        fps = info.(video_id).fps;
+        duration = info.(video_id).duration;
         num_seg = ceil(duration/seg_length);
         max_frame = ceil(duration*fps);
         
@@ -192,11 +196,11 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
         for ii=1:length(descs),
             desc = descs{ii};
             for jj=1:length(coding_params.(desc)),
-                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(MEDMD.info.(video_id).loc), video_id);
+                output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(info.(video_id).loc), video_id);
                 enc_param = coding_params.(desc){jj};
                 if strcmp(enc_param.enc_type, 'fisher') == 1,
                     sge_save(output_file, codes.(desc){jj}(1:enc_param.output_dim, :));
-                    stats_file = sprintf('%s/%s/%s/%s/%s.stats.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(MEDMD.info.(video_id).loc), video_id);
+                    stats_file = sprintf('%s/%s/%s/%s/%s.stats.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(info.(video_id).loc), video_id);
                     sge_save(stats_file, codes.(desc){jj}(enc_param.output_dim+1:end, :));
                 else
                     sge_save(output_file, codes.(desc){jj});
