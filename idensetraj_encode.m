@@ -36,7 +36,7 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
 	load(medmd_file, 'MEDMD'); 
 	%metadata = MEDMD.lookup;
 	
-    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12'};
+    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14'};
     
     clips = []; 
     durations = [];
@@ -83,6 +83,16 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
                 case 'test12'
                     clips_ = MEDMD.Test.clips;
                     durations_ = MEDMD.Test.durations;
+                    
+                case 'train14'
+                    clips_ = MEDMD.videos;
+                    durations_ = zeros(1, length(clips_));
+                    for ii=1:length(clips_),
+                        clip_id = clips_{ii};
+                        if isfield(MEDMD.info, clip_id),
+                            durations_(ii) = MEDMD.info.(clip_id).duration;
+                        end
+                    end
             end
             
             clips = [clips, clips_];
