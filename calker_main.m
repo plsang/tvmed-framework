@@ -96,10 +96,10 @@ if exist(cbfile, 'file'),
 else    
     [~, param_dict] = get_coding_params();
     feat_key = strrep(feature_ext, '.', '');
-    if ~isfield(param_dict, feat_key),
-        error('unknown feature <%s> \n', feature_ext);
+    if isfield(param_dict, feat_key),
+        ker.codebook = param_dict.(feat_key).codebook;
     end
-    ker.codebook = param_dict.(feat_key).codebook;
+    
 end
 
 calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
