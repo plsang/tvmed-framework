@@ -21,7 +21,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
     models = struct;
     scores = struct;
     
-    num_part = ceil(n_clip/ker.chunk_size);
+    num_part = n_clip;  %% test at each video
     
     for jj = 1:length(ker.event_ids),
         event_id = ker.event_ids{jj};
@@ -40,14 +40,17 @@ function calker_test_kernel(proj_name, exp_name, ker)
     
     %% loading devel hists
     fprintf('Loading training features...\n');
-    bg_feats = calker_load_feature(proj_name, exp_name, ker, 'bg');
+    %bg_feats = calker_load_feature_segment(proj_name, exp_name, ker, 'bg');
     train_feats = cell(length(ker.event_ids), 1);
     for ii=1:length(ker.event_ids),
         event_id = ker.event_ids{ii};
-        train_feats{ii} = calker_load_feature(proj_name, exp_name, ker, event_id);
+        train_feats{ii} = calker_load_feature_segment(proj_name, exp_name, ker, event_id);
     end
+	
+	train_feats = cat(1, train_feats{:});  %% 3878 x 1
     train_feats = cat(2, train_feats{:});
-    train_feats = [train_feats, bg_feats];
+	
+    %train_feats = [train_feats, bg_feats];
     
     cols = fix(linspace(1, n_clip + 1, num_part+1));
     
@@ -55,14 +58,14 @@ function calker_test_kernel(proj_name, exp_name, ker)
         
         fprintf('-- [%d/%d] -- Testing...\n', kk, num_part);
         
-        test_feats = calker_load_feature(proj_name, exp_name, ker, ker.test_pat, 'test', cols(kk), cols(kk+1)-1);
-        base = train_feats'*test_feats;
+        test_feats = calker_load_feature_segment(proj_name, exp_name, ker, ker.test_pat, 'test', cols(kk), cols(kk+1)-1);
+		test_feats = cat(2, test_feats{:});
         
         parfor jj = 1:length(ker.event_ids),
         
             event_id = ker.event_ids{jj};
             
-            test_base = base(models.(event_id).model.train_idx, :);
+            test_base = train_feats(:, models.(event_id).model.train_idx)'*test_feats;
             
             [N, Nt] = size(test_base); % Nt = # test ; % N  = # train
             
@@ -73,7 +76,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
             [y, acc, dec] = svmpredict(zeros(Nt, 1), [(1:Nt)' test_base'], models.(event_id).model.libsvm_cl, '-b 1 -q') ;		
             sub_scores = dec(:, 1)';
             
-            tmp_scores{jj}{kk} = sub_scores;
+            tmp_scores{jj}{kk} = max(sub_scores); % select max score
         end
         
         clear base test_feats;

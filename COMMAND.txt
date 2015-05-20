@@ -12,3 +12,33 @@ BoW
 
 calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4');
 calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4');
+
+
+%% segment-based overlapping non-overlapping
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen256', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen128', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen64', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen32', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen16', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+
+%% segment-based overlapping 50%
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen256.ov50', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen128.ov50', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen64.ov50', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen32.ov50', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen16.ov50', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
+
+calker_main('trecvidmed', 'segments', 'idensetraj.mbh.hardbow.cb4000.seglen8.ov50', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25, 'maxneg', 30);
