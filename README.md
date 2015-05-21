@@ -32,3 +32,4 @@ kaori-secode-calker-v8.0:  copied from v7.2, start testing different pooling tec
 note: be careful to specify desc option in main function. 
 it only used to get feature from the concatenated vector
 
+-- don't produce prbb output
