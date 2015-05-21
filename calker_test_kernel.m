@@ -11,15 +11,18 @@ function calker_test_kernel(proj_name, exp_name, ker)
             error('unknown video pat!!!\n');
     end
     	
-	scorePath = sprintf('%s/scores/%s/%s-%s/%s.%s.scores.mat', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type);
+	scoreSumPath = sprintf('%s/scores/%s/%s-%s/%s.%s.sum.scores.mat', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type);
+	
+	scoreMaxPath = sprintf('%s/scores/%s/%s-%s/%s.%s.max.scores.mat', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type);
     
-	if exist(scorePath, 'file'),
+	if exist(scoreSumPath, 'file') &&  exist(scoreMaxPath, 'file'),
 		fprintf('File already exist!!\n');
         return;
 	end
         
     models = struct;
-    scores = struct;
+    scores_sum = struct;
+	scores_max = struct;
     
     num_part = n_clip;  %% test at each video
     
@@ -34,8 +37,10 @@ function calker_test_kernel(proj_name, exp_name, ker)
         
         fprintf('Loading model ''%s''...\n', event_id);
         models.(event_id) = load(modelPath, 'model');
-        tmp_scores{jj} = cell(num_part, 1);
-        scores.(event_id) = [];
+        tmp_scores_sum{jj} = cell(num_part, 1);
+		tmp_scores_max{jj} = cell(num_part, 1);
+        scores_sum.(event_id) = [];
+		scores_max.(event_id) = [];
     end
     
     %% loading devel hists
@@ -76,11 +81,10 @@ function calker_test_kernel(proj_name, exp_name, ker)
             test_base = train_feats_(:, models.(event_id).model.svind)'*test_feats;
             sub_scores = models.(event_id).model.alphay' * test_base + models.(event_id).model.b;
             
-			if isfield(ker, 'testagg') && strcmp(ker.testagg, 'sum'),
-				tmp_scores{jj}{kk} = sum(sub_scores); % select max score
-			else
-				tmp_scores{jj}{kk} = max(sub_scores); % select max score
-			end
+			
+			tmp_scores_sum{jj}{kk} = mean(sub_scores); % select max score
+			tmp_scores_max{jj}{kk} = max(sub_scores); % select max score
+			
         end
         
         clear test_feats;
@@ -90,11 +94,18 @@ function calker_test_kernel(proj_name, exp_name, ker)
     
     for jj = 1:length(ker.event_ids),
         event_id = ker.event_ids{jj};
-        scores.(event_id) = cat(2, tmp_scores{jj}{:});
+        scores_sum.(event_id) = cat(2, tmp_scores_sum{jj}{:});
+		scores_max.(event_id) = cat(2, tmp_scores_max{jj}{:});
     end
         
     %saving scores
-    fprintf('\tSaving scores ''%s''.\n', scorePath) ;
-    ssave(scorePath, 'scores') ;
+	
+    fprintf('\tSaving scores ''%s''.\n', scoreSumPath) ;
+	scores = scores_sum;
+    ssave(scoreSumPath, 'scores') ;
+	
+	scores = scores_max;
+	fprintf('\tSaving scores ''%s''.\n', scoreMaxPath) ;
+    ssave(scoreMaxPath, 'scores') ;
 	
 end

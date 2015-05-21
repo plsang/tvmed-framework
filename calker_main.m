@@ -131,7 +131,12 @@ else
     calker_train_kernel(proj_name, exp_name, ker);
 end
 calker_test_kernel(proj_name, exp_name, ker);
+
+ker.testagg = 'sum';
 calker_cal_map(proj_name, exp_name, ker);
+ker.testagg = 'max';
+calker_cal_map(proj_name, exp_name, ker);
+
 %end
 %calker_cal_rank(proj_name, exp_name, ker);
 

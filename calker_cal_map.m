@@ -17,8 +17,8 @@ function calker_cal_map(proj_name, exp_name, ker)
     
 	
 	fprintf('Scoring for feature %s...\n', ker.name);
-	scorePath = sprintf('%s/scores/%s/%s-%s/%s.%s.scores.mat', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type);
-    mapPath = sprintf('%s/scores/%s/%s-%s/%s.%s.map.csv', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type);
+	scorePath = sprintf('%s/scores/%s/%s-%s/%s.%s.%s.scores.mat', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, ker.testagg);
+    mapPath = sprintf('%s/scores/%s/%s-%s/%s.%s.%s.map.csv', ker.calker_exp_dir, ker.test_pat, ker.prms.eventkit, ker.prms.rtype, ker.name, ker.type, ker.testagg);
     
 	if ~checkFile(scorePath), 
 		error('File not found!! %s \n', scorePath);
