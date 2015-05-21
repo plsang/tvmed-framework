@@ -22,7 +22,6 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
         neg_idx = setdiff(all_idx, [start_idx:end_idx]);
         max_neg_video = ker.maxneg * (length(ker.event_ids) - 1);
         if length(neg_idx) > max_neg_video,
-            fprintf('using ...\n');
             rand_idx = randperm(length(neg_idx));
             sel_idx = neg_idx(rand_idx(1:max_neg_video));
             labels(ii, sel_idx) = -ones(1, length(sel_idx));

@@ -19,6 +19,7 @@ seg_type = 'video'; %% video-based, segment-based
 cbfile = '';
 metadb='med2014';
 maxneg=Inf;
+testagg = 'max'; %% aggregation method for testing at video level
 
 for k=1:2:length(varargin),
 
@@ -62,7 +63,8 @@ for k=1:2:length(varargin),
             start_event = arg;
         case 'e'
             end_event = arg;
-    
+		case 'testagg'
+			testagg = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -81,6 +83,7 @@ ker.seg_type = seg_type;
 ker.enc_type = enc_type;
 ker.metadb = metadb;
 ker.maxneg = maxneg;
+ker.testagg = testagg;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW

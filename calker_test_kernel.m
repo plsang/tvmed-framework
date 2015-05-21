@@ -76,7 +76,11 @@ function calker_test_kernel(proj_name, exp_name, ker)
             test_base = train_feats_(:, models.(event_id).model.svind)'*test_feats;
             sub_scores = models.(event_id).model.alphay' * test_base + models.(event_id).model.b;
             
-            tmp_scores{jj}{kk} = max(sub_scores); % select max score
+			if isfield(ker, 'testagg') && strcmp(ker.testagg, 'sum'),
+				tmp_scores{jj}{kk} = sum(sub_scores); % select max score
+			else
+				tmp_scores{jj}{kk} = max(sub_scores); % select max score
+			end
         end
         
         clear test_feats;
