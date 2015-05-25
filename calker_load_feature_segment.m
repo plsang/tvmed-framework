@@ -1,5 +1,5 @@
 
-function [feats, labels] = calker_load_feature_segment(proj_name, exp_name, ker, video_pat, mode, start_clip, end_clip)
+function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_name, ker, video_pat, mode, start_clip, end_clip)
 
     %% video_pat: bg, kindred14, medtest14, or an event id
     %% mode: train (missing feature will be removed), other modes (test): missing features will be all-zero vectors
@@ -34,6 +34,8 @@ function [feats, labels] = calker_load_feature_segment(proj_name, exp_name, ker,
                 clips = ker.MEDMD.RefTest.MEDTEST.clips;
             case 'med2012'
                 clips = ker.MEDMD.RefTest.CVPR14Test.clips;    
+			case 'med11test'
+				clips = ker.MEDMD.RefTest.MED11TEST.clips;    
             otherwise
                 error('unknown video pat!!!\n');
         end
@@ -43,14 +45,19 @@ function [feats, labels] = calker_load_feature_segment(proj_name, exp_name, ker,
     if ~exist('end_clip', 'var'), end_clip = length(clips); end;
     
     feats = cell(end_clip - start_clip + 1, 1);
+	num_inst = ones(end_clip - start_clip + 1, 1);
 	labels = cell(end_clip - start_clip + 1, 1);
 	
     selected_label = zeros(1, end_clip - start_clip + 1);
 
     for ii = 1:end_clip - start_clip + 1, %
         
+		feats{ii} = zeros(ker.num_dim, 1);
+		
         clip_name = clips{ii + start_clip - 1};
-                                
+        
+		if ~isfield(ker.MEDMD.info, clip_name), continue; end;				
+		
         segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
                         ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
                         
@@ -84,6 +91,8 @@ function [feats, labels] = calker_load_feature_segment(proj_name, exp_name, ker,
         end
         
         feats{ii} = code;
+		num_inst(ii) = size(code, 2);
+		
 		if (any(ismember(ker.MEDMD.EventKit.(ker.prms.eventkit).eventids, video_pat))), 
 			labels{ii} = ones(1, size(code, 2));
 		end

@@ -7,6 +7,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
             n_clip = length(ker.MEDMD.RefTest.MEDTEST.clips);
         case 'med2012'
             n_clip = length(ker.MEDMD.RefTest.CVPR14Test.clips); 
+		case 'med11test'
+            n_clip = length(ker.MEDMD.RefTest.MED11TEST.clips); 	
         otherwise
             error('unknown video pat!!!\n');
     end
@@ -24,7 +26,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
     scores_sum = struct;
 	scores_max = struct;
     
-    num_part = n_clip;  %% test at each video
+    %num_part = n_clip;  %% test at each video
+	num_part = ceil(n_clip/ker.chunk_size);
     
     for jj = 1:length(ker.event_ids),
         event_id = ker.event_ids{jj};
@@ -63,8 +66,12 @@ function calker_test_kernel(proj_name, exp_name, ker)
         
         fprintf('-- [%d/%d] -- Testing...\n', kk, num_part);
         
-        test_feats = calker_load_feature_segment(proj_name, exp_name, ker, ker.test_pat, 'test', cols(kk), cols(kk+1)-1);
+        [test_feats, ~, num_inst] = calker_load_feature_segment(proj_name, exp_name, ker, ker.test_pat, 'test', cols(kk), cols(kk+1)-1);
 		test_feats = cat(2, test_feats{:});
+		
+		if size(test_feats, 2) ~= sum(num_inst),
+			error('Number of instance mismatch: size(test_feats, 2)= %d, while sum(num_inst) = %d \n', size(test_feats, 2), sum(num_inst));
+		end
         
         for jj = 1:length(ker.event_ids),
         
@@ -77,14 +84,24 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			
 			
             %only test at svind
+			
 			train_feats_ = train_feats(:, models.(event_id).model.train_idx);
-            test_base = train_feats_(:, models.(event_id).model.svind)'*test_feats;
-            sub_scores = models.(event_id).model.alphay' * test_base + models.(event_id).model.b;
-            
+			test_base = train_feats_(:, models.(event_id).model.svind)'*test_feats;
+			sub_scores = models.(event_id).model.alphay' * test_base + models.(event_id).model.b;
 			
-			tmp_scores_sum{jj}{kk} = mean(sub_scores); % select max score
-			tmp_scores_max{jj}{kk} = max(sub_scores); % select max score
+			video_sum_scores = zeros(1, cols(kk+1)-cols(kk));
+			video_max_scores = zeros(1, cols(kk+1)-cols(kk));
+			start_idx = 1;
+			for cc = 1:(cols(kk+1)-cols(kk)),
+				end_idx = start_idx + num_inst(cc) - 1;
+				video_sum_scores(cc) = mean(sub_scores(start_idx:end_idx));
+				video_max_scores(cc) = max(sub_scores(start_idx:end_idx));
+				start_idx = start_idx + num_inst(cc);
+			end			
 			
+			tmp_scores_sum{jj}{kk} = video_sum_scores; % select max score
+			tmp_scores_max{jj}{kk} = video_max_scores; % select max score
+
         end
         
         clear test_feats;

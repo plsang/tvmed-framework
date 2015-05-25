@@ -42,6 +42,8 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
                 clips = ker.MEDMD.RefTest.MEDTEST.clips;
             case 'med2012'
                 clips = ker.MEDMD.RefTest.CVPR14Test.clips;    
+			case 'med11test'
+				clips = ker.MEDMD.RefTest.MED11TEST.clips;    
             otherwise
                 error('unknown video pat!!!\n');
         end
@@ -56,7 +58,9 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
     parfor ii = 1:end_clip - start_clip + 1, %
         
         clip_name = clips{ii + start_clip - 1};
-                                
+        
+		if ~isfield(ker.MEDMD.info, clip_name), continue; end;		
+	
         segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
                         ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
                         
