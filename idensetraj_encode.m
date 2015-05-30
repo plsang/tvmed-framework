@@ -36,7 +36,7 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
 	load(medmd_file, 'MEDMD'); 
 	%metadata = MEDMD.lookup;
 	
-    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14'};
+    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14', 'med11patch'};
     
     clips = []; 
     durations = [];
@@ -93,6 +93,13 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
                             durations_(ii) = MEDMD.info.(clip_id).duration;
                         end
                     end
+                case 'med11patch'
+                    patch_file = '/net/per610a/export/das11f/plsang/trecvidmed11/metadata/med2011_med.pooling.seg4_patch.txt';
+                    fh = fopen(patch_file, 'r');
+                    infos = textscan(fh, '%s %s');
+                    clips_ = infos{1};
+                    durations_ = zeros(1, length(clips_));
+                    fclose(fh);
             end
             
             clips = [clips, clips_];
