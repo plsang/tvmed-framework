@@ -1,4 +1,4 @@
-function calker_train_kernel_ova(proj_name, exp_name, ker)
+function ker = calker_train_kernel_ova(proj_name, exp_name, ker)
 
     labels_ = cell(length(ker.event_ids), 1);
     train_feats = cell(length(ker.event_ids), 1);
@@ -33,7 +33,22 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
     end
         
     fprintf('\tCalculating linear kernel %s ... \n', ker.feat) ;	
-    train_kernel = train_feats'*train_feats;
+	
+	if strcmp(ker.type, 'linear'),
+		train_kernel = train_feats'*train_feats;
+	elseif strcmp(ker.type, 'echi2'),
+		%train_kernel = cal
+		matrix = vl_alldist2(train_feats, 'chi2');
+		mu     = 1 ./ mean(matrix(:)) ;
+		train_kernel = exp(- mu * matrix) ;
+		
+		ker.mu = mu;
+		clear matrix;
+	else
+		error('unknown ker type');
+	end
+	
+    
     
     parfor kk = 1:length(ker.event_ids),
     
@@ -59,14 +74,24 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
         
         fprintf('SVM learning with predefined kernel matrix...\n');
     
-        model = calker_svmkernellearn(base, labels_kk,   ...
+		if ker.cross == 1,
+			model = calker_svmkernellearn(base, labels_kk,   ...
+                           'type', 'C',        ...
+                           ...%'C', 1,            ...
+                           'verbosity', 0,     ...
+                           ...%'rbf', 1,           ...
+                           'crossvalidation', 5, ...
+                           'weights', [+1 posWeight ; -1 1]') ;
+		else
+			model = calker_svmkernellearn(base, labels_kk,   ...
                            'type', 'C',        ...
                            'C', 1,            ...
                            'verbosity', 0,     ...
                            ...%'rbf', 1,           ...
-                           ...'crossvalidation', 5, ...
+                           ...%'crossvalidation', 5, ...
                            'weights', [+1 posWeight ; -1 1]') ;
-                           
+        end
+		
 		model = svmflip(model, labels_kk);
 		
 		model.train_idx = train_idx;

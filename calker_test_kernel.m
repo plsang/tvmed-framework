@@ -7,6 +7,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
             n_clip = length(ker.MEDMD.RefTest.MEDTEST.clips);
         case 'med2012'
             n_clip = length(ker.MEDMD.RefTest.CVPR14Test.clips); 
+		case 'med11test'
+            n_clip = length(ker.MEDMD.RefTest.MED11TEST.clips); 	
         otherwise
             error('unknown video pat!!!\n');
     end
@@ -56,7 +58,17 @@ function calker_test_kernel(proj_name, exp_name, ker)
         fprintf('-- [%d/%d] -- Testing...\n', kk, num_part);
         
         test_feats = calker_load_feature(proj_name, exp_name, ker, ker.test_pat, 'test', cols(kk), cols(kk+1)-1);
-        base = train_feats'*test_feats;
+		
+		if strcmp(ker.type, 'linear'),
+			base = train_feats'*test_feats;
+		elseif strcmp(ker.type, 'echi2'),
+			%train_kernel = cal
+			matrix = vl_alldist2(train_feats, test_feats, 'chi2');
+			base = exp(- ker.mu * matrix);
+			clear matrix;
+		else
+			error('unknown ker type');
+		end
         
         parfor jj = 1:length(ker.event_ids),
         

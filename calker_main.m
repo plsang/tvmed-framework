@@ -111,9 +111,12 @@ if strcmp(ker.metadb, 'med2014'),
     medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
 elseif strcmp(ker.metadb, 'med2012'),
     medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med12/medmd_2012_upgraded.mat';
+elseif strcmp(ker.metadb, 'med2011'),
+	medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med11/medmd_2011.mat';
 else
     error('unknown metadb <%s>\n', ker.metadb);
 end
+
 fprintf('Loading metadata <%s>...\n', medmd_file);
 load(medmd_file, 'MEDMD'); 
 ker.MEDMD = MEDMD;
@@ -122,8 +125,8 @@ ker.MEDMD = MEDMD;
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 %calker_cal_train_kernel(proj_name, exp_name, ker);
 
-if strcmp(ker.metadb, 'med2012'),
-    calker_train_kernel_ova(proj_name, exp_name, ker);
+if strcmp(ker.metadb, 'med2012') || strcmp(ker.metadb, 'med2011'),
+    ker = calker_train_kernel_ova(proj_name, exp_name, ker);
 else
     calker_train_kernel(proj_name, exp_name, ker);
 end
