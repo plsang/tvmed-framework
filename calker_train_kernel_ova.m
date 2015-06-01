@@ -32,10 +32,19 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
         start_idx = start_idx + length(labels_{ii});    
     end
         
-    fprintf('\tCalculating linear kernel %s ... \n', ker.feat) ;
+    fprintf('\tCalculating training kernel %s ... \n', ker.feat) ;
 
 	train_feats	= cat(2, train_feats{:});
     
+	if strcmp(ker.type, 'linear'),
+		train_kernel = train_feats'*train_feats;	% selected features
+	elseif strcmp(ker.type, 'echi2'),
+		%train_kernel = cal
+		train_kernel = vl_alldist2(train_feats, 'chi2');
+	else
+		error('unknown ker type');
+	end
+		
     for kk = 1:length(ker.event_ids),
     
 		event_id = ker.event_ids{kk};
@@ -67,19 +76,14 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
 		seg_labels_kk = seg_labels_kk(train_idx);
 		
 		posWeight = ceil(length(find(seg_labels_kk == -1))/length(find(seg_labels_kk == 1)));
-		
-        %base = train_feats(:,train_idx)'*train_feats(:,train_idx);	% selected features
-        
-		fprintf('\tCalculating kernel %s, type %s ... \n', ker.feat, ker.type) ;	
 	
 		if strcmp(ker.type, 'linear'),
-			base = train_feats(:,train_idx)'*train_feats(:,train_idx);	% selected features
+			base = train_kernel(train_idx, train_idx); 
 		elseif strcmp(ker.type, 'echi2'),
 			%train_kernel = cal
-			matrix = vl_alldist2(train_feats(:,train_idx), 'chi2');
+			matrix = train_kernel(train_idx, train_idx); 
 			mu     = 1 ./ mean(matrix(:)) ;
-			base = exp(- mu * matrix) ;
-			
+			base = exp(- mu * matrix);
 			clear matrix;
 		else
 			error('unknown ker type');
