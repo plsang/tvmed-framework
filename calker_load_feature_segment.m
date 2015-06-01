@@ -58,18 +58,69 @@ function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_
         
 		if ~isfield(ker.MEDMD.info, clip_name), continue; end;				
 		
-        segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-                        ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
-                        
-        if ~exist(segment_path),
-            msg = sprintf('File [%s] does not exist!\n', segment_path);
-            fprintf(msg);
-            logmsg(logfile, msg);
-            continue;
-        end
-        
-        
-		load(segment_path, 'code');
+		if strcmp(ker.seg_type, 'video'),
+			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+							ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
+							
+			if ~exist(segment_path),
+				msg = sprintf('File [%s] does not exist!\n', segment_path);
+				fprintf(msg);
+				logmsg(logfile, msg);
+				continue;
+			end
+			
+			load(segment_path, 'code');
+		
+		else
+			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
+                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
+            
+			stats = load(segment_path, 'code'); 
+			%% load from med.pooling.seg4
+			total_unit_seg = size(stats.code, 2);	
+			
+			if ker.overlapping == 0, % non overlapping
+				idxs = 1:ker.num_agg:total_unit_seg;
+			else % overlapping, default 50%
+				idxs = 1:(ker.num_agg/2):total_unit_seg; 
+			end
+			
+			code = zeros(feat_dim, length(idxs));
+			remove_last_seg = 0;
+			for jj=1:length(idxs),
+				start_idx = idxs(jj);
+				end_idx = start_idx + num_agg - 1;
+				if end_idx > total_unit_seg, end_idx = total_unit_seg; end;
+				stat_ = stats.code(:, start_idx:end_idx);
+				
+				if any(any(isnan(stat_), 1)),
+					stat_ = stat_(:, ~any(isnan(stat_), 1));
+				end
+				
+				if isempty(stat_) && end_idx == total_unit_seg,
+					remove_last_seg = 1;
+					break;
+				end
+				
+				stat_ = sum(stat_, 2);
+                
+                cpp_handle = mexFisherEncodeHelperSP('init', ker.codebook, ker.fisher_params);
+                code_ = mexFisherEncodeHelperSP('getfkstats', cpp_handle, stat_);
+                mexFisherEncodeHelperSP('clear', cpp_handle);
+                
+                %% power normalization
+                code_ = sign(code_) .* sqrt(abs(code_));    
+                %clear stats;
+				
+				code(:, jj) = code_;
+				clear code_;
+			end
+			
+			if remove_last_seg,
+				fprintf('Last seg of video <%s> contains NaN. Removing...\n', feat_pat);
+				code(:, end) = [];
+			end
+		end
         
 		if ~isempty(find(any(isnan(code), 1))),
 			fprintf('Warning: File <%s> contains NaN\n', segment_path);

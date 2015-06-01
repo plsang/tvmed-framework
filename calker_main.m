@@ -20,6 +20,8 @@ cbfile = '';
 metadb='med2014';
 maxneg=Inf;
 testagg = 'max'; %% aggregation method for testing at video level
+num_agg = 16;
+overlapping = 0;
 
 for k=1:2:length(varargin),
 
@@ -65,6 +67,10 @@ for k=1:2:length(varargin),
             end_event = arg;
 		case 'testagg'
 			testagg = arg;
+		case 'nagg'
+			num_agg = arg;
+		case 'ov'
+			overlapping = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -84,6 +90,8 @@ ker.enc_type = enc_type;
 ker.metadb = metadb;
 ker.maxneg = maxneg;
 ker.testagg = testagg;
+ker.num_agg = num_agg;
+ker.overlapping = overlapping;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW

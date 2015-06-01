@@ -73,6 +73,16 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			error('Number of instance mismatch: size(test_feats, 2)= %d, while sum(num_inst) = %d \n', size(test_feats, 2), sum(num_inst));
 		end
         
+		if strcmp(ker.type, 'linear'),
+			base = train_feats'*test_feats;
+		elseif strcmp(ker.type, 'echi2'),
+			%train_kernel = cal
+			matrix = vl_alldist2(train_feats, test_feats, 'chi2');
+		else
+			error('unknown ker type');
+		end
+
+		
         for jj = 1:length(ker.event_ids),
         
             event_id = ker.event_ids{jj};
@@ -86,7 +96,21 @@ function calker_test_kernel(proj_name, exp_name, ker)
             %only test at svind
 			
 			train_feats_ = train_feats(:, models.(event_id).model.train_idx);
-			test_base = train_feats_(:, models.(event_id).model.svind)'*test_feats;
+			if strcmp(ker.type, 'linear'),
+				%test_base = train_feats_(:, models.(event_id).model.svind)'*test_feats;
+				base_ = base(models.(event_id).model.train_idx, :);
+				test_base = base_(models.(event_id).model.svind, :);
+				clear base_;
+			elseif strcmp(ker.type, 'echi2'),
+				%train_kernel = cal
+				%matrix = vl_alldist2(train_feats_(:, models.(event_id).model.svind), test_feats, 'chi2');
+				matrix_ = matrix(models.(event_id).model.train_idx, :);
+				test_base = exp(- models.(event_id).model.mu * matrix_(models.(event_id).model.svind, :));
+				clear matrix_;
+			else
+				error('unknown ker type');
+			end
+			
 			sub_scores = models.(event_id).model.alphay' * test_base + models.(event_id).model.b;
 			
 			video_sum_scores = zeros(1, cols(kk+1)-cols(kk));

@@ -68,8 +68,23 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
 		
 		posWeight = ceil(length(find(seg_labels_kk == -1))/length(find(seg_labels_kk == 1)));
 		
-        base = train_feats(:,train_idx)'*train_feats(:,train_idx);	% selected features
+        %base = train_feats(:,train_idx)'*train_feats(:,train_idx);	% selected features
         
+		fprintf('\tCalculating kernel %s, type %s ... \n', ker.feat, ker.type) ;	
+	
+		if strcmp(ker.type, 'linear'),
+			base = train_feats(:,train_idx)'*train_feats(:,train_idx);	% selected features
+		elseif strcmp(ker.type, 'echi2'),
+			%train_kernel = cal
+			matrix = vl_alldist2(train_feats(:,train_idx), 'chi2');
+			mu     = 1 ./ mean(matrix(:)) ;
+			base = exp(- mu * matrix) ;
+			
+			clear matrix;
+		else
+			error('unknown ker type');
+		end
+
         fprintf('SVM learning with predefined kernel matrix...\n');
     
 		if ker.cross == 1,
@@ -93,6 +108,9 @@ function calker_train_kernel_ova(proj_name, exp_name, ker)
 		model = svmflip(model, seg_labels_kk);
 		
 		model.train_idx = train_idx;
+		if strcmp(ker.type, 'echi2'),
+			model.mu = mu;
+		end
 		
         fprintf('\tSaving model ''%s''.\n', modelPath) ;
 		par_save( modelPath, model );	
