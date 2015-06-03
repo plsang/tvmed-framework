@@ -2,12 +2,17 @@
 %% med.pooling.seg4
 Fisher
 
-LD_PRELOAD="/net/per900a/raid0/plsang/usr.local/lib/libstdc++.so.6" matlab -nodisplay
-calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat');
+LD_PRELOAD="/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so" matlab -nodisplay
 
-calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat', 'nagg', );
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.4-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat', 'cross', 1, 'nagg', 64);
 
-calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.64.mat');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.4-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat', 'cross', 1, 'nagg', 32);
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.4-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat', 'cross', 1, 'nagg', 16);
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.4-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat', 'cross', 1, 'nagg', 8);
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.64.mat');
 
 
 BoW

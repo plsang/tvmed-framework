@@ -1,35 +1,62 @@
 function calker_train_kernel(proj_name, exp_name, ker)
 
-    fprintf('Loading background feature...\n');
-    bg_feats = calker_load_feature(proj_name, exp_name, ker, 'bg');
-
     labels_ = cell(length(ker.event_ids), 1);
     train_feats = cell(length(ker.event_ids), 1);
     
     for ii=1:length(ker.event_ids),
         event_id = ker.event_ids{ii};
         fprintf('Loading event feature [%s]...\n', event_id);
-        [train_feats{ii}, labels_{ii}] = calker_load_feature(proj_name, exp_name, ker, event_id);
+        [train_feats{ii}, labels_{ii}] = calker_load_feature_segment(proj_name, exp_name, ker, event_id);
     end
     
-    train_feats = cat(2, train_feats{:});
-    train_feats = [train_feats, bg_feats];
-    
-    labels = zeros(length(ker.event_ids), size(train_feats, 2));
+    train_feats = cat(1, train_feats{:});  %% 3878 x 1
+	all_labels_ = cat(1, labels_{:});
+    labels = zeros(length(ker.event_ids), size(train_feats, 1));
     start_idx = 1;
-    bg_start_idx = size(train_feats, 2) - size(bg_feats, 2)+1;
     
+    all_idx = [1:size(train_feats, 1)];
     for ii=1:length(ker.event_ids),
         end_idx = start_idx + length(labels_{ii}) - 1;
-        labels(ii, start_idx:end_idx) = labels_{ii};
-        labels(ii, bg_start_idx:end) = -ones(1, size(bg_feats, 2));
+        labels(ii, start_idx:end_idx) = ones(1, length(labels_{ii}));
+		
+        neg_idx = setdiff(all_idx, [start_idx:end_idx]);
+        max_neg_video = ker.maxneg * (length(ker.event_ids) - 1);
+        if length(neg_idx) > max_neg_video,
+            rand_idx = randperm(length(neg_idx));
+            sel_idx = neg_idx(rand_idx(1:max_neg_video));
+            labels(ii, sel_idx) = -ones(1, length(sel_idx));
+            %rem_idx = setdiff(neg_idx, sel_idx);
+        else
+            labels(ii, neg_idx) = -ones(1, length(neg_idx));
+        end
         start_idx = start_idx + length(labels_{ii});    
     end
         
-    fprintf('\tCalculating linear kernel %s ... \n', ker.feat) ;	
-    train_kernel = train_feats'*train_feats;
     
-    parfor kk = 1:length(ker.event_ids),
+
+	train_feats	= cat(2, train_feats{:});
+    num_event_train_seg = size(train_feats, 2);
+	
+	fprintf('Loading background feature...\n');
+    bg_feats = calker_load_feature_segment(proj_name, exp_name, ker, 'bg');
+	bg_feats = cat(2, bg_feats{:});
+	num_bg_train_seg = size(bg_feats, 2);
+	
+	train_feats = [train_feats, bg_feats];
+	clear bg_feats;
+	
+	fprintf('\tCalculating training kernel %s ... \n', ker.feat) ;
+	
+	if strcmp(ker.type, 'linear'),
+		train_kernel = train_feats'*train_feats;	% selected features
+	elseif strcmp(ker.type, 'echi2'),
+		%train_kernel = cal
+		train_kernel = vl_alldist2(train_feats, 'chi2');
+	else
+		error('unknown ker type');
+	end
+		
+    for kk = 1:length(ker.event_ids),
     
 		event_id = ker.event_ids{kk};
         
@@ -43,27 +70,62 @@ function calker_train_kernel(proj_name, exp_name, ker)
 		fprintf('Training event ''%s''...\n', event_id);	
 		
 		labels_kk = labels(kk, :);
+		%% segment expansion
+		seg_labels_kk = [zeros(1, num_event_train_seg), -ones(1, num_bg_train_seg)];
+		start_idx = 1;
+		for jj=1:length(labels_kk),
+			end_idx = start_idx + length(all_labels_{jj}) - 1;
+			
+			if labels_kk(jj) ~= 0,
+				seg_labels_kk(start_idx:end_idx) = labels_kk(jj);
+			end
+			
+			start_idx = start_idx + length(all_labels_{jj});
+		end
 		
-		train_idx = labels_kk ~= 0;
-		labels_kk = labels_kk(train_idx);
+		train_idx = seg_labels_kk ~= 0;
+		seg_labels_kk = seg_labels_kk(train_idx);
 		
-		posWeight = ceil(length(find(labels_kk == -1))/length(find(labels_kk == 1)));
-		
-        base = train_kernel(train_idx, train_idx);	% selected features
-        
+		posWeight = ceil(length(find(seg_labels_kk == -1))/length(find(seg_labels_kk == 1)));
+	
+		if strcmp(ker.type, 'linear'),
+			base = train_kernel(train_idx, train_idx); 
+		elseif strcmp(ker.type, 'echi2'),
+			%train_kernel = cal
+			matrix = train_kernel(train_idx, train_idx); 
+			mu     = 1 ./ mean(matrix(:)) ;
+			base = exp(- mu * matrix);
+			clear matrix;
+		else
+			error('unknown ker type');
+		end
+
         fprintf('SVM learning with predefined kernel matrix...\n');
     
-        model = calker_svmkernellearn(base, labels_kk,   ...
+		if ker.cross == 1,
+			model = calker_svmkernellearn(base, seg_labels_kk,   ...
                            'type', 'C',        ...
-                           ...%'C', 10,            ...
+                           ...%'C', 1,            ...
                            'verbosity', 0,     ...
                            ...%'rbf', 1,           ...
                            'crossvalidation', 5, ...
-                           'weights', [+1 posWeight ; -1 1]') ;
-                           
-		model = svmflip(model, labels_kk);
+                           'weights', [+1 posWeight ; -1 1]');
+        else
+			model = calker_svmkernellearn(base, seg_labels_kk,   ...
+                           'type', 'C',        ...
+                           'C', 1,            ...
+                           'verbosity', 0,     ...
+                           ...%'rbf', 1,           ...
+                           ...%'crossvalidation', 5, ...
+                           'weights', [+1 posWeight ; -1 1]');
+		end		
+		
+		model = svmflip(model, seg_labels_kk);
 		
 		model.train_idx = train_idx;
+		if strcmp(ker.type, 'echi2'),
+			model.mu = mu;
+		end
 		
         fprintf('\tSaving model ''%s''.\n', modelPath) ;
 		par_save( modelPath, model );	

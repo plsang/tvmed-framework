@@ -12,7 +12,7 @@ feature_ext = [feature_raw, '.', ker.feat_norm];
 
 ker.feat     = feature_ext ;
 ker.fea_fmt  = 'dvf';
-ker.num_dim = feat_dim; %98304;
+ker.feat_dim = feat_dim; %98304;
 ker.pyrLevel = [] ;
 ker.histName = [feature_ext '.dev_hists.' ker_type];
 ker.scaleparamsName = [feature_ext '.scaleparams.' ker_type];

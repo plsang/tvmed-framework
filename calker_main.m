@@ -23,11 +23,21 @@ testagg = 'max'; %% aggregation method for testing at video level
 num_agg = 16;
 overlapping = 0;
 
+config_str = '';
+
 for k=1:2:length(varargin),
 
 	opt = lower(varargin{k});
 	arg = varargin{k+1} ;
   
+	if ~strcmp(opt, 'cbfile'),
+		if strcmp(config_str, ''),
+			config_str = sprintf('%s.%s', opt, num2str(arg));
+		else
+			config_str = sprintf('%s_%s.%s', config_str, opt, num2str(arg));
+		end
+	end
+	
 	switch opt
 		case 'cross'
 			cross = arg;
@@ -113,10 +123,10 @@ else
     
 end
 
-calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
-ker.log_dir = fullfile(calker_exp_dir, 'log');
-ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s-%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
+
+ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, config_str);
 ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
+ker.log_dir = fullfile(ker.calker_exp_dir, 'log');
 
 if strcmp(ker.metadb, 'med2014'),
     medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
@@ -133,13 +143,9 @@ ker.MEDMD = MEDMD;
 
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
-%calker_cal_train_kernel(proj_name, exp_name, ker);
 
-if strcmp(ker.metadb, 'med2012') || strcmp(ker.metadb, 'med2011'),
-    calker_train_kernel_ova(proj_name, exp_name, ker);
-else
-    calker_train_kernel(proj_name, exp_name, ker);
-end
+calker_train_kernel(proj_name, exp_name, ker);
+
 calker_test_kernel(proj_name, exp_name, ker);
 
 ker.testagg = 'sum';

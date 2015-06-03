@@ -52,7 +52,7 @@ function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_
 
     for ii = 1:end_clip - start_clip + 1, %
         
-		feats{ii} = zeros(ker.num_dim, 1);
+		feats{ii} = zeros(ker.feat_dim, 1);
 		
         clip_name = clips{ii + start_clip - 1};
         
@@ -75,6 +75,13 @@ function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_
 			segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
                     ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
             
+			if ~exist(segment_path),
+				msg = sprintf('File [%s] does not exist!\n', segment_path);
+				fprintf(msg);
+				logmsg(logfile, msg);
+				continue;
+			end
+			
 			stats = load(segment_path, 'code'); 
 			%% load from med.pooling.seg4
 			total_unit_seg = size(stats.code, 2);	
@@ -85,11 +92,11 @@ function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_
 				idxs = 1:(ker.num_agg/2):total_unit_seg; 
 			end
 			
-			code = zeros(feat_dim, length(idxs));
+			code = zeros(ker.feat_dim, length(idxs));
 			remove_last_seg = 0;
 			for jj=1:length(idxs),
 				start_idx = idxs(jj);
-				end_idx = start_idx + num_agg - 1;
+				end_idx = start_idx + ker.num_agg - 1;
 				if end_idx > total_unit_seg, end_idx = total_unit_seg; end;
 				stat_ = stats.code(:, start_idx:end_idx);
 				

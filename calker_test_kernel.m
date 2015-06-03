@@ -48,7 +48,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
     
     %% loading devel hists
     fprintf('Loading training features...\n');
-    %bg_feats = calker_load_feature_segment(proj_name, exp_name, ker, 'bg');
+    
     train_feats = cell(length(ker.event_ids), 1);
     for ii=1:length(ker.event_ids),
         event_id = ker.event_ids{ii};
@@ -58,7 +58,12 @@ function calker_test_kernel(proj_name, exp_name, ker)
 	train_feats = cat(1, train_feats{:});  %% 3878 x 1
     train_feats = cat(2, train_feats{:});
 	
-    %train_feats = [train_feats, bg_feats];
+    fprintf('Loading background feature...\n');
+    bg_feats = calker_load_feature_segment(proj_name, exp_name, ker, 'bg');
+	bg_feats = cat(2, bg_feats{:});
+	
+	train_feats = [train_feats, bg_feats];
+	clear bg_feats;
     
     cols = fix(linspace(1, n_clip + 1, num_part+1));
     
@@ -76,7 +81,6 @@ function calker_test_kernel(proj_name, exp_name, ker)
 		if strcmp(ker.type, 'linear'),
 			base = train_feats'*test_feats;
 		elseif strcmp(ker.type, 'echi2'),
-			%train_kernel = cal
 			matrix = vl_alldist2(train_feats, test_feats, 'chi2');
 		else
 			error('unknown ker type');
