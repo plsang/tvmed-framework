@@ -1,17 +1,44 @@
-function codes = idensetraj_extract_and_encode( video_file, start_frame, end_frame, coding_params )
+function codes = idensetraj_extract_and_encode( video_file, coding_params, varargin)
 
-    idensetraj = 'LD_PRELOAD=/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so.6 /net/per610a/export/das11f/plsang/codes/opensource/improved_trajectory_release/release/DenseTrackStab_HOGHOFMBH';
+
+	start_frame = -1;
+	end_frame = -1;
+	for k=1:2:length(varargin),
+
+		opt = lower(varargin{k});
+		arg = varargin{k+1} ;
+	  
+		switch opt
+			case 'start_frame'
+				start_frame = arg;
+			case 'end_frame'
+				end_frame  = arg;
+			case 'sbfile'
+				sbfile  = arg;
+			otherwise
+				error(sprintf('Option ''%s'' unknown.', opt)) ;
+		end  
+	end
+
+    densetraj = '/net/per610a/export/das09f/satoh-lab/ejmp/binaries/1st_iteration/MotionImprovedTrajectoriesConsole';
+	
+	densetraj_config = '/net/per610a/export/das09f/satoh-lab/ejmp/Configs/config_MotionImprovedTrajectories_template.xml';
     
-    cmd = [idensetraj, ' ', video_file, ' -S ', num2str(start_frame), ' -E ', num2str(end_frame)];
+	if start_frame == -1,
+		cmd = sprintf('%s %s %s %s', densetraj, video_file, densetraj_config, sbfile);
+	else
+		error('unsupported start frame, end frame yet');
+		%cmd = [densetraj, ' ', video_file, ' -S ', num2str(start_frame), ' -E ', num2str(end_frame)];
+	end
 
     % open pipe 
-    p = popenr(cmd);
+    p = popenr_edu(cmd);
 
     if p < 0
 		error(['Error running popenr(', cmd,')']);
     end
 	
-	full_dim = 396;		
+	full_dim = 436;		
     BLOCK_SIZE = 50000;                          % initial capacity (& increment size)
     X = zeros(full_dim, BLOCK_SIZE, 'single');
    
@@ -46,7 +73,7 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
     while true,
 
         % Get the next chunk of data from the process
-        Y = popenr(p, full_dim, 'float');
+        Y = popenr_edu(p, full_dim, 'float');
 
         if isempty(Y), break; end;
 
@@ -125,16 +152,13 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
             enc_param = coding_params.(desc){jj};
             
             if strcmp(enc_param.enc_type, 'fisher') == 1,
-                [code_, stats_] = mexFisherEncodeHelperSP('getfk', enc_param.fisher_handle);
-                codes.(desc){jj} = [code_; stats_];
+                codes.(desc){jj} = mexFisherEncodeHelperSP('getfk', enc_param.fisher_handle);
                 mexFisherEncodeHelperSP('clear', enc_param.fisher_handle); 
-                
-                clear code_ stats_;
             end
         end
     end
     
     % Close pipe
-    popenr(p, -1);
+    popenr_edu(p, -1);
 
 end

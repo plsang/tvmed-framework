@@ -1,4 +1,4 @@
-function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
+function idensetraj_encode( exp_name, pat_list, start_video, end_video )
     
     % pat_list == 'ek100ps14 ek10ps14 bg kindred14 medtest14 --count'
     % seg_length: length of segment, in seconds, if seg_length is large enough, it become video-based
@@ -16,19 +16,22 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
     if isempty(strfind(pat_list, '--nolog')),
        	configs = set_global_config();
         logfile = sprintf('%s/%s.log', configs.logdir, mfilename);
-        msg = sprintf('Start running %s(%s, %d, %d)', mfilename, exp_name, start_seg, end_seg);
+        msg = sprintf('Start running %s(%s, %d, %d)', mfilename, exp_name, start_video, end_video);
         logmsg(logfile, msg);
         change_perm(logfile);
         tic;
     end
 	
     video_dir = '/net/per610a/export/das11f/plsang/dataset/MED/LDCDIST-RSZ';
-	fea_dir = '/net/per610a/export/das11f/plsang/trecvidmed/feature';
+	fea_dir = '/net/per920a/export/das14a/satoh-lab/plsang/trecvidmed/feature';
 	
     if ~isempty(strfind(pat_list, '12')),
         %% MED 2012
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med12/medmd_2012.mat';   
-    else
+    elseif ~isempty(strfind(pat_list, 'med11')),
+		%% MED 2011
+		medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med11/medmd_2011.mat';
+	else
         %% MED 2014
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
     end
@@ -36,7 +39,7 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
 	load(medmd_file, 'MEDMD'); 
 	%metadata = MEDMD.lookup;
 	
-    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14', 'med11patch'};
+    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14', 'med11ek', 'med11devt', 'med11test'};
     
     clips = []; 
     durations = [];
@@ -93,13 +96,17 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
                             durations_(ii) = MEDMD.info.(clip_id).duration;
                         end
                     end
-                case 'med11patch'
-                    patch_file = '/net/per610a/export/das11f/plsang/trecvidmed11/metadata/med2011_med.pooling.seg4_patch.txt';
-                    fh = fopen(patch_file, 'r');
-                    infos = textscan(fh, '%s %s');
-                    clips_ = infos{1};
-                    durations_ = zeros(1, length(clips_));
-                    fclose(fh);
+                case 'med11ek'
+                    clips_ = MEDMD.EventKit.EK130Ex.clips;
+                    durations_ = MEDMD.EventKit.EK130Ex.durations;
+				
+				case 'med11devt'
+					clips_ =  MEDMD.RefTest.MED11DEVT.clips;
+					durations_ = MEDMD.RefTest.MED11DEVT.durations;
+					
+				case 'med11test'
+					clips_ =  MEDMD.RefTest.MED11TEST.clips;
+					durations_ = MEDMD.RefTest.MED11TEST.durations;
             end
             
             clips = [clips, clips_];
@@ -122,19 +129,19 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
     coding_params = get_coding_params();
     descs = fieldnames(coding_params);
     
-    if start_seg < 1,
-        start_seg = 1;
+    if start_video < 1,
+        start_video = 1;
     end
     
-    if end_seg > length(clips),
-        end_seg = length(clips);
+    if end_video > length(clips),
+        end_video = length(clips);
     end
     
     clear clips_ durations_ durations;
     info = MEDMD.info;
     clear MEDMD;
     
-    for ss = start_seg:end_seg,
+    for ss = start_video:end_video,
 	
 		video_id = clips{ss};
         
@@ -163,65 +170,38 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
             continue; 
         end
         
-   		fprintf(' [%d --> %d --> %d] Extracting & Encoding for [%s], durations %f s...\n', start_seg, ss, end_seg, video_id, info.(video_id).duration);
-        
-        fps = info.(video_id).fps;
-        duration = info.(video_id).duration;
-        num_seg = ceil(duration/seg_length);
-        max_frame = ceil(duration*fps);
+   		fprintf(' [%d --> %d --> %d] Extracting & Encoding for [%s], durations %f s...\n', start_video, ss, end_video, video_id, info.(video_id).duration);
         
         codes = struct;
         for ii=1:length(descs),
             desc = descs{ii};
             codes.(desc) = cell(length(coding_params.(desc)), 1);
-            for jj=1:length(coding_params.(desc)),
-                enc_param = coding_params.(desc){jj};
-                if strcmp(enc_param.enc_type, 'fisher') == 1,
-                    codes.(desc){jj} = zeros(enc_param.output_dim + enc_param.stats_dim, num_seg, 'single');
-                else
-                    codes.(desc){jj} = zeros(enc_param.output_dim, num_seg, 'single');
-                end
-            end
         end
         
-        for ff=1:num_seg,
-            start_frame = ceil((ff-1)*seg_length*fps) + 1;
-            if ff == 1, %% first segment
-                start_frame = 0;
-            else
-                start_frame = start_frame - 15; %% traj length is 15
-            end
-            
-            end_frame = ceil(ff*seg_length*fps);
-            if end_frame > max_frame,
-                end_frame = max_frame;
-            end
-            
-            codes_ = idensetraj_extract_and_encode(video_file, start_frame, end_frame, coding_params);
-            
-            for ii=1:length(descs),
-                desc = descs{ii};
-                for jj=1:length(codes.(desc)),
-                    codes.(desc){jj}(:, ff) = codes_.(desc){jj};
-                end
-            end
-            
-            clear codes_;
-        end
+		sbfile = sprintf('%s/%s/%s/%s/%s.txt', fea_dir, exp_name, 'sbinfo', fileparts(info.(video_id).loc), video_id);
+		if ~exist(fileparts(sbfile)), 
+			sge_mkdir(fileparts(sbfile), 'sbinfo'); 
+		end
+		
+		codes_ = idensetraj_extract_and_encode(video_file, coding_params, 'sbfile', sbfile);
+		
+		change_perm(sbfile); 
+		
+		for ii=1:length(descs),
+			desc = descs{ii};
+			for jj=1:length(codes.(desc)),
+				codes.(desc){jj} = codes_.(desc){jj};
+			end
+		end
         
+		clear codes_;
+		
         %%% save at video level
         for ii=1:length(descs),
             desc = descs{ii};
             for jj=1:length(coding_params.(desc)),
                 output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(info.(video_id).loc), video_id);
-                enc_param = coding_params.(desc){jj};
-                if strcmp(enc_param.enc_type, 'fisher') == 1,
-                    sge_save(output_file, codes.(desc){jj}(1:enc_param.output_dim, :));
-                    stats_file = sprintf('%s/%s/%s/%s/%s.stats.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(info.(video_id).loc), video_id);
-                    sge_save(stats_file, codes.(desc){jj}(enc_param.output_dim+1:end, :));
-                else
-                    sge_save(output_file, codes.(desc){jj});
-                end
+                sge_save(output_file, codes.(desc){jj});
             end
         end
         
@@ -232,7 +212,7 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
     if isempty(strfind(pat_list, '--nolog')),
         elapsed = toc;
         elapsed_str = datestr(datenum(0,0,0,0,0,elapsed),'HH:MM:SS');
-        msg = sprintf('Finish running %s(%s, %d, %d). Elapsed time: %s', mfilename, exp_name, start_seg, end_seg, elapsed_str);
+        msg = sprintf('Finish running %s(%s, %d, %d). Elapsed time: %s', mfilename, exp_name, start_video, end_video, elapsed_str);
         logmsg(logfile, msg);
     end
     

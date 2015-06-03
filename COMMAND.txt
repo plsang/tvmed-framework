@@ -1,0 +1,12 @@
+ idensetraj_encode('a', 'dfsf med11ek_med11devt --count', 1, 1)          
+Loading metadata...
+Total clips: 13083 
+Total durations: 431.756 hours
+
+cm_gen_sge_code_log('idensetraj_encode', 'eduardo.idensetraj.1st med11ek_med11devt %d %d', 13083, 5000, 'debug', 1)
+
+Total clips: 22691 
+Total durations: 956.041 hours
+cm_gen_sge_code_log('idensetraj_encode', 'eduardo.idensetraj ek100ps14_bg_kindred14 %d %d', 22691, 6000, 'debug', 1, 'pe', 2)
+
+
