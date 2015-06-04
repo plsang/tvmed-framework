@@ -119,6 +119,8 @@ function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_
                 code_ = sign(code_) .* sqrt(abs(code_));    
                 %clear stats;
 				
+				code_ = code_ / norm(code_, 2);
+				
 				code(:, jj) = code_;
 				clear code_;
 			end
@@ -174,3 +176,11 @@ function [feats, labels, num_inst] = calker_load_feature_segment(proj_name, exp_
 	logmsg(logfile, msg);
 	
 end
+
+function X = l2_norm_matrix(X),
+    for ii=1:size(X, 2),
+        if any(X(:,ii) ~= 0), 
+            X(:,ii) = X(:,ii) / norm(X(:,ii), 2);
+        end
+    end
+end    
