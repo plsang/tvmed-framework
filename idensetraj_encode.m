@@ -158,7 +158,8 @@ function idensetraj_encode( exp_name, pat_list, start_video, end_video )
             desc = descs{ii};
             for jj=1:length(coding_params.(desc)),
                 output_file = sprintf('%s/%s/%s/%s/%s.mat', fea_dir, exp_name, coding_params.(desc){jj}.feature_pat, fileparts(info.(video_id).loc), video_id);
-                if ~exist(output_file, 'file'),
+                output_file_info = dir(output_file);
+                if ~exist(output_file, 'file') || output_file_info.bytes < 2000,
                     bool_run = 1;
                     break;
                 end
