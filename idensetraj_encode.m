@@ -31,15 +31,18 @@ function idensetraj_encode( exp_name, pat_list, start_video, end_video )
     elseif ~isempty(strfind(pat_list, 'med11')),
 		%% MED 2011
 		medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med11/medmd_2011.mat';
+    elseif ~isempty(strfind(pat_list, 'med15eval')),
+		%% MED 2015
+		medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_eval.mat';
 	else
         %% MED 2014
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
     end
 	fprintf('Loading metadata...\n');
 	load(medmd_file, 'MEDMD'); 
-	%metadata = MEDMD.lookup;
 	
-    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14', 'med11ek', 'med11devt', 'med11test'};
+    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', ...
+        'train12', 'test12', 'train14', 'med11ek', 'med11devt', 'med11test', 'med15eval'};
     
     clips = []; 
     durations = [];
@@ -107,6 +110,10 @@ function idensetraj_encode( exp_name, pat_list, start_video, end_video )
 				case 'med11test'
 					clips_ =  MEDMD.RefTest.MED11TEST.clips;
 					durations_ = MEDMD.RefTest.MED11TEST.durations;
+                    
+                case 'med15eval'
+                    clips_ =  MEDMD.UnrefTest.MED15EvalFull.clips;
+					durations_ = MEDMD.UnrefTest.MED15EvalFull.durations;
             end
             
             clips = [clips, clips_];
@@ -178,15 +185,8 @@ function idensetraj_encode( exp_name, pat_list, start_video, end_video )
             desc = descs{ii};
             codes.(desc) = cell(length(coding_params.(desc)), 1);
         end
-        
-		sbfile = sprintf('%s/%s/%s/%s/%s.txt', fea_dir, exp_name, 'sbinfo', fileparts(info.(video_id).loc), video_id);
-		if ~exist(fileparts(sbfile)), 
-			sge_mkdir(fileparts(sbfile), 'sbinfo'); 
-		end
 		
-		codes_ = idensetraj_extract_and_encode(video_file, coding_params, 'sbfile', sbfile);
-		
-		change_perm(sbfile); 
+		codes_ = idensetraj_extract_and_encode(video_file, coding_params);
 		
 		for ii=1:length(descs),
 			desc = descs{ii};

@@ -20,25 +20,27 @@ function codes = idensetraj_extract_and_encode( video_file, coding_params, varar
 		end  
 	end
 
-    densetraj = '/net/per610a/export/das09f/satoh-lab/ejmp/binaries/1st_iteration/MotionImprovedTrajectoriesConsole';
+    %% use full extraction. Modified version to extract at every frame, resample at every frame
+    %idensetraj = 'LD_PRELOAD=/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so.6 /net/per610a/export/das11f/plsang/codes/opensource/improved_trajectory_release/release/DenseTrackStab_HOGHOFMBH';
+    
 	
-	densetraj_config = '/net/per610a/export/das09f/satoh-lab/ejmp/Configs/config_MotionImprovedTrajectories_template.xml';
+    idensetraj = 'LD_PRELOAD=/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so.6 /net/per900a/raid0/plsang/tools/improved_trajectory_release/release/DenseTrackStab_HOGHOFMBH';
     
 	if start_frame == -1,
-		cmd = sprintf('%s %s %s %s', densetraj, video_file, densetraj_config, sbfile);
+		cmd = sprintf('%s %s', idensetraj, video_file);
 	else
 		error('unsupported start frame, end frame yet');
 		%cmd = [densetraj, ' ', video_file, ' -S ', num2str(start_frame), ' -E ', num2str(end_frame)];
 	end
 
     % open pipe 
-    p = popenr_edu(cmd);
+    p = popenr(cmd);
 
     if p < 0
 		error(['Error running popenr(', cmd,')']);
     end
 	
-	full_dim = 436;		
+	full_dim = 396;		
     BLOCK_SIZE = 50000;                          % initial capacity (& increment size)
     X = zeros(full_dim, BLOCK_SIZE, 'single');
    
@@ -62,7 +64,7 @@ function codes = idensetraj_extract_and_encode( video_file, coding_params, varar
             enc_param = coding_params.(desc){jj};
             
             if strcmp(enc_param.enc_type, 'fisher') == 1,
-                codes.(desc){jj} = zeros(enc_param.output_dim + enc_param.stats_dim, 1, 'single');
+                codes.(desc){jj} = zeros(enc_param.output_dim, 1, 'single');
                 coding_params.(desc){jj}.fisher_handle = mexFisherEncodeHelperSP('init', enc_param.codebook, fisher_params); 
             else
                 codes.(desc){jj} = zeros(enc_param.output_dim, 1, 'single');
@@ -73,7 +75,7 @@ function codes = idensetraj_extract_and_encode( video_file, coding_params, varar
     while true,
 
         % Get the next chunk of data from the process
-        Y = popenr_edu(p, full_dim, 'float');
+        Y = popenr(p, full_dim, 'float');
 
         if isempty(Y), break; end;
 
@@ -159,6 +161,6 @@ function codes = idensetraj_extract_and_encode( video_file, coding_params, varar
     end
     
     % Close pipe
-    popenr_edu(p, -1);
+    popenr(p, -1);
 
 end

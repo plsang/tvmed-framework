@@ -53,12 +53,16 @@ function [coding_params, param_dict] = post_process(coding_params)
             
             if strcmp(desc, 'hoghof'),
                 coding_params.(desc){jj}.desc_dim = 204;
-                coding_params.(desc){jj}.start_idx = 41;
-                coding_params.(desc){jj}.end_idx = 244;
+                %coding_params.(desc){jj}.start_idx = 41;
+                %coding_params.(desc){jj}.end_idx = 244;
+                coding_params.(desc){jj}.start_idx = 1;
+                coding_params.(desc){jj}.end_idx = 204;
             elseif strcmp(desc, 'mbh'),
                 coding_params.(desc){jj}.desc_dim = 192;
-                coding_params.(desc){jj}.start_idx = 245;
-                coding_params.(desc){jj}.end_idx = 436;
+                %coding_params.(desc){jj}.start_idx = 245;
+                %coding_params.(desc){jj}.end_idx = 436;
+                coding_params.(desc){jj}.start_idx = 205;
+                coding_params.(desc){jj}.end_idx = 396;
             end
             
             key = strrep(coding_params.(desc){jj}.feature_pat, '.', '');
