@@ -45,7 +45,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
 			case 'med11test'
 				clips = ker.MEDMD.RefTest.MED11TEST.clips;    
             case 'eval15full'
-				clips = ker.MEDMD.UnrefTest.MED15EvalFull.clips;        
+				clips = ker.EVALMD.UnrefTest.MED15EvalFull.clips;        
             otherwise
                 error('unknown video pat!!!\n');
         end
@@ -57,14 +57,20 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
     feats = zeros(ker.num_dim, end_clip - start_clip + 1);
     selected_label = zeros(1, end_clip - start_clip + 1);
 
+    if strcmp(video_pat, 'eval15full'),
+        info = ker.EVALMD.info;
+    else
+        info = ker.MEDMD.info;
+    end
+    
     parfor ii = 1:end_clip - start_clip + 1, %
         
         clip_name = clips{ii + start_clip - 1};
                                 
-		if ~isfield(ker.MEDMD.info, clip_name), continue; end;
+		if ~isfield(info, clip_name), continue; end;
 		
         segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
-                        ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
+                        ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(info.(clip_name).loc), clip_name);
                         
         if ~exist(segment_path),
             msg = sprintf('File [%s] does not exist!\n', segment_path);
@@ -83,15 +89,32 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
 				code = sign(code) .* sqrt(abs(code));    
 			end
 			
+            if ker.pntest > 0 && strcmp(video_pat, 'eval15full'),
+				%% only for hoghof, mbh on eval15
+				code = sign(code) .* sqrt(abs(code));    
+			end
+            
             % if strcmp(ker.idt_desc, 'hoghof'),
                 % code = code(1:65536);
             % elseif strcmp(ker.idt_desc, 'mbh'),
                 % code = code(65537:end);
             % end
+        elseif strcmp(ker.seg_type, 'keyframe'),  %% video-based
+            code = load(segment_path, 'code');
+            code = code.code;
+            
+            code = mean(code, 2);
+            
+            if ker.pn > 0,
+				%% currently alpha = 0.5
+				%% todo: support other alpha values
+				code = sign(code) .* sqrt(abs(code));    
+			end
+            
         else %% segment-based
             if strcmp(ker.enc_type, 'fisher'),
                 stats_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
-                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(ker.MEDMD.info.(clip_name).loc), clip_name);
+                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(info.(clip_name).loc), clip_name);
                 stats = load(stats_path, 'code'); 
 
                 if any(any(isnan(stats.code), 1)),

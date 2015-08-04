@@ -22,6 +22,7 @@ testdb='';
 maxneg=Inf;
 config_str = '';
 pn = 0;
+pntest = 0; %% power norm on test data only (already pn on train)
 
 for k=1:2:length(varargin),
 
@@ -77,6 +78,8 @@ for k=1:2:length(varargin),
             end_event = arg;
 		case 'pn'
 			pn = arg;
+        case 'pntest'
+			pntest = arg;    
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -97,6 +100,7 @@ ker.metadb = metadb;
 ker.testdb = testdb;
 ker.maxneg = maxneg;
 ker.pn = pn;
+ker.pntest = pntest;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
@@ -159,7 +163,7 @@ if strcmp(ker.test_pat, 'eval15full'),
     testmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_eval.mat';
     fprintf('Loading test metadata <%s>...\n', testmd_file);
     load(testmd_file, 'MEDMD'); 
-    ker.MEDMD = MEDMD;
+    ker.EVALMD = MEDMD;
 end
 
 calker_test_kernel(proj_name, exp_name, ker);
