@@ -44,6 +44,8 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
                 clips = ker.MEDMD.RefTest.CVPR14Test.clips;    
 			case 'med11test'
 				clips = ker.MEDMD.RefTest.MED11TEST.clips;    
+            case 'eval15full'
+				clips = ker.MEDMD.UnrefTest.MED15EvalFull.clips;        
             otherwise
                 error('unknown video pat!!!\n');
         end
@@ -75,11 +77,17 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
             code = load(segment_path, 'code');
             code = code.code;
             
-            if strcmp(ker.idt_desc, 'hoghof'),
-                code = code(1:65536);
-            elseif strcmp(ker.idt_desc, 'mbh'),
-                code = code(65537:end);
-            end
+			if ker.pn > 0,
+				%% currently alpha = 0.5
+				%% todo: support other alpha values
+				code = sign(code) .* sqrt(abs(code));    
+			end
+			
+            % if strcmp(ker.idt_desc, 'hoghof'),
+                % code = code(1:65536);
+            % elseif strcmp(ker.idt_desc, 'mbh'),
+                % code = code(65537:end);
+            % end
         else %% segment-based
             if strcmp(ker.enc_type, 'fisher'),
                 stats_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...

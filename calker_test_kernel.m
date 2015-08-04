@@ -9,6 +9,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
             n_clip = length(ker.MEDMD.RefTest.CVPR14Test.clips); 
 		case 'med11test'
             n_clip = length(ker.MEDMD.RefTest.MED11TEST.clips); 	
+        case 'eval15full'
+			n_clip = length(ker.MEDMD.UnrefTest.MED15EvalFull.clips);            
         otherwise
             error('unknown video pat!!!\n');
     end
