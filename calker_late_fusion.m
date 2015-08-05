@@ -1,9 +1,16 @@
-function calker_late_fusion(proj_name, test_pat, ek_set, miss_type)
-
-	exp_name = 'trecvidmed14-video-bg';
+function calker_late_fusion(fuse_list)
+    %%% fuse_list = 'mfcc_fc7'
+    
+    proj_name = 'trecvidmed15';
+	exp_name = 'niimed2015';
+    ek_set = 'EK10Ex';
+    miss_type = 'RN';
+    ker_type = 'linear';
+    test_pat = 'kindred14';
+    feat_norm = 'l2';
 	
 	if ~exist('suffix', 'var'),
-		suffix = '--tvmed13-v1.1.3-ps';
+		suffix = '--v1.3-r1';
 		%suffix = '--tvmed13-v1.1.3-ah';
 	end
 	
@@ -22,33 +29,34 @@ function calker_late_fusion(proj_name, test_pat, ek_set, miss_type)
 	events = infos{1};
 			
 	ker_names = struct;
-	ker_names.('hoghofmbh_fc') = 'idensetraj.hoghofmbh.cb256.fc.pca.l2';
-	%ker_names.('mbh_fc_pca') = 'densetrajectory.mbh.cb256.fc.pca.l2';
-	%ker_names.('mbh_fc') = 'densetrajectory.mbh.cb256.fc.l2';
-	%ker_names.('mbh_soft') = 'densetrajectory.mbh.cb4000.soft.l2';
-	%ker_names.('multiseg_mbh_fc') = 'fusion-multiseg.mbh_fc';
-	%ker_names.('multiseg_mbh_soft') = 'fusion-multiseg.mbh_soft';
-	
-	ker_names.('sift_fc_pca') = 'covdet.hessian.v14.1.1.sift.cb256.fisher.pca.l2';
-	%ker_names.('sift_soft') = 'covdet.hessian.sift.cb4000.devel.soft.l2';
-	%ker_names.('multiseg_sift_fc') = 'fusion-multiseg.sift_fc';
-	%ker_names.('multiseg_sift_soft') = 'fusion-multiseg.sift_soft';
-	
-	ker_names.('mfcc_fc') = 'mfcc.rastamat.cb256.fc.l2';
-	%ker_names.('mfcc_soft') = 'mfcc.rastamat.cb4000.soft.l2';
+	ker_names.('sift') = 'covdet.hessian.sift.cb256.fc.pca';
+	ker_names.('mfcc') = 'mfcc.rastamat.cb256.fc';
+    ker_names.('hoghof') = 'idensetraj.hoghof.fisher.cb256.pca';
+    ker_names.('mbh') = 'idensetraj.mbh.fisher.cb256.pca';
+    ker_names.('fc6') = 'placeshybrid.fc6';
+    ker_names.('fc7') = 'placeshybrid.fc7';
+    ker_names.('full') = 'placeshybrid.full';
 				
-	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker', ker.proj_dir, proj_name, exp_name);
+	calker_exp_dir = sprintf('%s/%s/experiments/%s', ker.proj_dir, proj_name, exp_name);
 	
-	fused_ids = fieldnames(ker_names);
+	ker_ids = fieldnames(ker_names);
+    
+    fused_ids = {};
+    for ii=1:length(ker_ids),
+        ker_id = ker_ids{ii};
+        if ~isempty(strfind(fuse_list, ker_id)),
+            fused_ids = [fused_ids, ker_id];
+        end
+    end
+    
 	fusion_name = 'fusion';
 	for ii=1:length(fused_ids),
 		fusion_name = sprintf('%s.%s', fusion_name, fused_ids{ii});
 	end
 	
-	%ek_set = 'EK100Ex';
-	%miss_type = 'RN';
-	
-	output_file = sprintf('%s/%s%s/scores/%s/%s-%s/%s.kl2.scores.mat', calker_exp_dir, fusion_name, suffix, test_pat, ek_set, miss_type, fusion_name);
+    fusion_name = sprintf('%s.%s', fusion_name, feat_norm);
+    
+	output_file = sprintf('%s/%s.%s/scores/%s/%s-%s/%s.%s.scores.mat', calker_exp_dir, fusion_name, suffix, test_pat, ek_set, miss_type, fusion_name, ker_type);
 	
 	if ~exist(output_file, 'file'),
 	
@@ -64,28 +72,26 @@ function calker_late_fusion(proj_name, test_pat, ek_set, miss_type)
 			for jj = 1:length(fused_ids),
 				ker_name = ker_names.(fused_ids{jj});
 				fprintf(' -- [%d/%d] kernel [%s]...\n', jj, length(fused_ids), ker_name);
-				scorePath = sprintf('%s/%s%s/scores/%s/%s-%s/%s.video.scores.mat', calker_exp_dir, ker_name, suffix, test_pat, ek_set, miss_type, ker_name);
 				
-				if ~exist(scorePath, 'file');
-					scorePath = sprintf('%s/%s%s/scores/%s/%s-%s/%s.kl2.scores.mat', calker_exp_dir, ker_name, suffix, test_pat, ek_set, miss_type, ker_name);
-				end
-				
+				scorePath = sprintf('%s/%s.%s.%s/scores/%s/%s-%s/%s.%s.%s.scores.mat', calker_exp_dir, ker_name, feat_norm, suffix, test_pat, ek_set, miss_type, ker_name, feat_norm, ker_type);
+					
 				if ~exist(scorePath, 'file');
 					error('File not found! [%s]', scorePath);
 				end
 				
-				scores = load(scorePath);
+				load(scorePath, 'scores');
 				if isfield(fused_scores, event_name),			
 					fused_scores.(event_name) = [fused_scores.(event_name); scores.(event_name)];
 				else
 					fused_scores.(event_name) = scores.(event_name);
 				end
 			end
+            
 			fused_scores.(event_name) = mean(fused_scores.(event_name)); %scores: 1 x number of videos
 		end
 		
 		scores = fused_scores;
-		ssave(output_file, '-STRUCT', 'scores');
+		save(output_file, 'scores');
 		
 	end
 	
@@ -94,15 +100,23 @@ function calker_late_fusion(proj_name, test_pat, ek_set, miss_type)
 	ker.name = fusion_name;
 	ker.suffix = suffix;
 	ker.test_pat = test_pat;
-	ker.type = 'kl2';
+	ker.type = ker_type;
 	
 	ker.prms.tvprefix = 'TVMED14';
 	ker.prms.eventkit = ek_set;
 	ker.prms.rtype = miss_type;
-	ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
+	%ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
+    medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
+    fprintf('Loading metadata <%s>...\n', medmd_file);
+    load(medmd_file, 'MEDMD'); 
+    ker.MEDMD = MEDMD;
 	
+    ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [21:40], 'UniformOutput', false);
+    
+    ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
+    
 	fprintf('Calculating MAP...\n');
 	calker_cal_map(proj_name, exp_name, ker);
-	calker_cal_rank(proj_name, exp_name, ker);
+	%calker_cal_rank(proj_name, exp_name, ker);
 	%calker_cal_threshhold(proj_name, exp_name, ker);
 end
