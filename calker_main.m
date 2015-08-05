@@ -156,7 +156,7 @@ if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 if strcmp(ker.metadb, 'med2012') || strcmp(ker.metadb, 'med2011'),
     ker = calker_train_kernel_ova(proj_name, exp_name, ker);
 else
-    calker_train_kernel(proj_name, exp_name, ker);
+    ker = calker_train_kernel(proj_name, exp_name, ker);
 end
 
 if strcmp(ker.test_pat, 'eval15full'),

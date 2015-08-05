@@ -1,4 +1,4 @@
-function calker_train_kernel(proj_name, exp_name, ker)
+function ker = calker_train_kernel(proj_name, exp_name, ker)
 
     fprintf('Loading background feature...\n');
     bg_feats = calker_load_feature(proj_name, exp_name, ker, 'bg');
@@ -26,8 +26,21 @@ function calker_train_kernel(proj_name, exp_name, ker)
         start_idx = start_idx + length(labels_{ii});    
     end
         
-    fprintf('\tCalculating linear kernel %s ... \n', ker.feat) ;	
-    train_kernel = train_feats'*train_feats;
+    fprintf('\tCalculating %s kernel %s ... \n', ker.type, ker.feat) ;	
+    
+    if strcmp(ker.type, 'linear'),
+		train_kernel = train_feats'*train_feats;
+	elseif strcmp(ker.type, 'echi2'),
+		%train_kernel = cal
+		matrix = vl_alldist2(train_feats, 'chi2');
+		mu     = 1 ./ mean(matrix(:)) ;
+		train_kernel = exp(- mu * matrix) ;
+		
+		ker.mu = mu;
+		clear matrix;
+	else
+		error('unknown ker type');
+	end
     
     parfor kk = 1:length(ker.event_ids),
     
