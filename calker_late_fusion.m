@@ -1,33 +1,54 @@
-function calker_late_fusion(fuse_list)
+function calker_late_fusion(fuse_list, varargin)
     %%% fuse_list = 'mfcc_fc7'
+    %%% test_pat = 'kindred14', 'eval15full';
+    
+    
+    test_pat = 'kindred14';
+    start_event = 21;
+    end_event = 40;
     
     proj_name = 'trecvidmed15';
 	exp_name = 'niimed2015';
     ek_set = 'EK10Ex';
     miss_type = 'RN';
     ker_type = 'linear';
-    test_pat = 'kindred14';
     feat_norm = 'l2';
+	suffix = '--v1.3-r1';
 	
-	if ~exist('suffix', 'var'),
-		suffix = '--v1.3-r1';
-		%suffix = '--tvmed13-v1.1.3-ah';
-	end
-	
+    for k=1:2:length(varargin),
+
+        opt = lower(varargin{k});
+        arg = varargin{k+1} ;
+        
+        switch opt
+            case 'suffix'
+                suffix = arg ;
+            case 'dim'
+                feat_dim = arg;
+            case 'ek'
+                eventkit = arg;	
+            case 'miss'
+                miss_type = arg;	
+            case 'test'
+                test_pat = arg;	
+            case 's'
+                start_event = arg;
+            case 'e'
+                end_event = arg;
+            otherwise
+                error(sprintf('Option ''%s'' unknown.', opt)) ;
+        end  
+    end
+
+
 	ker.proj_dir = '/net/per610a/export/das11f/plsang';
 	
 	addpath('/net/per900a/raid0/plsang/tools/kaori-secode-calker/support');
 	addpath('/net/per900a/raid0/plsang/tools/libsvm-3.17/matlab');
 	addpath('/net/per900a/raid0/plsang/tools/vlfeat-0.9.16/toolbox');
-
-	event_list = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/common/trecvidmed14.events.ps.lst';
-	%event_list = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/common/trecvidmed14.events.ah.lst';
-	
-	fh = fopen(event_list, 'r');
-	infos = textscan(fh, '%s %s', 'delimiter', ' >.< ', 'MultipleDelimsAsOne', 1);
-	fclose(fh);
-	events = infos{1};
-			
+    
+    event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
+    
 	ker_names = struct;
 	ker_names.('sift') = 'covdet.hessian.sift.cb256.fc.pca';
 	ker_names.('mfcc') = 'mfcc.rastamat.cb256.fc';
@@ -66,8 +87,8 @@ function calker_late_fusion(fuse_list)
 		end
 		
 		fused_scores = struct;
-		for ii=1:length(events),
-			event_name = events{ii};
+		for ii=1:length(event_ids),
+			event_name = event_ids{ii};
 			fprintf('Fusing for event [%s]...\n', event_name);
 			for jj = 1:length(fused_ids),
 				ker_name = ker_names.(fused_ids{jj});
@@ -95,28 +116,31 @@ function calker_late_fusion(fuse_list)
 		
 	end
 	
-	
-	ker.feat = fusion_name;
-	ker.name = fusion_name;
-	ker.suffix = suffix;
-	ker.test_pat = test_pat;
-	ker.type = ker_type;
-	
-	ker.prms.tvprefix = 'TVMED14';
-	ker.prms.eventkit = ek_set;
-	ker.prms.rtype = miss_type;
-	%ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
-    medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
-    fprintf('Loading metadata <%s>...\n', medmd_file);
-    load(medmd_file, 'MEDMD'); 
-    ker.MEDMD = MEDMD;
-	
-    ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [21:40], 'UniformOutput', false);
+	if ~strcmp(test_pat, 'eval15full'),
     
-    ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
-    
-	fprintf('Calculating MAP...\n');
-	calker_cal_map(proj_name, exp_name, ker);
+        ker.feat = fusion_name;
+        ker.name = fusion_name;
+        ker.suffix = suffix;
+        ker.test_pat = test_pat;
+        ker.type = ker_type;
+        
+        ker.prms.tvprefix = 'TVMED14';
+        ker.prms.eventkit = ek_set;
+        ker.prms.rtype = miss_type;
+        %ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
+        medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
+        fprintf('Loading metadata <%s>...\n', medmd_file);
+        load(medmd_file, 'MEDMD'); 
+        ker.MEDMD = MEDMD;
+        
+        ker.event_ids = event_ids;
+        
+        ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
+        
+        fprintf('Calculating MAP...\n');
+        calker_cal_map(proj_name, exp_name, ker);
+        
+    end
 	%calker_cal_rank(proj_name, exp_name, ker);
 	%calker_cal_threshhold(proj_name, exp_name, ker);
 end
