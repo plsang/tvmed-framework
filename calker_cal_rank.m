@@ -30,7 +30,7 @@ function calker_cal_rank(proj_name, exp_name, ker)
 		
 		[sorted_scores, sorted_idx] = sort(this_scores, 'descend');
 		
-		rankFile = sprintf('%s/%s.%s.rank', scoreDir, event_name, ker.name);
+		rankFile = sprintf('%s/%s.%s.%s.rank', scoreDir, event_name, ker.name, ker.type);
 		
 		fh = fopen(rankFile, 'w');
 		for kk=1:length(sorted_scores),

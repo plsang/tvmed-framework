@@ -141,13 +141,6 @@ end
 fprintf('Loading metadata <%s>...\n', medmd_file);
 load(medmd_file, 'MEDMD'); 
 ker.MEDMD = MEDMD;
-
-if strcmp(ker.test_pat, 'eval15full'),
-    testmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_eval.mat';
-    fprintf('Loading test metadata <%s>...\n', testmd_file);
-    load(testmd_file, 'MEDMD'); 
-    ker.TESTMD = MEDMD;
-end
     
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
@@ -173,7 +166,7 @@ if isempty(strfind(ker.test_pat, 'eval')),
 end
 
 %end
-%calker_cal_rank(proj_name, exp_name, ker);
+calker_cal_rank(proj_name, exp_name, ker);
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
