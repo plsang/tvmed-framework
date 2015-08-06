@@ -116,31 +116,37 @@ function calker_late_fusion(fuse_list, varargin)
 		
 	end
 	
+    ker.feat = fusion_name;
+    ker.name = fusion_name;
+    ker.suffix = suffix;
+    ker.test_pat = test_pat;
+    ker.type = ker_type;
+    
+    ker.prms.tvprefix = 'TVMED14';
+    ker.prms.eventkit = ek_set;
+    ker.prms.rtype = miss_type;
+    
+    
+    
+    ker.event_ids = event_ids;
+    ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
+        
 	if ~strcmp(test_pat, 'eval15full'),
     
-        ker.feat = fusion_name;
-        ker.name = fusion_name;
-        ker.suffix = suffix;
-        ker.test_pat = test_pat;
-        ker.type = ker_type;
-        
-        ker.prms.tvprefix = 'TVMED14';
-        ker.prms.eventkit = ek_set;
-        ker.prms.rtype = miss_type;
-        %ker.prms.test_meta_file = sprintf('%s/%s/metadata/%s-REFTEST-%s/database.mat', ker.proj_dir, proj_name, ker.prms.tvprefix, upper(test_pat));
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
         fprintf('Loading metadata <%s>...\n', medmd_file);
         load(medmd_file, 'MEDMD'); 
         ker.MEDMD = MEDMD;
-        
-        ker.event_ids = event_ids;
-        
-        ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
-        
+    
         fprintf('Calculating MAP...\n');
         calker_cal_map(proj_name, exp_name, ker);
-        
+    else
+        medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_eval.mat';
+        fprintf('Loading metadata <%s>...\n', medmd_file);
+        load(medmd_file, 'MEDMD'); 
+        ker.MEDMD = MEDMD;
     end
-	%calker_cal_rank(proj_name, exp_name, ker);
+	
+    calker_cal_rank(proj_name, exp_name, ker);
 	%calker_cal_threshhold(proj_name, exp_name, ker);
 end
