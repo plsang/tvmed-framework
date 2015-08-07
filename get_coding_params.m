@@ -7,10 +7,10 @@ function [coding_params, param_dict] = get_coding_params()
     coding_param.enc_type = 'fisher';
     coding_param.codebook_size = 256;
     coding_param.dimred = 128;
-    codebook_file = '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat';
+    codebook_file = '/net/per610a/export/das11f/plsang/vsd2014/feature/bow.codebook.devel/idensetraj.hoghof/data/codebook.gmm.256.128.mat';
     load(codebook_file);
     coding_param.codebook = codebook;
-    lowproj_file = '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/lowproj.128.204.mat';
+    lowproj_file = '/net/per610a/export/das11f/plsang/vsd2014/feature/bow.codebook.devel/idensetraj.hoghof/data/lowproj.128.204.mat';
     load(lowproj_file);
     coding_param.low_proj =  low_proj;
     coding_params.hoghof{end+1} = coding_param;
@@ -23,10 +23,10 @@ function [coding_params, param_dict] = get_coding_params()
     coding_param.enc_type = 'fisher';
     coding_param.codebook_size = 256;
     coding_param.dimred = 128;
-    codebook_file = '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.mbh/codebook.gmm.256.128.mat';
+    codebook_file = '/net/per610a/export/das11f/plsang/vsd2014/feature/bow.codebook.devel/idensetraj.mbh/data/codebook.gmm.256.128.mat';
     load(codebook_file);
     coding_param.codebook = codebook;
-    lowproj_file = '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.mbh/lowproj.128.192.mat';
+    lowproj_file = '/net/per610a/export/das11f/plsang/vsd2014/feature/bow.codebook.devel/idensetraj.mbh/data/lowproj.128.192.mat';
     load(lowproj_file);
     coding_param.low_proj =  low_proj;
     coding_params.mbh{end+1} = coding_param;
