@@ -33,8 +33,13 @@ for ii = 1:length(shots),
     fprintf('Processing [%d/%d] videos...\n', ii, length(shots));
     database.cname{end+1} = shot_id(1:end-4);        
 
-    c_path = sprintf('%s/%s/feature/%s/%s/%s.mat',...
-        ker.proj_dir, ker.proj_name, ker.feat_raw, pat_name, shot_id(1:end-4));                  
+    if strcmp(ker.mode, 'submit'),
+        c_path = sprintf('%s/%s/feature/%s/%s/%s.mat',...
+            ker.proj_dir, ker.proj_name, ker.feat_raw, pat_name, shot_id(1:end-4));                  
+    elseif strcmp(ker.mode, 'tune'),
+        c_path = sprintf('%s/%s/feature/%s/%s/%s.mat',...
+            ker.proj_dir, ker.proj_name, ker.feat_raw, 'devset', shot_id(1:end-4));                  
+    end
     
     database.path{end+1} = c_path;
 
@@ -44,9 +49,9 @@ end
 database.num_shot = length(database.cname);
 
 %% no annotation dir for this pat_name, means this is a test patition	
-if strcmp(pat_name, 'devset'),
+if ~isempty(strfind(pat_name, 'dev')),
     ann_dir = sprintf('%s/%s/annotations/%s', ...
-			ker.proj_dir, ker.proj_name, pat_name);
+			ker.proj_dir, ker.proj_name, 'devset');
 			
 	for jj = 1:length(ker.events),
 		event = ker.events{jj};
@@ -54,7 +59,11 @@ if strcmp(pat_name, 'devset'),
 		%label = -1*ones(1, length(shots));
 		label = -ones(1, length(database.cname));
 		
-		pos_ann_file = sprintf('%s/%s_%s', ann_dir, task, event); 	% label 1
+        if strcmp(task, 'violence'),
+            pos_ann_file = sprintf('%s/%s', ann_dir, task); 	% label 1
+        else
+            pos_ann_file = sprintf('%s/%s_%s', ann_dir, task, event); 	% label 1
+        end    
 		
 		pos_shots = load_shot_ann(pos_ann_file);
 		

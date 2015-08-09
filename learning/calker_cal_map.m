@@ -1,14 +1,8 @@
-function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
+function calker_cal_map(proj_name, exp_name, ker, events)
 	
-	%videolevel: 1 (default): video-based approach, 0: segment-based approach
+	calker_exp_dir = sprintf('%s/%s/experiments/%s/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
 	
-	if ~exist('videolevel', 'var'),
-		videolevel = 1;
-	end
-	
-	calker_exp_dir = sprintf('%s/%s/experiments/%s-calker/%s%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.suffix);
-	
-	calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
+	calker_common_exp_dir = sprintf('%s/%s/experiments/%s/common/%s', ker.proj_dir, proj_name, exp_name, ker.feat);
 	
 	test_db_file = sprintf('database_%s.mat', ker.test_pat);
 	
@@ -16,7 +10,7 @@ function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
 	
 	if ~exist(gt_file, 'file'),
 		warning('File not found! [%s] USING COMMON DIR GROUNDTRUTH!!!', gt_file);
-		calker_common_exp_dir = sprintf('%s/%s/experiments/%s-calker/common', ker.proj_dir, proj_name, exp_name);
+		calker_common_exp_dir = sprintf('%s/%s/experiments/%s/common', ker.proj_dir, proj_name, exp_name);
 		gt_file = fullfile(calker_common_exp_dir, test_db_file);
 	end
 	
@@ -33,7 +27,7 @@ function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
 
 	
 	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
-	videoScorePath = sprintf('%s/scores/%s/%s.video.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
+    
 	mapPath = sprintf('%s/scores/%s/%s.map.csv', calker_exp_dir, ker.test_pat, ker.name);
     
 	if ~checkFile(scorePath), 
@@ -42,93 +36,28 @@ function calker_cal_map(proj_name, exp_name, ker, events, videolevel, fusion)
 	scores = load(scorePath);
 			
 	m_ap = zeros(1, n_event);
-
-	if videolevel | (~videolevel & exist(videoScorePath, 'file')),	% video-based
+    
+    for jj = 1:n_event,
+        event_name = events{jj};
+        this_scores = scores.(event_name);
+        
+        fprintf('Scoring for event [%s]...\n', event_name);
+        
+        [~, idx] = sort(this_scores, 'descend');
+        gt_idx = find(database.labels.(event_name) == 1);
+        
+        rank_idx = arrayfun(@(x)find(idx == x), gt_idx);
+        
+        sorted_idx = sort(rank_idx);	
+        ap = 0;
+        for kk = 1:length(sorted_idx), 
+            ap = ap + kk/sorted_idx(kk);
+        end
+        ap = ap/length(sorted_idx);
+        m_ap(jj) = ap;
+        %map.(event_name) = ap;
+    end	
 	
-		if ~videolevel,
-			fprintf('Loading video scores path...\n');
-			scores = load(videoScorePath);
-		end
-	
-		
-		parfor jj = 1:n_event,
-			event_name = events{jj};
-			this_scores = scores.(event_name);
-			
-			fprintf('Scoring for event [%s]...\n', event_name);
-			
-			[~, idx] = sort(this_scores, 'descend');
-			gt_idx = find(database.label == jj);
-			
-			rank_idx = arrayfun(@(x)find(idx == x), gt_idx);
-			
-			sorted_idx = sort(rank_idx);	
-			ap = 0;
-			for kk = 1:length(sorted_idx), 
-				ap = ap + kk/sorted_idx(kk);
-			end
-			ap = ap/length(sorted_idx);
-			m_ap(jj) = ap;
-			%map.(event_name) = ap;
-		end	
-	else 		% segment-based
-		
-		%videoScorePath = sprintf('%s/scores/%s.video.scores.mat', calker_exp_dir, ker.name);
-		fprintf('Calculating scores at video level...\n');
-		
-		video_scores_ = cell(n_event, 1);
-		
-		parfor jj = 1:n_event,
-			event_name = events{jj};
-			this_scores = scores.(event_name);
-			
-			% choose max score of each segment as score of a video	
-			fprintf('Combining scores at video level for event [%s]...\n', event_name);
-			%this_video_scores = arrayfun(@(x)max(this_scores(find(x == database.video))), unique(database.video));
-			%video_scores_{jj} = this_video_scores;
-			
-			% Update Sep, 10th :-), using loop instead of arrayfun
-			video_ids = unique(database.video);
-			this_video_scores = zeros(length(video_ids), 1);
-			for kk = 1:length(video_ids),
-				if ~mod(kk, 1000),
-					fprintf('%d ', kk);
-				end
-				
-				%this_video_scores(kk) = max(this_scores(find(kk == database.video)));
-				this_video_scores(kk) = max(this_scores(find(video_ids(kk) == database.video)));
-				
-			end
-			fprintf('\n ');
-			video_scores_{jj} = this_video_scores;
-			
-			fprintf('Scoring for event [%s]...\n', event_name);
-			
-			[~, idx] = sort(this_video_scores, 'descend');
-			gt_idx = find(database.label == jj);
-			
-			video_idx = unique(database.video(gt_idx));
-			
-			rank_idx = arrayfun(@(x)find(idx == x), video_idx);
-			
-			sorted_idx = sort(rank_idx);	
-			ap = 0;
-			for kk = 1:length(sorted_idx), 
-				ap = ap + kk/sorted_idx(kk);
-			end
-			ap = ap/length(sorted_idx);
-			m_ap(jj) = ap;
-			%map.(event_name) = ap;
-		end	
-		
-		video_scores = struct;
-		for jj = 1:n_event,
-			event_name = events{jj};
-			video_scores.(event_name) = video_scores_{jj};
-		end
-		
-		ssave(videoScorePath, '-STRUCT', 'video_scores') ;
-	end
 
 	m_ap
 	mean(m_ap)	

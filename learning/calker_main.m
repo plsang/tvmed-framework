@@ -9,6 +9,7 @@ feat_dim = 4000;
 ker_type = 'kl2';
 cross = 0;
 open_pool = 0;
+mode = 'submit';
 suffix = '';
 
 for k=1:2:length(varargin),
@@ -29,6 +30,8 @@ for k=1:2:length(varargin),
 			suffix = arg ;
 		case 'dim'
 			feat_dim = arg;
+        case 'mode'
+            mode = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -49,9 +52,21 @@ end
 ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 
 ker.events = events;
-ker.dev_pat = 'devset';
-ker.test_pat = 'testset';
-ker.proj_dir = '/net/per920a/export/das14a/satoh-lab/plsang';
+ker.mode = mode;
+
+if strcmp(ker.mode, 'submit'),
+    ker.dev_pat = 'devset';
+    ker.test_pat = 'testset';
+elseif strcmp(mode, 'tune'),
+    ker.dev_pat = 'dev_train';
+    ker.test_pat = 'dev_val';
+else
+    error('unknown mode <%s> \n', mode);
+end
+
+
+
+
 
 ker.proj_dir = '/net/per920a/export/das14a/satoh-lab/plsang';
 ker.proj_name = 'vsd2015';
@@ -83,7 +98,10 @@ calker_train_kernel(ker.proj_name, ker.exp_name, ker, events);
 calker_cal_test_kernel(ker.proj_name, ker.exp_name, ker);
 calker_test_kernel(ker.proj_name, ker.exp_name, ker, events);
 calker_cal_rank(ker.proj_name, ker.exp_name, ker, events);
-%calker_cal_map(proj_name, exp_name, ker, events);
+
+if strcmp(mode, 'tune'),
+    calker_cal_map(ker.proj_name, ker.exp_name, ker, events);
+end
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
