@@ -11,6 +11,7 @@ cross = 0;
 open_pool = 0;
 mode = 'submit';
 suffix = '';
+segtype = 'video';
 
 for k=1:2:length(varargin),
 
@@ -32,6 +33,8 @@ for k=1:2:length(varargin),
 			feat_dim = arg;
         case 'mode'
             mode = arg;
+        case 'segtype'
+            segtype = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -53,6 +56,7 @@ ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 
 ker.events = events;
 ker.mode = mode;
+ker.segtype = segtype;
 
 if strcmp(ker.mode, 'submit'),
     ker.dev_pat = 'devset';

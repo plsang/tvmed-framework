@@ -67,6 +67,10 @@ parfor jj = 1:num_part,
 				code = load(segment_path, 'code');
 				code = code.code;
 				
+                if strcmp(ker.segtype, 'keyframe'),
+                    code = mean(code, 2);
+                end
+    
 				if size(code, 1) ~= ker.num_dim,
 					warning('Dimension mismatch [%d-%d-%s]. Generating random feature... !!\n', size(code, 1), ker.num_dim, segment_path);
 					%code = ones(ker.num_dim, 1);

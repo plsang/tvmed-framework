@@ -50,6 +50,10 @@ for ii = 1:length(traindb_path), %
 	code = load(segment_path, 'code');
 	code = code.code;
 	
+    if strcmp(ker.segtype, 'keyframe'),
+        code = mean(code, 2);
+    end
+    
 	if size(code, 1) ~= ker.num_dim,
 		warning('Dimension mismatch [%d-%d-%s]. Skipped !!\n', size(code, 1), ker.num_dim, segment_path);
 		size(code);
