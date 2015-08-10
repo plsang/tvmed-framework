@@ -40,7 +40,7 @@ function calker_test_kernel(proj_name, exp_name, ker, events)
 	for jj = 1:n_event,
 		event_name = events{jj};
 		
-		modelPath = sprintf('%s/models/%s.%s.%s.cross%d.model.mat', calker_exp_dir, event_name, ker.name, ker.type, ker.cross);
+		modelPath = sprintf('%s/models/%s/%s.%s.%s.cross%d.model.mat', calker_exp_dir, ker.dev_pat, event_name, ker.name, ker.type, ker.cross);
         
 		if ~checkFile(modelPath),
 			error('Model not found %s \n', modelPath);			

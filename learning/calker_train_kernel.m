@@ -38,7 +38,7 @@ function calker_train_kernel(proj_name, exp_name, ker, events, start_event, end_
 	
 		event_name = events{kk};
 	
-        modelPath = sprintf('%s/models/%s.%s.%s.cross%d.model.mat', calker_exp_dir, event_name, ker.name, ker.type, ker.cross);
+        modelPath = sprintf('%s/models/%s/%s.%s.%s.cross%d.model.mat', calker_exp_dir, ker.dev_pat, event_name, ker.name, ker.type, ker.cross);
 		
 		if checkFile(modelPath),
 			fprintf('Skipped training %s \n', modelPath);
