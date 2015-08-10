@@ -39,7 +39,7 @@ function calker_cal_train_kernel(proj_name, exp_name, ker)
 		
 	end
 
-	if ker.cross,
+	if 0, %ker.cross,
 		parfor jj = 1:numLog2g,
 			cv_ker = ker;
 			log2g = log2g_list(jj);

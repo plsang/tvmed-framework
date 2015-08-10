@@ -54,6 +54,14 @@ for ii = 1:length(traindb_path), %
         code = mean(code, 2);
     end
     
+    if ker.dev2014 == 1,
+        if strcmp(ker.idt_desc, 'hoghof'),
+            code = code(1:65536);
+        elseif strcmp(ker.idt_desc, 'mbh'),
+            code = code(65537:end);
+        end
+    end
+    
 	if size(code, 1) ~= ker.num_dim,
 		warning('Dimension mismatch [%d-%d-%s]. Skipped !!\n', size(code, 1), ker.num_dim, segment_path);
 		size(code);

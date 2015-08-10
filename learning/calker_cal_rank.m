@@ -13,9 +13,7 @@ function calker_cal_rank(proj_name, exp_name, ker, events)
 	load(db_file, 'database');
 	
 	scoreDir =  sprintf('%s/scores/%s', calker_exp_dir, ker.test_pat);
-	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
-	videoScorePath = sprintf('%s/scores/%s/%s.video.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
-	mapPath = sprintf('%s/scores/%s/%s.map.csv', calker_exp_dir, ker.test_pat, ker.name);
+	scorePath = sprintf('%s/scores/%s/%s.%s.cross%d.scores.mat', calker_exp_dir, ker.test_pat, ker.name, ker.type, ker.cross);
     
 	if ~checkFile(scorePath), 
 		warning('File not found!! %s \n', scorePath);

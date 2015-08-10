@@ -26,13 +26,14 @@ function calker_cal_map(proj_name, exp_name, ker, events)
 	fprintf('Scoring for feature %s...\n', ker.name);
 
 	
-	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
+	scorePath = sprintf('%s/scores/%s/%s.%s.cross%d.scores.mat', calker_exp_dir, ker.test_pat, ker.name, ker.type, ker.cross);
     
-	mapPath = sprintf('%s/scores/%s/%s.map.csv', calker_exp_dir, ker.test_pat, ker.name);
+	mapPath = sprintf('%s/scores/%s/%s.%s.cross%d.map.csv', calker_exp_dir, ker.test_pat, ker.name, ker.type, ker.cross);
     
 	if ~checkFile(scorePath), 
 		error('File not found!! %s \n', scorePath);
 	end
+    
 	scores = load(scorePath);
 			
 	m_ap = zeros(1, n_event);

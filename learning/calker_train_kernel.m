@@ -38,7 +38,7 @@ function calker_train_kernel(proj_name, exp_name, ker, events, start_event, end_
 	
 		event_name = events{kk};
 	
-        modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
+        modelPath = sprintf('%s/models/%s.%s.%s.cross%d.model.mat', calker_exp_dir, event_name, ker.name, ker.type, ker.cross);
 		
 		if checkFile(modelPath),
 			fprintf('Skipped training %s \n', modelPath);
@@ -47,7 +47,12 @@ function calker_train_kernel(proj_name, exp_name, ker, events, start_event, end_
 		
 		fprintf('***** Training event ''%s''...\n', event_name);	
 		
-		labels = double(database.labels.(event_name));
+        if ker.dev2014 == 1 && strcmp(event_name, 'violence'),
+            labels = double(database.labels.('subjviolentscenes'));
+        else
+            labels = double(database.labels.(event_name));
+        end
+        
 		non_zero_label_idx = labels ~= 0;
 		train_idx = sel_feat & non_zero_label_idx;
 		
@@ -60,19 +65,29 @@ function calker_train_kernel(proj_name, exp_name, ker, events, start_event, end_
 		
 			
 		fprintf('SVM learning with predefined kernel matrix...\n');
-		svm = calker_svmkernellearn(cur_base, labels,   ...
-						   'type', 'C',        ...
-						   'C', 1,            ...
-						   'verbosity', 1,     ...
-						   ...%'rbf', 1,           ...
-						   ...%'crossvalidation', 5, ...
-						   'weights', [+1 posWeight ; -1 1]') ;
-						   
+        
+        if ker.cross == 0,
+            svm = calker_svmkernellearn(cur_base, labels,   ...
+                               'type', 'C',        ...
+                               'C', 1,            ...
+                               'verbosity', 1,     ...
+                               ...%'rbf', 1,           ...
+                               ...%'crossvalidation', 5, ...
+                               'weights', [+1 posWeight ; -1 1]') ;
+        else
+            svm = calker_svmkernellearn(cur_base, labels,   ...
+                               'type', 'C',        ...
+                               ...%'C', 1,            ...
+                               'verbosity', 1,     ...
+                               ...%'rbf', 1,           ...
+                               'crossvalidation', 5, ...
+                               'weights', [+1 posWeight ; -1 1]') ;
+        end        
+        
 		if isfield(kernels_, 'mu'),
 			gamma = kernels_.mu;
 		end
 	
-
 		svm = svmflip(svm, labels);
 
 		if strcmp(ker.type, 'echi2'),

@@ -23,7 +23,7 @@ function calker_test_kernel(proj_name, exp_name, ker, events)
     num_part = ceil(n_test_kf/ker.chunk_size);
     cols = fix(linspace(1, n_test_kf + 1, num_part+1));
 	
-	scorePath = sprintf('%s/scores/%s/%s.scores.mat', calker_exp_dir, ker.test_pat, ker.name);
+	scorePath = sprintf('%s/scores/%s/%s.%s.cross%d.scores.mat', calker_exp_dir, ker.test_pat, ker.name, ker.type, ker.cross);
 	
 	if exist(scorePath, 'file'),
 		fprintf('File [%s] already exist!\n', scorePath);
@@ -40,7 +40,7 @@ function calker_test_kernel(proj_name, exp_name, ker, events)
 	for jj = 1:n_event,
 		event_name = events{jj};
 		
-		modelPath = sprintf('%s/models/%s.%s.%s.model.mat', calker_exp_dir, event_name, ker.name, ker.type);
+		modelPath = sprintf('%s/models/%s.%s.%s.cross%d.model.mat', calker_exp_dir, event_name, ker.name, ker.type, ker.cross);
         
 		if ~checkFile(modelPath),
 			error('Model not found %s \n', modelPath);			

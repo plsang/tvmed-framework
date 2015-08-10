@@ -2,7 +2,7 @@ function calker_main(exp_name, feature_ext, varargin)
 
 %% exp_name: arousal, valence, violence
 
-addpath('/net/per610a/export/das11f/plsang/codes/kaori-secode-vsd');
+%%addpath('/net/per610a/export/das11f/plsang/codes/kaori-secode-vsd');
 set_env;
 
 feat_dim = 4000;
@@ -12,6 +12,8 @@ open_pool = 0;
 mode = 'submit';
 suffix = '';
 segtype = 'video';
+dev2014 = 0;
+desc = ''; %% compatible issue with dev2014 feature, desc = hoghof, desc = mbh
 
 for k=1:2:length(varargin),
 
@@ -35,6 +37,10 @@ for k=1:2:length(varargin),
             mode = arg;
         case 'segtype'
             segtype = arg;
+        case 'dev2014'
+            dev2014 = arg;  
+        case 'desc'
+            desc = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -57,12 +63,24 @@ ker = calker_build_kerdb(feature_ext, ker_type, feat_dim, cross, suffix);
 ker.events = events;
 ker.mode = mode;
 ker.segtype = segtype;
+ker.idt_desc = desc;
+ker.dev2014 = dev2014;
 
 if strcmp(ker.mode, 'submit'),
-    ker.dev_pat = 'devset';
+    if dev2014 == 0,
+        ker.dev_pat = 'devset';
+    else
+        ker.dev_pat = 'dev2014';
+    end
+    
     ker.test_pat = 'testset';
 elseif strcmp(mode, 'tune'),
-    ker.dev_pat = 'dev_train';
+    if dev2014 == 0,
+        ker.dev_pat = 'dev_train';
+    else
+        ker.dev_pat = 'dev2014';
+    end
+    
     ker.test_pat = 'dev_val';
 else
     error('unknown mode <%s> \n', mode);
@@ -91,7 +109,10 @@ mkdir(fullfile(calker_exp_dir, 'models'));
 mkdir(fullfile(calker_exp_dir, 'log'));
 %end
 
-calker_create_database(ker, ker.dev_pat, exp_name);
+if dev2014 == 0,
+    calker_create_database(ker, ker.dev_pat, exp_name);
+end
+
 calker_create_database(ker, ker.test_pat, exp_name);
 
 %open pool
