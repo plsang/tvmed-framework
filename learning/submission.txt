@@ -1,0 +1,102 @@
+***** Violence
+
+calker_gen_submission('vsd', 'hoghof_mbh_mfcc', 1, 0)
+    0.2200, (0.150000, 0.261224)
+    
+calker_gen_submission('vsd', 'hoghof_mbh_sift_mfcc', 2, 0)
+    0.2094, (0.120000, 0.273684)
+    
+calker_gen_submission('vsd', 'hoghof_mbh_mfcc_vdfull', 3, 1)
+    0.2457, (0.110000, 0.283988)
+
+calker_gen_submission('vsd', 'hoghof_mbh_mfcc_vdfull_hbm', 4, 1)
+    0.2499, (0.130000, 0.292517)
+
+calker_gen_submission('vsd', 'hoghof_mbh_sift_mfcc_vdfull_vdfc6_vdfc7_fohgoh_hbm_tfis_ccfm', 5, 1)
+    0.1930, optimal: (0.150000, 0.244565)
+    
+    
+***** Affect    
+
+calker_gen_submission('affect', 'hoghof_mbh_sift_mfcc', 1, 0, 1) % use threshold
+
+ m_ap =
+
+    0.5054    0.4071    0.3318
+
+
+ans =
+
+    0.4148
+
+Loading database [database_dev_val.mat]...
+
+ *** optimal: (0.250000, 0.570703)
+
+ *** optimal: (0.290000, 0.544421)
+
+ *** optimal: (0.270000, 0.411532)
+
+
+ 
+ m_ap =
+
+    0.3279    0.1499    0.7216
+
+
+ans =
+
+    0.3998
+
+Loading database [database_dev_val.mat]...
+
+ *** optimal: (0.230000, 0.399486)
+
+ *** optimal: (0.110000, 0.259058)
+
+ *** optimal: (0.540000, 0.774801)
+
+ 
+ 
+ calker_gen_submission('affect', 'hoghof_mbh_sift_mfcc', 2, 0, 0) % don't use threshold
+ 
+
+ 
+ calker_gen_submission('affect', 'hoghof_mbh_sift_mfcc_vdfc6_vdfc7_vdfull', 3, 1, 1)
+m_ap =
+
+    0.5403    0.4125    0.3601
+
+
+ans =
+
+    0.4376
+
+Loading database [database_dev_val.mat]...
+
+ *** optimal: (0.280000, 0.588235)
+
+ *** optimal: (0.280000, 0.544421)
+
+ *** optimal: (0.290000, 0.438550)
+
+
+ m_ap =
+
+    0.3256    0.1594    0.7023
+
+
+ans =
+
+    0.3958
+
+Loading database [database_dev_val.mat]...
+
+ *** optimal: (0.210000, 0.387194)
+
+ *** optimal: (0.120000, 0.259717)
+
+ *** optimal: (0.470000, 0.772949)
+
+
+ calker_gen_submission('affect', 'hoghof_mbh_sift_mfcc_vdfc6_vdfc7_vdfull', 4, 1, 0)
