@@ -132,7 +132,7 @@ function calker_late_fusion(exp_name, fuse_list, varargin)
 				fprintf(' -- [%d/%d] kernel [%s]...\n', jj, length(fused_ids), ker_name);
 				
 				%scorePath = sprintf('%s/%s.%s.%s/scores/%s/%s-%s/%s.%s.%s.scores.mat', calker_exp_dir, ker_name, feat_norm, suffix, test_pat, ek_set, miss_type, ker_name, feat_norm, ker_type);
-				scorePath = sprintf('%s/%s.%s%s/scores/%s/%s.%s.cross%d.scores.mat', calker_exp_dir, ker_name, feat_norm, suffix, test_pat, ker_name, ker_type, 0);
+				scorePath = sprintf('%s/%s.%s%s/scores/%s/%s.%s.%s.cross%d.scores.mat', calker_exp_dir, ker_name, feat_norm, suffix, test_pat, ker_name, feat_norm, ker_type, 1);
                 
 				if ~exist(scorePath, 'file');
 					error('File not found! [%s]', scorePath);
@@ -172,3 +172,4 @@ function calker_late_fusion(exp_name, fuse_list, varargin)
     %calker_cal_rank(proj_name, exp_name, ker);
 	%calker_cal_threshhold(proj_name, exp_name, ker);
 end
+
