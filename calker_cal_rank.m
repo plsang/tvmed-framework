@@ -19,7 +19,21 @@ function calker_cal_rank(proj_name, exp_name, ker)
 	
 	fprintf('Ranking for feature %s...\n', ker.name);
 	
-	
+	switch ker.test_pat,
+        case 'kindred14'
+            clips = ker.MEDMD.RefTest.KINDREDTEST.clips;
+        case 'medtest14'
+            clips = ker.MEDMD.RefTest.MEDTEST.clips;
+        case 'med2012'
+            clips = ker.MEDMD.RefTest.CVPR14Test.clips; 
+		case 'med11test'
+            clips = ker.MEDMD.RefTest.MED11TEST.clips; 	
+        case 'eval15full'
+			clips = ker.EVALMD.UnrefTest.MED15EvalFull.clips;            
+        otherwise
+            error('unknown video pat!!!\n');
+    end
+    
 	for jj = 1:n_event,
 		event_name = events{jj};
 		
@@ -35,7 +49,7 @@ function calker_cal_rank(proj_name, exp_name, ker)
 		fh = fopen(rankFile, 'w');
 		for kk=1:length(sorted_scores),
 			rank_idx = sorted_idx(kk);
-			fprintf(fh, '%s %f\n', ker.MEDMD.UnrefTest.MED15EvalFull.clips{rank_idx}, sorted_scores(kk));
+			fprintf(fh, '%s %f\n', clips{rank_idx}, sorted_scores(kk));
 		end
 		
 		fclose(fh);

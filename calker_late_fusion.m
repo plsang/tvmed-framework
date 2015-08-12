@@ -11,7 +11,7 @@ function calker_late_fusion(fuse_list, varargin)
 	exp_name = 'niimed2015';
     ek_set = 'EK10Ex';
     miss_type = 'RN';
-    ker_type = 'linear';
+    ker_type = 'mixed';
     feat_norm = 'l2';
 	suffix = '--v1.3-r1';
 	
@@ -26,7 +26,7 @@ function calker_late_fusion(fuse_list, varargin)
             case 'dim'
                 feat_dim = arg;
             case 'ek'
-                eventkit = arg;	
+                ek_set = arg;	
             case 'miss'
                 miss_type = arg;	
             case 'test'
@@ -57,7 +57,20 @@ function calker_late_fusion(fuse_list, varargin)
     ker_names.('fc6') = 'placeshybrid.fc6';
     ker_names.('fc7') = 'placeshybrid.fc7';
     ker_names.('full') = 'placeshybrid.full';
-				
+    ker_names.('zs') = 'placeshybrid.full.zeroshot';
+    ker_names.('htc') = 'hitachi.audio';
+	
+    ker_types = struct;
+	ker_types.('sift') = 'linear';
+	ker_types.('mfcc') = 'linear';
+    ker_types.('hoghof') = 'linear';
+    ker_types.('mbh') = 'linear';
+    ker_types.('fc6') = 'echi2';
+    ker_types.('fc7') = 'echi2';
+    ker_types.('full') = 'echi2';
+    ker_types.('zs') = 'linear';
+    ker_types.('htc') = 'mixed';
+    
 	calker_exp_dir = sprintf('%s/%s/experiments/%s', ker.proj_dir, proj_name, exp_name);
 	
 	ker_ids = fieldnames(ker_names);
@@ -77,7 +90,8 @@ function calker_late_fusion(fuse_list, varargin)
 	
     fusion_name = sprintf('%s.%s', fusion_name, feat_norm);
     
-	output_file = sprintf('%s/%s.%s/scores/%s/%s-%s/%s.%s.scores.mat', calker_exp_dir, fusion_name, suffix, test_pat, ek_set, miss_type, fusion_name, ker_type);
+	output_file = sprintf('%s/%s.%s/scores/%s/%s-%s/%s.%s.scores.mat', ...
+        calker_exp_dir, fusion_name, suffix, test_pat, ek_set, miss_type, fusion_name, ker_type);
 	
 	if ~exist(output_file, 'file'),
 	
@@ -94,7 +108,9 @@ function calker_late_fusion(fuse_list, varargin)
 				ker_name = ker_names.(fused_ids{jj});
 				fprintf(' -- [%d/%d] kernel [%s]...\n', jj, length(fused_ids), ker_name);
 				
-				scorePath = sprintf('%s/%s.%s.%s/scores/%s/%s-%s/%s.%s.%s.scores.mat', calker_exp_dir, ker_name, feat_norm, suffix, test_pat, ek_set, miss_type, ker_name, feat_norm, ker_type);
+				scorePath = sprintf('%s/%s.%s.%s/scores/%s/%s-%s/%s.%s.%s.scores.mat', ...
+                    calker_exp_dir, ker_name, feat_norm, suffix, test_pat, ek_set, miss_type, ...
+                    ker_name, feat_norm, ker_types.(fused_ids{jj}));
 					
 				if ~exist(scorePath, 'file');
 					error('File not found! [%s]', scorePath);
@@ -144,7 +160,7 @@ function calker_late_fusion(fuse_list, varargin)
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_eval.mat';
         fprintf('Loading metadata <%s>...\n', medmd_file);
         load(medmd_file, 'MEDMD'); 
-        ker.MEDMD = MEDMD;
+        ker.EVALMD = MEDMD;
     end
 	
     calker_cal_rank(proj_name, exp_name, ker);
