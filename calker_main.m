@@ -24,6 +24,11 @@ config_str = '';
 pn = 0;
 pntest = 0; %% power norm on test data only (already pn on train)
 
+runtrain = 1;
+runtest = 1;
+runmap = 1;
+runrank = 1;
+
 for k=1:2:length(varargin),
 
 	opt = lower(varargin{k});
@@ -80,6 +85,14 @@ for k=1:2:length(varargin),
 			pn = arg;
         case 'pntest'
 			pntest = arg;    
+        case 'runtrain'
+			runtrain = arg;        
+        case 'runtest'
+			runtest = arg;        
+        case 'runmap'
+			runmap = arg;        
+        case 'runrank'
+			runrank = arg;            
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -101,6 +114,8 @@ ker.testdb = testdb;
 ker.maxneg = maxneg;
 ker.pn = pn;
 ker.pntest = pntest;
+ker.start_event = start_event;
+ker.end_event = end_event;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
@@ -146,10 +161,12 @@ ker.MEDMD = MEDMD;
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 %calker_cal_train_kernel(proj_name, exp_name, ker);
 
-if strcmp(ker.metadb, 'med2012') || strcmp(ker.metadb, 'med2011'),
-    ker = calker_train_kernel_ova(proj_name, exp_name, ker);
-else
-    ker = calker_train_kernel(proj_name, exp_name, ker);
+if runtrain == 1,
+    if strcmp(ker.metadb, 'med2012') || strcmp(ker.metadb, 'med2011'),
+        ker = calker_train_kernel_ova(proj_name, exp_name, ker);
+    else
+        ker = calker_train_kernel(proj_name, exp_name, ker);
+    end
 end
 
 if strcmp(ker.test_pat, 'eval15full'),
@@ -159,14 +176,23 @@ if strcmp(ker.test_pat, 'eval15full'),
     ker.EVALMD = MEDMD;
 end
 
-calker_test_kernel(proj_name, exp_name, ker);
-
-if isempty(strfind(ker.test_pat, 'eval')),
-    calker_cal_map(proj_name, exp_name, ker);
+if runtest == 1,
+    if ~strcmp(eventkit, 'EK0Ex'),
+        calker_test_kernel(proj_name, exp_name, ker);
+    else
+        calker_test_zeroshot(proj_name, exp_name, ker);
+    end
 end
 
-%end
-calker_cal_rank(proj_name, exp_name, ker);
+if runmap == 1,
+    if isempty(strfind(ker.test_pat, 'eval')),
+        calker_cal_map(proj_name, exp_name, ker);
+    end
+end
+
+if runrank == 1,
+    calker_cal_rank(proj_name, exp_name, ker);
+end
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
