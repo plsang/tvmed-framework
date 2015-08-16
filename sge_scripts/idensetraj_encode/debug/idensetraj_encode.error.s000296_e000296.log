@@ -1,0 +1,12 @@
+{??? Error using ==> save
+Unable to write file
+/net/per610a/export/das11f/plsang/trecvidmed15/feature/niimed2015/idensetraj.hoghof.fisher.cb256.pca/LDC2012E01/events/E027/HVC048963.mat:
+permission denied.
+
+Error in ==> sge_save at 11
+    save( output_file, 'code');
+
+Error in ==> idensetraj_encode at 205
+                sge_save(output_file, codes.(desc){jj});
+} 
+

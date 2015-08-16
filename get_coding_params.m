@@ -45,7 +45,7 @@ function [coding_params, param_dict] = post_process(coding_params)
             if strcmp(coding_param.enc_type, 'fisher') == 1,
                 coding_params.(desc){jj}.output_dim = 2*coding_param.codebook_size*coding_param.dimred;
                 coding_params.(desc){jj}.stats_dim = 1 + coding_param.codebook_size*(2*coding_param.dimred + 1);
-                coding_params.(desc){jj}.feature_pat = sprintf('idensetraj.%s.%s.cb%d.pca%d', desc, coding_param.enc_type, coding_param.codebook_size, coding_param.dimred);
+                coding_params.(desc){jj}.feature_pat = sprintf('idensetraj.%s.%s.cb%d.pca', desc, coding_param.enc_type, coding_param.codebook_size);
             else
                 coding_params.(desc){jj}.output_dim = coding_param.codebook_size;
                 coding_params.(desc){jj}.feature_pat = sprintf('idensetraj.%s.%s.cb%d', desc, coding_param.enc_type, coding_param.codebook_size);

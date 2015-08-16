@@ -23,7 +23,7 @@ function idensetraj_encode( exp_name, pat_list, start_video, end_video )
     end
 	
     video_dir = '/net/per610a/export/das11f/plsang/dataset/MED/LDCDIST-RSZ';
-	fea_dir = '/net/per920a/export/das14a/satoh-lab/plsang/trecvidmed/feature';
+	fea_dir = '/net/per610a/export/das11f/plsang/trecvidmed15/feature';
 	
     if ~isempty(strfind(pat_list, '12')),
         %% MED 2012

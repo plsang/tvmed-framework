@@ -154,7 +154,9 @@ function codes = idensetraj_extract_and_encode( video_file, coding_params, varar
             enc_param = coding_params.(desc){jj};
             
             if strcmp(enc_param.enc_type, 'fisher') == 1,
-                codes.(desc){jj} = mexFisherEncodeHelperSP('getfk', enc_param.fisher_handle);
+                
+                code = mexFisherEncodeHelperSP('getfk', enc_param.fisher_handle);
+                codes.(desc){jj} = sign(code) .* sqrt(abs(code));
                 mexFisherEncodeHelperSP('clear', enc_param.fisher_handle); 
             end
         end

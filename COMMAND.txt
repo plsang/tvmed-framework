@@ -9,4 +9,14 @@ Total clips: 22691
 Total durations: 956.041 hours
 cm_gen_sge_code_log('idensetraj_encode', 'eduardo.idensetraj ek100ps14_bg_kindred14 %d %d', 22691, 6000, 'debug', 1, 'pe', 2)
 
+Total clips: 198003
+Total durations: 7579.766 hours
+cm_gen_sge_code_log('idensetraj_encode', 'idensetraj.hoghofmbh med15eval %d %d', 198003, 6000, 'debug', 3)
 
+
+>> cm_gen_sge_code_log('idensetraj_encode', 'niimed2015 ek100ps14 %d %d', 2991, 2991, 'debug', 1, 'spacing', 'lin')
+>> cm_gen_sge_code_log('idensetraj_encode', 'niimed2015 ek100ps14 %d %d', 2991, 2991, 'debug', 0, 'spacing', 'lin', 'local', 1)
+>> 
+
+to be checked
+Video </net/per610a/export/das11f/plsang/dataset/MED/LDCDIST-RSZ/LDC2012E01/events/E026/HVC302415.mp4> already processed 
