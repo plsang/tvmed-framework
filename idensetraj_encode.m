@@ -23,20 +23,25 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
     end
 	
     video_dir = '/net/per610a/export/das11f/plsang/dataset/MED/LDCDIST-RSZ';
-	fea_dir = '/net/per610a/export/das11f/plsang/trecvidmed/feature';
+	%fea_dir = '/net/per610a/export/das11f/plsang/trecvidmed/feature';
+    fea_dir = '/net/per920a/export/das14a/satoh-lab/plsang/trecvidmed/feature';
 	
     if ~isempty(strfind(pat_list, '12')),
         %% MED 2012
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med12/medmd_2012.mat';   
+    elseif ~isempty(strfind(pat_list, 'med15eval')),
+		%% MED 2015
+		medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_eval_fps.mat';
     else
         %% MED 2014
         medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed14/metadata/medmd_2014_devel_ps.mat';
     end
+    
 	fprintf('Loading metadata...\n');
 	load(medmd_file, 'MEDMD'); 
 	%metadata = MEDMD.lookup;
 	
-    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14', 'med11patch'};
+    supported_pat_list = {'ek100ps14', 'ek10ps14', 'bg', 'kindred14', 'medtest14', 'train12', 'test12', 'train14', 'med11patch', 'med15eval'};
     
     clips = []; 
     durations = [];
@@ -100,6 +105,9 @@ function idensetraj_encode( exp_name, pat_list, seg_length, start_seg, end_seg )
                     clips_ = infos{1};
                     durations_ = zeros(1, length(clips_));
                     fclose(fh);
+                case 'med15eval'
+                    clips_ =  MEDMD.UnrefTest.MED15EvalFull.clips;
+					durations_ = MEDMD.UnrefTest.MED15EvalFull.durations;
             end
             
             clips = [clips, clips_];

@@ -12,7 +12,7 @@ function codes = idensetraj_extract_and_encode( video_file, start_frame, end_fra
     end
 	
 	full_dim = 396;		
-    BLOCK_SIZE = 50000;                          % initial capacity (& increment size)
+    BLOCK_SIZE = 30000;                          % initial capacity (& increment size)
     X = zeros(full_dim, BLOCK_SIZE, 'single');
    
     listPtr = 1;
