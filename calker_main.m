@@ -29,6 +29,7 @@ runtest = 1;
 runmap = 1;
 runrank = 1;
 preload = 0;
+randdep = 0; %% where to use random dependency 
 
 for k=1:2:length(varargin),
 
@@ -96,6 +97,8 @@ for k=1:2:length(varargin),
 			runrank = arg;            
         case 'preload'
             preload = arg;
+        case 'randdep'
+            randdep = arg;    
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -119,8 +122,8 @@ ker.pn = pn;
 ker.pntest = pntest;
 ker.start_event = start_event;
 ker.end_event = end_event;
-
 ker.preload = preload;
+ker.randdep = randdep;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
@@ -182,7 +185,7 @@ if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 if preload ~= 0,
     pl_file = sprintf('%s/%s/feature/%s/%s.h5', ker.proj_dir, proj_name, exp_name, ker.feat_raw);
     fprintf('loading feature from file <%s>...\n', pl_file);
-    ker.feats = calker_load_h5_feature(pl_file, preload, ker.num_dim);
+    ker.feats = calker_load_h5_feature(pl_file, preload, ker.num_dim, ker.randdep);
 end
 
 if runtrain == 1,
