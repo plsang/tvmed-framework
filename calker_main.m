@@ -28,6 +28,7 @@ runtrain = 1;
 runtest = 1;
 runmap = 1;
 runrank = 1;
+preload = 0;
 
 for k=1:2:length(varargin),
 
@@ -93,6 +94,8 @@ for k=1:2:length(varargin),
 			runmap = arg;        
         case 'runrank'
 			runrank = arg;            
+        case 'preload'
+            preload = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -117,6 +120,8 @@ ker.pntest = pntest;
 ker.start_event = start_event;
 ker.end_event = end_event;
 
+ker.preload = preload;
+
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
 fisher_params.grad_means = true;		% 1st order
@@ -133,12 +138,10 @@ else
     feat_key = strrep(feature_ext, '.', '');
     if isfield(param_dict, feat_key),
         ker.codebook = param_dict.(feat_key).codebook;
-    end
-    
+    end 
 end
 
 ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
-ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
 ker.log_dir = fullfile(ker.calker_exp_dir, 'log');
 
 if strcmp(ker.metadb, 'med2014'),
@@ -149,6 +152,10 @@ elseif strcmp(ker.metadb, 'med2011'),
 	medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med11/medmd_2011.mat';
 elseif strcmp(ker.metadb, 'med2015ah'),
 	medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med15/med15_ah.mat';    
+elseif strcmp(ker.metadb, 'med2013lj'),
+	medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med13/medmd_2013_lujiang.mat';        
+elseif strcmp(ker.metadb, 'med2014lj'),
+	medmd_file = '/net/per610a/export/das11f/plsang/trecvidmed/metadata/med14/medmd_2014_lujiang.mat';        
 else
     error('unknown metadb <%s>\n', ker.metadb);
 end
@@ -156,10 +163,22 @@ end
 fprintf('Loading metadata <%s>...\n', medmd_file);
 load(medmd_file, 'MEDMD'); 
 ker.MEDMD = MEDMD;
+
+if isfield(MEDMD.RefTest, 'KINDREDTEST'),
+    ker.event_ids = MEDMD.RefTest.KINDREDTEST.eventids;
+else
+    ker.event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
+end
     
 %open pool
 if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 %calker_cal_train_kernel(proj_name, exp_name, ker);
+
+if preload ~= 0,
+    pl_file = sprintf('%s/%s/feature/%s/%s.h5', ker.proj_dir, proj_name, exp_name, ker.feat_raw);
+    fprintf('loading feature from file <%s>...\n', pl_file);
+    ker.feats = calker_load_h5_feature(pl_file, preload);
+end
 
 if runtrain == 1,
     if strcmp(ker.metadb, 'med2012') || strcmp(ker.metadb, 'med2011'),

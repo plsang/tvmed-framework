@@ -30,6 +30,10 @@ function calker_cal_rank(proj_name, exp_name, ker)
             clips = ker.MEDMD.RefTest.MED11TEST.clips; 	
         case 'eval15full'
 			clips = ker.EVALMD.UnrefTest.MED15EvalFull.clips;            
+        case 'medtest13lj'
+            clips = ker.MEDMD.RefTest.MEDTEST2.clips;
+        case 'medtest14lj'
+            clips = ker.MEDMD.RefTest.MEDTEST2.clips;      
         otherwise
             error('unknown video pat!!!\n');
     end

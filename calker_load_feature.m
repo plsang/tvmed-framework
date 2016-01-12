@@ -46,6 +46,10 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
 				clips = ker.MEDMD.RefTest.MED11TEST.clips;    
             case 'eval15full'
 				clips = ker.EVALMD.UnrefTest.MED15EvalFull.clips;        
+            case 'medtest13lj'
+                clips = ker.MEDMD.RefTest.MEDTEST2.clips;
+            case 'medtest14lj'
+                clips = ker.MEDMD.RefTest.MEDTEST2.clips;    
             otherwise
                 error('unknown video pat!!!\n');
         end
@@ -69,77 +73,84 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
                                 
 		if ~isfield(info, clip_name), continue; end;
 		
-        segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+        if ker.preload ~= 0,
+            %% use feature that is preloaded
+            %% currently support video-based only
+            code = ker.feats.(clip_name);
+        else
+            
+            segment_path = sprintf('%s/%s/feature/%s/%s/%s/%s.mat',...
+                            ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(info.(clip_name).loc), clip_name);
+                            
+            if ~exist(segment_path),
+                msg = sprintf('File [%s] does not exist!\n', segment_path);
+                fprintf(msg);
+                logmsg(logfile, msg);
+                continue;
+            end
+            
+            if strcmp(ker.seg_type, 'video'),  %% video-based
+                code = load(segment_path, 'code');
+                code = code.code;
+                
+                if ker.pn > 0,
+                    %% currently alpha = 0.5
+                    %% todo: support other alpha values
+                    code = sign(code) .* sqrt(abs(code));    
+                end
+                
+                if ker.pntest > 0 && strcmp(video_pat, 'eval15full'),
+                    %% only for hoghof, mbh on eval15
+                    code = sign(code) .* sqrt(abs(code));    
+                end
+                
+                % if strcmp(ker.idt_desc, 'hoghof'),
+                    % code = code(1:65536);
+                % elseif strcmp(ker.idt_desc, 'mbh'),
+                    % code = code(65537:end);
+                % end
+            elseif strcmp(ker.seg_type, 'keyframe'),  %% video-based
+                code = load(segment_path, 'code');
+                code = code.code;
+                
+                code = mean(code, 2);
+                
+                if ker.pn > 0,
+                    %% currently alpha = 0.5
+                    %% todo: support other alpha values
+                    code = sign(code) .* sqrt(abs(code));    
+                end
+                
+            else %% segment-based
+                if strcmp(ker.enc_type, 'fisher'),
+                    stats_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
                         ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(info.(clip_name).loc), clip_name);
-                        
-        if ~exist(segment_path),
-            msg = sprintf('File [%s] does not exist!\n', segment_path);
-            fprintf(msg);
-            logmsg(logfile, msg);
-            continue;
-        end
-        
-        if strcmp(ker.seg_type, 'video'),  %% video-based
-            code = load(segment_path, 'code');
-            code = code.code;
-            
-			if ker.pn > 0,
-				%% currently alpha = 0.5
-				%% todo: support other alpha values
-				code = sign(code) .* sqrt(abs(code));    
-			end
-			
-            if ker.pntest > 0 && strcmp(video_pat, 'eval15full'),
-				%% only for hoghof, mbh on eval15
-				code = sign(code) .* sqrt(abs(code));    
-			end
-            
-            % if strcmp(ker.idt_desc, 'hoghof'),
-                % code = code(1:65536);
-            % elseif strcmp(ker.idt_desc, 'mbh'),
-                % code = code(65537:end);
-            % end
-        elseif strcmp(ker.seg_type, 'keyframe'),  %% video-based
-            code = load(segment_path, 'code');
-            code = code.code;
-            
-            code = mean(code, 2);
-            
-            if ker.pn > 0,
-				%% currently alpha = 0.5
-				%% todo: support other alpha values
-				code = sign(code) .* sqrt(abs(code));    
-			end
-            
-        else %% segment-based
-            if strcmp(ker.enc_type, 'fisher'),
-                stats_path = sprintf('%s/%s/feature/%s/%s/%s/%s.stats.mat',...
-                    ker.proj_dir, proj_name, exp_name, ker.feat_raw, fileparts(info.(clip_name).loc), clip_name);
-                stats = load(stats_path, 'code'); 
+                    stats = load(stats_path, 'code'); 
 
-                if any(any(isnan(stats.code), 1)),
-                    fprintf('Warning: File <%s> contains NaN\n', stats_path);
-                    stats.code = stats.code(:, ~any(isnan(stats.code), 1));
+                    if any(any(isnan(stats.code), 1)),
+                        fprintf('Warning: File <%s> contains NaN\n', stats_path);
+                        stats.code = stats.code(:, ~any(isnan(stats.code), 1));
+                    end
+                    
+                    stats = sum(stats.code, 2);
+                    
+                    cpp_handle = mexFisherEncodeHelperSP('init', ker.codebook, ker.fisher_params);
+                    code = mexFisherEncodeHelperSP('getfkstats', cpp_handle, stats);
+                    mexFisherEncodeHelperSP('clear', cpp_handle);
+                    
+                    %% power normalization
+                    code = sign(code) .* sqrt(abs(code));    
+                    %clear stats;
+                    
+                else %bow
+                    codes = load(segment_path, 'code');
+                    if ~isempty(find(any(isnan(codes.code), 1))),
+                        fprintf('Warning: File <%s> contains NaN\n', segment_path);
+                        codes.code = codes.code(:, ~any(isnan(codes.code), 1));
+                    end
+                    code = sum(codes.code, 2);
+                    %clear codes;
                 end
-                
-                stats = sum(stats.code, 2);
-                
-                cpp_handle = mexFisherEncodeHelperSP('init', ker.codebook, ker.fisher_params);
-                code = mexFisherEncodeHelperSP('getfkstats', cpp_handle, stats);
-                mexFisherEncodeHelperSP('clear', cpp_handle);
-                
-                %% power normalization
-                code = sign(code) .* sqrt(abs(code));    
-                %clear stats;
-                
-            else %bow
-                codes = load(segment_path, 'code');
-                if ~isempty(find(any(isnan(codes.code), 1))),
-                    fprintf('Warning: File <%s> contains NaN\n', segment_path);
-                    codes.code = codes.code(:, ~any(isnan(codes.code), 1));
-                end
-                code = sum(codes.code, 2);
-                %clear codes;
             end
         end
         

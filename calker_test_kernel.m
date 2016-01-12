@@ -11,6 +11,10 @@ function calker_test_kernel(proj_name, exp_name, ker)
             n_clip = length(ker.MEDMD.RefTest.MED11TEST.clips); 	
         case 'eval15full'
 			n_clip = length(ker.EVALMD.UnrefTest.MED15EvalFull.clips);            
+        case 'medtest13lj'
+            n_clip = length(ker.MEDMD.RefTest.MEDTEST2.clips);
+        case 'medtest14lj'
+            n_clip = length(ker.MEDMD.RefTest.MEDTEST2.clips);     
         otherwise
             error('unknown video pat!!!\n');
     end
@@ -72,7 +76,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			error('unknown ker type');
 		end
         
-        parfor jj = 1:length(ker.event_ids),
+        %parfor jj = 1:length(ker.event_ids),
+        for jj = 1:length(ker.event_ids),
         
             event_id = ker.event_ids{jj};
             
@@ -84,6 +89,7 @@ function calker_test_kernel(proj_name, exp_name, ker)
             %test_base = base(models.(event_id).svind,:);
             %sub_scores = models.(event_id).alphay' * test_base + models.(event_id).b;
             
+            % Dec 16, 2015
             [y, acc, dec] = svmpredict(zeros(Nt, 1), [(1:Nt)' test_base'], models.(event_id).model.libsvm_cl, '-b 1 -q') ;		
             sub_scores = dec(:, 1)';
             
