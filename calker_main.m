@@ -141,7 +141,12 @@ else
     end 
 end
 
-ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, suffix);
+if isempty(suffix),
+    ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.type);
+else
+    ker.calker_exp_dir = sprintf('%s/%s/experiments/%s/%s.%s.%s', ker.proj_dir, proj_name, exp_name, ker.feat, ker.type, suffix);
+end
+
 ker.log_dir = fullfile(ker.calker_exp_dir, 'log');
 
 if strcmp(ker.metadb, 'med2014'),
@@ -177,7 +182,7 @@ if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 if preload ~= 0,
     pl_file = sprintf('%s/%s/feature/%s/%s.h5', ker.proj_dir, proj_name, exp_name, ker.feat_raw);
     fprintf('loading feature from file <%s>...\n', pl_file);
-    ker.feats = calker_load_h5_feature(pl_file, preload);
+    ker.feats = calker_load_h5_feature(pl_file, preload, ker.num_dim);
 end
 
 if runtrain == 1,
