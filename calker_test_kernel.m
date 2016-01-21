@@ -85,9 +85,10 @@ function calker_test_kernel(proj_name, exp_name, ker)
             
             [N, Nt] = size(test_base); % Nt = # test ; % N  = # train
             
-            %only test at svind
-            %test_base = base(models.(event_id).svind,:);
-            %sub_scores = models.(event_id).alphay' * test_base + models.(event_id).b;
+            % only test at svind 
+            % Jan 15, 2016: very poor results, must have some bugs.
+            % test_base = base(models.(event_id).model.svind,:);
+            % sub_scores = models.(event_id).model.alphay' * test_base + models.(event_id).model.b;
             
             % Dec 16, 2015
             [y, acc, dec] = svmpredict(zeros(Nt, 1), [(1:Nt)' test_base'], models.(event_id).model.libsvm_cl, '-b 1 -q') ;		
