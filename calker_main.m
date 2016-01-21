@@ -23,6 +23,7 @@ maxneg=Inf;
 config_str = '';
 pn = 0;
 pntest = 0; %% power norm on test data only (already pn on train)
+strictova = 0;
 
 runtrain = 1;
 runtest = 1;
@@ -88,6 +89,8 @@ for k=1:2:length(varargin),
 			pn = arg;
         case 'pntest'
 			pntest = arg;    
+        case 'strictova'
+			strictova = arg;        
         case 'runtrain'
 			runtrain = arg;        
         case 'runtest'
@@ -123,6 +126,7 @@ ker.testdb = testdb;
 ker.maxneg = maxneg;
 ker.pn = pn;
 ker.pntest = pntest;
+ker.strictova = strictova;
 ker.start_event = start_event;
 ker.end_event = end_event;
 ker.preload = preload;
@@ -187,7 +191,7 @@ if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 %calker_cal_train_kernel(proj_name, exp_name, ker);
 
 if preload ~= 0,
-    pl_file = sprintf('%s/%s/feature/%s/%s.h5', ker.proj_dir, proj_name, exp_name, ker.feat_raw);
+    pl_file = sprintf('%s/%s/feature/%s/%s.h5', ker.proj_dir, proj_name, 'mydeps', ker.feat_raw);
     fprintf('loading feature from file <%s>...\n', pl_file);
     ker.feats = calker_load_h5_feature(pl_file, preload, ker.num_dim, ker.randdep, ker.selfile);
 end
@@ -227,3 +231,5 @@ end
 
 %close pool
 if matlabpool('size') > 0, matlabpool close; end;
+
+quit;

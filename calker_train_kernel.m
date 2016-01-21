@@ -23,7 +23,13 @@ function ker = calker_train_kernel(proj_name, exp_name, ker)
         end_idx = start_idx + length(labels_{ii}) - 1;
         labels(ii, start_idx:end_idx) = labels_{ii};
         labels(ii, bg_start_idx:end) = -ones(1, size(bg_feats, 2));
-        start_idx = start_idx + length(labels_{ii});    
+        
+        if ker.strictova == 1,
+            labels(ii, 1:start_idx-1) = -1;
+            labels(ii, end_idx+1:bg_start_idx-1) = -1;
+        end
+        
+        start_idx = start_idx + length(labels_{ii});
     end
         
     fprintf('\tCalculating %s kernel %s ... \n', ker.type, ker.feat) ;	
@@ -42,7 +48,7 @@ function ker = calker_train_kernel(proj_name, exp_name, ker)
 		error('unknown ker type');
 	end
     
-    parfor kk = 1:length(ker.event_ids),
+    for kk = 1:length(ker.event_ids),
     
 		event_id = ker.event_ids{kk};
         
