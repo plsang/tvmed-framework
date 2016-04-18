@@ -1,0 +1,97 @@
+all: 
+
+fc7-med2013lj-ek10:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc7', 'dim', 4096, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2013lj-ek10:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 22034, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2013lj-ek10-concept:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 1000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'concept', 'vidpre', 'HVC')"    
+fc8-med2013lj-ek10-concept-nobe:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 999, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'concept.nobe', 'vidpre', 'HVC', 'selfile', 'nobe')" 
+fc8-med2013lj-ek100-concept-nobe:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 999, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'concept.nobe', 'vidpre', 'HVC', 'selfile', 'nobe')" 
+fc8-med2013lj-ek10-dep:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 21034, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'dep', 'vidpre', 'HVC', 'selfile', 'depnet')"    
+fc7-med2013lj-ek100:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc7', 'dim', 4096, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2013lj-ek100:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 22034, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2013lj-ek100-concept:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 1000, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'concept', 'vidpre', 'HVC')"        
+fc8-med2013lj-ek100-dep:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 21034, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'dep', 'vidpre', 'HVC', 'selfile', 'depnet')"    
+    
+### med2014lj
+
+fc7-med2014lj-ek10:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc7', 'dim', 4096, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2014lj-ek10:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc8', 'dim', 22034, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"    
+fc8-med2014lj-ek10-concept:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc8', 'dim', 1000, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'concept', 'vidpre', 'HVC')"    
+fc8-med2014lj-ek10-dep:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc8', 'dim', 21034, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'dep', 'vidpre', 'HVC', 'selfile', 'depnet')"    
+fc7-med2014lj-ek100:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc7', 'dim', 4096, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2014lj-ek100:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc8', 'dim', 22034, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'echi2', 'vidpre', 'HVC')"
+fc8-med2014lj-ek100-concept:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc8', 'dim', 1000, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'concept', 'vidpre', 'HVC')"        
+fc8-med2014lj-ek100-dep:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2014lj', 'depnet_fc8', 'dim', 21034, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'preload', 'data', 'test', 'medtest14lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'dep', 'vidpre', 'HVC', 'selfile', 'depnet')"        
+
+
+#### vgg-mydepsv4
+
+vgg-fc8-med2013lj-ek10:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 100, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd100', 'vidpre', 'HVC')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 200, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd200', 'vidpre', 'HVC')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 500, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd500', 'vidpre', 'HVC')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 1000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd1000', 'vidpre', 'HVC')"
+
+vgg-fc8-med2013lj-ek10-1:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 2000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd2000', 'vidpre', 'HVC')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 5000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd5000', 'vidpre', 'HVC')"
+
+vgg-fc8-med2013lj-ek10-2:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 10000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd10000', 'vidpre', 'HVC')"
+
+vgg-fc8-med2013lj-ek10-3:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 15000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd15000', 'vidpre', 'HVC')"
+
+vgg-fc8-med2013lj-ek10-4:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_vgg_fc8', 'dim', 20000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'vgg.nd20000', 'vidpre', 'HVC')"
+
+#### mt1-mydepsv4
+
+mt1-fc8-med2013lj-ek10-0:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 100, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd100', 'vidpre', 'HVC', 'startind', 1001)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 200, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd200', 'vidpre', 'HVC', 'startind', 1001)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 500, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd500', 'vidpre', 'HVC', 'startind', 1001)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 1000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd1000', 'vidpre', 'HVC', 'startind', 1001)"
+
+mt1-fc8-med2013lj-ek10-1:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 2000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd2000', 'vidpre', 'HVC', 'startind', 1001)"
+    
+mt1-fc8-med2013lj-ek10-2:    
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 5000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd5000', 'vidpre', 'HVC', 'startind', 1001)"
+
+mt1-fc8-med2013lj-ek10-3:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 10000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd10000', 'vidpre', 'HVC', 'startind', 1001)"
+
+mt1-fc8-med2013lj-ek10-4:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 15000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd15000', 'vidpre', 'HVC', 'startind', 1001)"
+
+mt1-fc8-med2013lj-ek10-5:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'depnet_fc8', 'dim', 20000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'data', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'mt1.nd20000', 'vidpre', 'HVC', 'startind', 1001)"
+    
+#### caffe-vgg-mydepsv4
+
+caffevgg-fc8-med2013lj-ek10-100:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'vgg-mydepsv4-fc8', 'dim', 100, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'fc8-conv-sigmoid', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'caffevgg.fc8.nd100')"    
+caffevgg-fc8-med2013lj-ek10-1000:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'vgg-mydepsv4-fc8', 'dim', 1000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'fc8-conv-sigmoid', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'caffevgg.fc8.nd1000')"        
+caffevgg-fc7-med2013lj-ek10-100:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'vgg-mydepsv4-fc8', 'dim', 100, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'fc7-conv', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'caffevgg.fc7.nd100')"    
+caffevgg-fc7-med2013lj-ek10-1000:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'depnet.med2013lj', 'vgg-mydepsv4-fc8', 'dim', 1000, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'preload', 'fc7-conv', 'test', 'medtest13lj', 'cross', 0, 'ker', 'echi2', 'suffix', 'caffevgg.fc7.nd1000')"        

@@ -155,7 +155,7 @@ function [feats, labels] = calker_load_feature(proj_name, exp_name, ker, video_p
         end
         
         if size(code, 1) ~= ker.num_dim,
-            fprintf('Dimension mismatch [%d-%d-%s]. Skipped !!\n', size(code, 1), ker.num_dim, segment_path);
+            fprintf('Dimension mismatch [%d-%d-%s]. Skipped !!\n', size(code, 1), ker.num_dim, clip_name);
             continue;
         end
         

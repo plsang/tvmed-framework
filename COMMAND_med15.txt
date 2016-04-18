@@ -1,0 +1,84 @@
+
+%% test on 2014, ek10, kindredtest
+
+calker_main('trecvidmed15', 'niimed2015', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+calker_main('trecvidmed15', 'niimed2015', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+
+%% deep learning feature
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+
+%% ah
+
+calker_main('trecvidmed15', 'niimed2015', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', 'v1.3-ah-r1', 'miss', 'RN');
+
+calker_main('trecvidmed15', 'niimed2015', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-r1', 'miss', 'RN');
+
+%%% use pntest for hoghof/mbh
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-r1', 'miss', 'RN', 'pntest', 1);
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-r1', 'miss', 'RN', 'pntest', 1);
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-r1', 'miss', 'RN', 'segtype', 'keyframe');
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-echi2-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2', 'pool', 4);
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-echi2-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2', 'pool', 4);
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'metadb', 'med2015ah', 'test', 'eval15full', 's', 61, 'e', 70, 'ek', 'EK10Ex', 'suffix', '--v1.3-ah-echi2-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+
+%%%% Pre-Specified - EK10Ex
+
+calker_main('trecvidmed15', 'niimed2015', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+calker_main('trecvidmed15', 'niimed2015', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+--- use pntest for hoghof/mbh
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'pntest', 1);
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'pntest', 1);
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'test', 'eval15full', 'ek', 'EK10Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+
+
+%%%% Pre-Specified - EK100Ex
+
+calker_main('trecvidmed15', 'niimed2015', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+calker_main('trecvidmed15', 'niimed2015', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN');
+
+--- use pntest for hoghof/mbh
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'pntest', 1);
+calker_main('trecvidmed15', 'niimed2015', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'pntest', 1);
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe');
+
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc6', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.fc7', 'dim', 4096, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'test', 'eval15full', 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'keyframe', 'ker', 'echi2');
+
+
+%%%%% zeroshot
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK0Ex', 'suffix', '--v1.3-r1', 'segtype', 'keyframe', 'runtrain', 0);
+calker_main('trecvidmed15', 'niimed2015', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK0Ex', 'suffix', '--v1.3-r1', 'segtype', 'keyframe', 'runtrain', 0, 'test', 'eval15full');
+
+
+* Late fusion
+calker_late_fusion('hoghof_mbh_mfcc_sift_fc6_fc7_full_zs_htc', 'test', 'eval15full')

@@ -1,0 +1,63 @@
+#all: myconcepts fc6fc7 numdeps randeps deptypes
+
+
+med13.ek10:
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2', 'fusion.baseline.med2015')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.baseline.med2015.mydepsv4nd1000')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000', 'fusion.baseline.med2015.mydepsv4nd5000')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.med2015.mydepsv4nd1000fc6fc7')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.med2015.mydepsv4nd5000fc6fc7')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.nosift.med2015.mydepsv4nd5000fc6fc7')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'vgg16l-myconceptsv3.l2.echi2.fc8-conv-sigmoid_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.mydepsv4nd1000.myconceptsv3')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'vgg16l.fc8.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.mydepsv4nd1000.imagenet1000')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'vgg16l-myconceptsv3.l2.echi2.fc8-conv-sigmoid_vgg16l.fc8.l2.echi2', 'fusion.imagenet1000.myconceptsv3')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'vgg16l-myconceptsv3.l2.echi2.fc8-conv-sigmoid_vgg16l.fc8.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.mydepsv4nd1000.imagenet1000.myconceptsv3')"
+
+
+med13.ek100:
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2', 'fusion.baseline.med2015', 'ek', 'EK100Ex')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.baseline.med2015.mydepsv4nd1000', 'ek', 'EK100Ex')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000', 'fusion.baseline.med2015.mydepsv4nd5000', 'ek', 'EK100Ex')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.med2015.mydepsv4nd1000fc6fc7', 'ek', 'EK100Ex')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.med2015.mydepsv4nd5000fc6fc7', 'ek', 'EK100Ex')"
+
+med14.ek10:
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2', 'fusion.baseline.med2015', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.baseline.med2015.mydepsv4nd1000', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000', 'fusion.baseline.med2015.mydepsv4nd5000', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.med2015.mydepsv4nd1000fc6fc7', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'vgg16l-myconceptsv3.l2.echi2.fc8-conv-sigmoid_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.mydepsv4nd1000.myconceptsv3', 'metadb', 'med2014lj', 'test', 'medtest14lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'vgg16l.fc8.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.mydepsv4nd1000.imagenet1000', 'metadb', 'med2014lj', 'test', 'medtest14lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'vgg16l-myconceptsv3.l2.echi2.fc8-conv-sigmoid_vgg16l.fc8.l2.echi2', 'fusion.imagenet1000.myconceptsv3', 'metadb', 'med2014lj', 'test', 'medtest14lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'vgg16l-myconceptsv3.l2.echi2.fc8-conv-sigmoid_vgg16l.fc8.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.mydepsv4nd1000.imagenet1000.myconceptsv3', 'metadb', 'med2014lj', 'test', 'medtest14lj')"
+
+med14.ek100:
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2', 'fusion.baseline.med2015', 'ek', 'EK100Ex', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000', 'fusion.baseline.med2015.mydepsv4nd1000', 'ek', 'EK100Ex', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd5000', 'fusion.baseline.med2015.mydepsv4nd5000', 'ek', 'EK100Ex', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+    
+	matlab -nodisplay -r "calker_late_fusion2('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca.l2.linear_idensetraj.hoghof.fisher.cb256.pca.l2.linear_idensetraj.mbh.fisher.cb256.pca.l2.linear_mfcc.rastamat.cb256.fc.l2.linear_placeshybrid.fc6.l2.echi2_placeshybrid.fc7.l2.echi2_placeshybrid.full.l2.echi2_vgg16l-mydepsv4.fc8-conv-sigmoid.l2.echi2.nd1000_vgg16l-mydepsv4.fc6-conv.l2.echi2_vgg16l-mydepsv4.fc7-conv.l2.echi2', 'fusion.baseline.med2015.mydepsv4nd1000fc6fc7', 'ek', 'EK100Ex', 'test', 'medtest14lj', 'metadb', 'med2014lj')"
+    
+

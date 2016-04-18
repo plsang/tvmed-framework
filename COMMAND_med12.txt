@@ -1,0 +1,124 @@
+
+%% med.pooling.seg4
+Fisher
+
+LD_PRELOAD="/net/per900a/raid0/plsang/usr.local/lib/libstdc++.so.6" matlab -nodisplay
+LD_PRELOAD="/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so" matlab -nodisplay
+
+%hoghof
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.64.mat');
+
+%mbh
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.mbh/codebook.gmm.256.128.mat');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.mbh/codebook.gmm.256.64.mat');
+
+
+
+BoW
+%% needs to supports Kernel SVM
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+
+%mbh
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+
+%%med2012
+
+'miss', 'NR'
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.hardbow.cb4000', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'seg4', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25);
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.softbow.cb4000', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'seg4', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25);
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'seg4', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25);
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'seg4', 'enctype', 'fisher', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25);
+
+%%med2012 with max neg = 30
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'seg4', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25);
+
+calker_main('trecvidmed', 'keyframes2video', 'placehybridCNN.full', 'dim', 1183, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25);
+
+%%med2012 sum-max pooling
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 's', 1, 'e', 25);
+
+
+%%med2012 sum-max pooling max-neg 30
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25); 
+
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r2', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r3', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r4', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EKCVPR14', 'suffix', '-v1.3-med2012-mneg30-r5', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med2012', 'metadb', 'med2012', 'maxneg', 30, 's', 1, 'e', 25); 
+
+
+%% MED2011
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.sumsum_bn', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.sumsum_an', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax210', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax180', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax150', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax120', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax90', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax60', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax30', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.summax15', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+%max-sum
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxmax_bn', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxmax_an', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum210', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum180', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum150', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum120', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum90', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum60', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum30', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.segments450.maxsum15', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+%%sim
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.sumsum', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.500', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.300', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.180', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.108', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.065', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.050', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.039', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.023', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.014', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.008', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+calker_main('trecvidmed11', 'dt.mbh.bow4000.kcb', 'densetrajectory.mbh.cb4000.kcb.shot0.500.agg.summax0.005', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'miss', 'NR', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'cross', 1, 'suffix', '-v1.3-r1');
+
+
+%% med2011
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.hardbow.cb4000', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'seg4', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'maxneg', 30);

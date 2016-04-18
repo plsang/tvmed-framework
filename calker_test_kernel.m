@@ -76,8 +76,8 @@ function calker_test_kernel(proj_name, exp_name, ker)
 			error('unknown ker type');
 		end
         
-        %parfor jj = 1:length(ker.event_ids),
-        for jj = 1:length(ker.event_ids),
+        parfor jj = 1:length(ker.event_ids),
+        %for jj = 1:length(ker.event_ids),
         
             event_id = ker.event_ids{jj};
             

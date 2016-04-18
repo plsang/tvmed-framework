@@ -1,0 +1,49 @@
+#all: myconcepts fc6fc7 numdeps randeps deptypes
+
+
+sift:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'covdet.hessian.sift.cb256.fc.pca', 'dim', 40960, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear')"
+
+mfcc:    
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'mfcc.rastamat.cb256.fc', 'dim', 19968, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear')"
+
+hoghof:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear', 'pntest', 1)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear', 'pntest', 1)"	
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear', 'pntest', 1)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'idensetraj.hoghof.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear', 'pntest', 1)"
+
+mbh:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear', 'pntest', 1)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'linear', 'pntest', 1)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear', 'pntest', 1)"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'idensetraj.mbh.fisher.cb256.pca', 'dim', 65536, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'linear', 'pntest', 1)"
+
+
+deepfc6.med2013.ek10:    
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'placeshybrid.fc6', 'dim', 4096, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+
+deepfc6.med2013.ek100:    
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'placeshybrid.fc6', 'dim', 4096, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+
+deepfc6.med2014:    
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'placeshybrid.fc6', 'dim', 4096, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'placeshybrid.fc6', 'dim', 4096, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+
+deepfc7:        
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'placeshybrid.fc7', 'dim', 4096, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'placeshybrid.fc7', 'dim', 4096, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'placeshybrid.fc7', 'dim', 4096, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'placeshybrid.fc7', 'dim', 4096, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+
+deepfc8:
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK10Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2013lj', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK100Ex', 'metadb', 'med2013lj', 'miss', 'RN', 'test', 'medtest13lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK10Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'echi2', 'segtype', 'keyframe')"
+	matlab -nodisplay -r "calker_main('trecvidmed', 'mydeps.med2014lj', 'placeshybrid.full', 'dim', 1183, 'ek', 'EK100Ex', 'metadb', 'med2014lj', 'miss', 'RN', 'test', 'medtest14lj', 'ker', 'echi2', 'segtype', 'keyframe')"

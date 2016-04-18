@@ -2,13 +2,30 @@
 %% med.pooling.seg4
 Fisher
 
-LD_PRELOAD="/net/per900a/raid0/plsang/usr.local/lib/libstdc++.so.6" matlab -nodisplay
-calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat');
+LD_PRELOAD="/net/per610a/export/das11f/plsang/usr/lib64/libstdc++.so" matlab -nodisplay
 
+%hoghof
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.128.mat');
 calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.hoghof/codebook.gmm.256.64.mat');
+
+%mbh
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.mbh/codebook.gmm.256.128.mat');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.fisher.cb256.pca64', 'dim', 2^15, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'cbfile', '/net/per610a/export/das11f/plsang/trecvidmed/feature/codebook/idensetraj.mbh/codebook.gmm.256.64.mat');
+
 
 
 BoW
+%% needs to supports Kernel SVM
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
 
-calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4');
-calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.hoghof.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'seg4');
+%mbh
+
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.hardbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+calker_main('trecvidmed', 'med.pooling.seg4', 'idensetraj.mbh.softbow.cb4000', 'dim', 4000, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'miss', 'RN', 'segtype', 'seg4', 'enctype', 'bow');
+
+
+
+calker_main('trecvidmed', 'eduardo.idensetraj.1st', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', '--v1.3-r1', 'pool', 5, 'miss', 'RN', 'segtype', 'video');
+
+calker_main('trecvidmed', 'eduardo.idensetraj.1st', 'idensetraj.hoghof.fisher.cb256.pca128', 'dim', 2^16, 'ek', 'EK100Ex', 'suffix', 'v1.3-r2', 'pool', 5, 'miss', 'RN', 'pn', 0.5);

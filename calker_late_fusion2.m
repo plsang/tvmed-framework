@@ -1,16 +1,14 @@
-function calker_late_fusion2(fuse_list, output_run, varargin)
+function calker_late_fusion2(proj_name, exp_name, fuse_list, output_run, varargin)
     %%% fuse_list = 'mfcc_fc7'
     %%% test_pat = 'kindred14', 'eval15full';
     
     
     test_pat = 'medtest13lj';
-    proj_name = 'trecvidmed';
-	exp_name = 'mydeps-m1';
     ek_set = 'EK10Ex';
     miss_type = 'RN';
-    ker_type = 'echi2';
+    ker_type = 'mixed';
     feat_norm = 'l2';
-	suffix = '';
+	metadb = 'med2013lj';
 	
     for k=1:2:length(varargin),
 
@@ -18,8 +16,8 @@ function calker_late_fusion2(fuse_list, output_run, varargin)
         arg = varargin{k+1} ;
         
         switch opt
-            case 'suffix'
-                suffix = arg ;
+            case 'metadb'
+                metadb = arg ;
             case 'dim'
                 feat_dim = arg;
             case 'ek'
@@ -47,9 +45,14 @@ function calker_late_fusion2(fuse_list, output_run, varargin)
     %event_ids = arrayfun(@(x) sprintf('E%03d', x), [start_event:end_event], 'UniformOutput', false);
     
     %% hard code for med 2013 
-    event_ids = [arrayfun(@(x) sprintf('E%03d', x), [6:15], 'UniformOutput', false), ...
+    if strcmp(test_pat, 'medtest13lj'),
+        event_ids = [arrayfun(@(x) sprintf('E%03d', x), [6:15], 'UniformOutput', false), ...
                     arrayfun(@(x) sprintf('E%03d', x), [21:30], 'UniformOutput', false)]
-    
+    elseif strcmp(test_pat, 'medtest14lj'),
+        event_ids = arrayfun(@(x) sprintf('E%03d', x), [21:40], 'UniformOutput', false);
+    else    
+        error('Unknown test pat');
+    end
 	calker_exp_dir = sprintf('%s/%s/experiments/%s', ker.proj_dir, proj_name, exp_name);
 	
     %fused_runs = strsplit(fuse_list, '_');
@@ -112,7 +115,7 @@ function calker_late_fusion2(fuse_list, output_run, varargin)
     ker.prms.tvprefix = 'TVMED14';
     ker.prms.eventkit = ek_set;
     ker.prms.rtype = miss_type;
-    ker.metadb = 'med2013lj';
+    ker.metadb = metadb;
     
     
     ker.event_ids = event_ids;
@@ -144,4 +147,6 @@ function calker_late_fusion2(fuse_list, output_run, varargin)
     calker_cal_map(proj_name, exp_name, ker);
     calker_cal_rank(proj_name, exp_name, ker);
 	%calker_cal_threshhold(proj_name, exp_name, ker);
+    
+    quit;
 end

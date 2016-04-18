@@ -32,6 +32,8 @@ runrank = 1;
 preload = 0;
 randdep = 0; %% where to use random dependency 
 selfile = ''; %% file that contains selected indexes (of a dependency type)
+vidpre = ''; %% video prefix, append prefix to video id
+startind = 1; %% start index when selecting top k
 
 for k=1:2:length(varargin),
 
@@ -105,6 +107,10 @@ for k=1:2:length(varargin),
             randdep = arg;    
         case 'selfile'
             selfile = arg;
+        case 'vidpre'
+            vidpre = arg;
+        case 'startind'
+            startind = arg;
 		otherwise
 			error(sprintf('Option ''%s'' unknown.', opt)) ;
 	end  
@@ -132,6 +138,8 @@ ker.end_event = end_event;
 ker.preload = preload;
 ker.randdep = randdep;
 ker.selfile = selfile;
+ker.vidpre = vidpre;
+ker.startind = startind;
 
 fisher_params = struct;
 fisher_params.grad_weights = false;		% "soft" BOW
@@ -193,7 +201,7 @@ if matlabpool('size') == 0 && open_pool > 0, matlabpool(open_pool); end;
 if preload ~= 0,
     pl_file = sprintf('%s/%s/feature/%s/%s.h5', ker.proj_dir, proj_name, 'mydeps', ker.feat_raw);
     fprintf('loading feature from file <%s>...\n', pl_file);
-    ker.feats = calker_load_h5_feature(pl_file, preload, ker.num_dim, ker.randdep, ker.selfile);
+    ker.feats = calker_load_h5_feature(pl_file, preload, ker.num_dim, ker.randdep, ker.selfile, ker.vidpre, ker.startind);
 end
 
 if runtrain == 1,

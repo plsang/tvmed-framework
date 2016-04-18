@@ -1,0 +1,60 @@
+
+%%med2011 sum-max pooling
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15);
+
+
+%%med2011 sum-max pooling max-neg 30
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15); 
+
+
+%%% kernel version
+
+%%med2011 sum-max pooling
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128',  'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64',  'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15);
+
+
+%%med2011 sum-max pooling max-neg 30
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15); calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15);  calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'ker', 'echi2', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-mneg30-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'maxneg', 30, 's', 6, 'e', 15); 
+
+
+%% linear, cv
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15);
+
+%% kernel, cv
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax256', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15, 'ker', 'echi2'); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax128', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15, 'ker', 'echi2'); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax64', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15, 'ker', 'echi2'); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax32', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15, 'ker', 'echi2'); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax16', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15, 'ker', 'echi2'); 
+
+calker_main('trecvidmed', 'summax.pooling', 'idensetraj.mbh.hardbow.cb4000.summax8', 'dim', 4000, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 'cross', 1, 's', 6, 'e', 15, 'ker', 'echi2');
+
+
+
+
+%%% testing with placehybrid features
+calker_main('trecvidmed', 'keyframes2video', 'placehybridCNN.full', 'dim', 1183, 'ek', 'EK130Ex', 'suffix', '-v1.3-med2011-r1', 'miss', 'NR', 'segtype', 'video', 'enctype', 'bow', 'test', 'med11test', 'metadb', 'med2011', 's', 6, 'e', 15, 'ker', 'echi2');
+

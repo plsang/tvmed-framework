@@ -196,13 +196,13 @@ clear D ;
 zz=0 ;
 if cross  
   if verb   
-    fprintf('svmkernelleran: entering 10-fold cross validation ...\n') ;
+    fprintf('svmkernelleran: entering %d-fold cross validation ...\n', cross) ;
   end
   switch lower(type)
     case 'c'
       %val_range = logspace(-5,+5,11) ;
-	  val_range_idx = [-5:+5];
-	  val_range = arrayfun(@(x) 4^x, val_range_idx);
+	  val_range_idx = [-1:1];
+	  val_range = arrayfun(@(x) 10^x, val_range_idx);
     case 'nu'
       val_range = logspace(-10,-0.0001,11) ;
   end
@@ -270,15 +270,15 @@ if cross
     end
 
     % max iterations
-    if zz > 2
+    if zz > 0
         break;
     end
     
     %step = log10(val_range(2)) - log10(val_range(1)) ;
     %val_range = logspace(log10(val) - 2*step, log10(val) + 2*step, 11) ;
 	
-	val_range_idx = [val_range_idx(pick)-5:val_range_idx(pick)+5];
-	val_range = arrayfun(@(x) 2^x, val_range_idx);
+	%val_range_idx = [val_range_idx(pick)-5:val_range_idx(pick)+5];
+	%val_range = arrayfun(@(x) 2^x, val_range_idx);
     
   end
 end

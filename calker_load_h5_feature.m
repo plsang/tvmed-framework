@@ -1,4 +1,4 @@
-function maps = calker_load_h5_feature(input_file, set, top_k, randdep, selfile)
+function maps = calker_load_h5_feature(input_file, set, top_k, randdep, selfile, vidpre, startind)
     % input_file = '/net/per920a/export/das14a/satoh-lab/plsang/trecvidmed/feature/mydeps/vgg16l.fc8.h5';
     
     % top_k: top frequent dependencies
@@ -29,13 +29,21 @@ function maps = calker_load_h5_feature(input_file, set, top_k, randdep, selfile)
         selfile = '';
     end
     
+    if ~exist('vidpre', 'var'),
+        vidpre = '';
+    end
+    
+    if ~exist('startind', 'var'),
+        startind = 1;
+    end
+    
     if isempty(selfile),
         if top_k ~= size(data, 1) && randdep ~= 0,
             fprintf('*** Selecting randomly %d out of %d dependencies...\n', top_k, size(data, 1));
             rand_idx = randperm(size(data, 1));
             sel_idx = rand_idx(1:top_k);
         else
-            sel_idx = 1:top_k;
+            sel_idx = startind:startind+top_k-1;
         end    
         
         sel_idx = sel_idx';
@@ -54,14 +62,18 @@ function maps = calker_load_h5_feature(input_file, set, top_k, randdep, selfile)
         fprintf('Num of sel index: %d \n', length(sel_idx));
     end
     % convert to row vector
-    
-    
     maps = {};
-    
-    
+    dbstop if error
     for ii =1:length(index),
-        video_id = index(ii).Data;
+        if ~strcmp(vidpre, ''),
+            video_id = sprintf('%s%06d', vidpre, index(ii));
+	else
+            video_id = index(ii).Data;
+        end
         maps.(video_id) = data(sel_idx,ii);
+        if mod(ii,1000) == 0,
+            fprintf('%d/%d read...\n', ii, length(index));
+        end
     end
     
 end
